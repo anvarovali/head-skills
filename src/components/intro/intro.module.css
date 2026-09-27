@@ -71,16 +71,13 @@
 .mark { display: inline-block; height: 1em; width: 2.4654em; vertical-align: -.1225em; margin: 0 .035em 0 .045em; overflow: visible; }
 .base { color: #e6e7ec; }
 .base [data-glyph] { opacity: 0; }
-/* the drop's light: a blurred blue copy blooms behind, a white copy is revealed through a moving skewed slit */
-.bloom { position: absolute; left: 0; top: 0; white-space: nowrap; color: #2a4cff; filter: blur(.075em); opacity: 0; pointer-events: none; will-change: opacity, transform; }
-.bloom .slashBlue { color: #2a4cff; }
+/* the drop's light: a white copy of the line is revealed through a moving, skewed, soft-edged slit */
 .sweep {
   position: absolute; left: 0; top: -.15em; bottom: -.2em; width: 28%; overflow: hidden; opacity: 0; transform-origin: 0 0;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent); mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent);
   will-change: transform;
 }
-.sweepIn { position: absolute; left: 0; top: .15em; width: max-content; white-space: nowrap; color: #fff; transform-origin: 0 -.15em; will-change: transform;
-  filter: drop-shadow(0 0 .05em rgba(150, 175, 255, .95)); }
+.sweepIn { position: absolute; left: 0; top: .15em; width: max-content; white-space: nowrap; color: #fff; transform-origin: 0 -.15em; will-change: transform; }
 .rest .word + .word { margin-left: .26em; }
 .tag { font-size: clamp(18px, 1.85vw, 30px); letter-spacing: -.012em; color: var(--fg-2); margin-top: .8em; }
 
@@ -114,13 +111,10 @@
 }
 .blankHead { display: flex; align-items: center; gap: 12px; height: 30px; }
 .blankIcon { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: rgba(255, 255, 255, .1); }
+/* far card backs: out of focus, depth only */
+.soft { filter: blur(7px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); }
 .bar { display: block; height: 9px; border-radius: 5px; background: rgba(255, 255, 255, .14); }
 .blankHead .bar { height: 11px; background: rgba(255, 255, 255, .22); }
-.chip {
-  position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; white-space: nowrap;
-  font-family: var(--font-mono); font-weight: 500; font-size: 16px; color: rgba(245, 245, 247, .82);
-  background: rgba(255, 255, 255, .07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); opacity: 0; will-change: transform, opacity;
-}
 
 /* the install line as a hero, typed on the 8ths */
 .cmdWrap { display: flex; flex-direction: column; align-items: center; gap: 26px; }

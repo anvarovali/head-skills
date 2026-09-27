@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useLocale } from '@/i18n/useLocale'
 import type { Locale } from '@/i18n/locales'
-import { INTRO_AUDIO, INTRO_EVENT, SEEN_KEY } from './replay'
+import { INTRO_AUDIO, INTRO_EVENT, INTRO_OFFSET, SEEN_KEY } from './replay'
 
 /* First-visit intro. This file is the light half: it decides whether to play, covers the page for the few ms the
    show chunk takes to arrive, and listens for replays. The show itself (GSAP, the stage) is a lazy chunk that mounts
@@ -43,6 +43,7 @@ export function Intro() {
       let audio: HTMLAudioElement | undefined
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         audio = new Audio(INTRO_AUDIO)
+        audio.currentTime = INTRO_OFFSET // before metadata this sets the default start position
         audio.play().catch(() => {})
       }
       launch({ mode: 'show', locale: live.current.locale, navigate: (to) => live.current.navigate(to), audio })
