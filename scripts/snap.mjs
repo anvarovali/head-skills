@@ -6,7 +6,7 @@ import { mkdirSync } from 'node:fs'
 const [out, base, ...rest] = process.argv.slice(2)
 const full = rest.includes('--full')
 const wait = Number((rest.find((a) => a.startsWith('--wait=')) ?? '--wait=1200').split('=')[1])
-const targets = rest.filter((a) => a.includes('=') && !a.startsWith('--')).map((a) => a.split('='))
+const targets = rest.filter((a) => a.includes('=') && !a.startsWith('--')).map((a) => [a.slice(0, a.indexOf('=')), a.slice(a.indexOf('=') + 1)])
 mkdirSync(out, { recursive: true })
 const browser = await chromium.launch()
 for (const [vp, opts] of [['desktop', { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 }], ['mobile', devices['iPhone 13']]]) {

@@ -4,6 +4,7 @@ import { HeadMark } from '@/components/ui/HeadMark'
 import { LOCALES, LOCALE_NAMES, switchLocale } from '@/i18n/locales'
 import { useHref, useLocale, useT } from '@/i18n/useLocale'
 import { ArrowUp, ArrowUpRight } from '@/components/market/icons'
+import { replayIntro } from '@/components/intro/replay'
 import s from './Footer.module.css'
 
 /** qoder footer: bg-layout, mark + two-line tagline left, link columns right, a small legal row with Back to top. */
@@ -13,8 +14,6 @@ export function Footer() {
   const locale = useLocale()
   const { pathname, search } = useLocation()
   const headuz = (slug = '') => `https://head.uz${locale === 'uz' ? '' : `/${locale}`}${slug}`
-  const replay = new URLSearchParams(search)
-  replay.set('intro', '1')
 
   return (
     <footer className={s.footer}>
@@ -29,7 +28,7 @@ export function Footer() {
             <Link to={`${href()}?tab=skills`} className={s.link}>{t('tab.skills')}</Link>
             <Link to={`${href()}?tab=bundles`} className={s.link}>{t('tab.bundles')}</Link>
             <Link to={href('submit')} className={s.link}>{t('nav.submit')}</Link>
-            <Link to={`${pathname}?${replay}`} className={s.link}>{t('footer.replay')}</Link>
+            <button type="button" onClick={replayIntro} className={s.link}>{t('footer.replay')}</button>
           </div>
           <div className={s.col}>
             <p className={s.colTitle}>{t('footer.colHead')}</p>
