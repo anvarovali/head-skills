@@ -18,7 +18,7 @@ import s from './intro.module.css'
    real marketplace grid. Lazy chunk; mounted on its own root by Intro.tsx. */
 
 const COPY: Record<Locale, { hi: string; rest: string; tag: string; cmd: string; done: string; skip: string; mute: string; unmute: string; dialog: string }> = {
-  uz: { hi: 'Salom', rest: 'head.uz’ga xush kelibsiz', tag: 'AI agentlaringiz uchun skill’lar', cmd: 'Bitta buyruq bilan o‘rnating', done: 'o‘rnatildi', skip: 'O‘tkazib yuborish', mute: 'Ovozni o‘chirish', unmute: 'Ovozni yoqish', dialog: 'Tilni tanlang' },
+  uz: { hi: 'Salom', rest: 'head.uzʼga xush kelibsiz', tag: 'AI agentlaringiz uchun skillʼlar', cmd: 'Bitta buyruq bilan oʻrnating', done: 'oʻrnatildi', skip: 'Oʻtkazib yuborish', mute: 'Ovozni oʻchirish', unmute: 'Ovozni yoqish', dialog: 'Tilni tanlang' },
   ru: { hi: 'Привет', rest: 'добро пожаловать в head.uz', tag: 'Скиллы для ваших AI‑агентов', cmd: 'Установка одной командой', done: 'установлены', skip: 'Пропустить', mute: 'Выключить звук', unmute: 'Включить звук', dialog: 'Выберите язык' },
   en: { hi: 'Hey', rest: 'welcome to head.uz', tag: 'Skills for your AI agents', cmd: 'Install with one command', done: 'installed', skip: 'Skip intro', mute: 'Mute', unmute: 'Unmute', dialog: 'Choose your language' },
 }
