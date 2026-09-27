@@ -9,6 +9,7 @@
 
 .sectionHead { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; min-height: 28px; }
 .sectionTitle { font-size: 16px; line-height: 24px; font-weight: 500; }
+@media (max-width: 767px) { .sectionTitle { font-size: 18px; line-height: 26px; } }
 .count {
   font-size: 13px; line-height: 20px; padding: 2px 8px; border-radius: var(--m-r-full); background: var(--m-bg-container);
   color: var(--m-text-3); font-variant-numeric: tabular-nums;

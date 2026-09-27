@@ -11,14 +11,14 @@
   flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--m-r-md);
   border: 1px solid var(--m-border); background: var(--m-bg-base); color: var(--m-text); overflow: hidden;
 }
-.icon img { width: 100%; height: 100%; object-fit: cover; }
+.icon img { width: 22px; height: 22px; object-fit: contain; }
 .name {
   flex: 1 1 auto; min-width: 0; font-size: 16px; line-height: 22px; font-weight: 500; letter-spacing: -.005em;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .badge {
-  flex: none; font-size: 10px; line-height: 14px; font-weight: 500; padding: 2px 6px; border-radius: var(--m-r-xs);
-  background: var(--m-primary-bg); color: var(--m-primary-text);
+  flex: none; font-size: 10px; line-height: 14px; font-weight: 400; padding: 2px 6px; border-radius: var(--m-r-xs);
+  background: var(--m-tag-bg); color: var(--m-tag-text);
 }
 .desc {
   font-size: 13px; line-height: 18px; color: var(--m-text-3); min-height: 36px;

@@ -33,7 +33,7 @@
   flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 5px; border: 1px solid var(--m-border);
   background: var(--m-bg-base); color: var(--m-text);
 }
-.rowIcon svg { width: 12px; height: 12px; }
+.rowIcon svg, .rowIcon img { width: 13px; height: 13px; }
 .rowTitle { flex: none; font-size: 14px; font-weight: 500; }
 .rowSub { min-width: 0; font-size: 13px; color: var(--m-text-4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .none { padding: 10px 8px; font-size: 14px; color: var(--m-text-3); }

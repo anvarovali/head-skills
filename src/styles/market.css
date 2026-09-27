@@ -38,5 +38,7 @@ code, pre, kbd { font-family: var(--m-font-code); }
   --m-shadow-pop: 0 6px 16px rgba(16, 17, 19, .08), 0 3px 6px -4px rgba(16, 17, 19, .12), 0 9px 28px 8px rgba(16, 17, 19, .05);
   --m-shadow-tile: 0 2px 6px rgba(16, 17, 19, .06), 0 8px 20px rgba(16, 17, 19, .06);
   --m-header-x: 36px;
+  --m-tag-bg: #eff2ff;                   /* pale tag, as qoder's Recommend: a tint, not a fill */
+  --m-tag-text: #4a67ff;
 }
-@media (max-width: 767px) { :root { --m-header-x: 20px; } }
+@media (max-width: 767px) { :root { --m-header-x: var(--m-page-x); } }

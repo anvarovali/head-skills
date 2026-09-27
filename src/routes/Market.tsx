@@ -117,7 +117,10 @@ function SkillsView({ items, cats, srcs, sort, page, byFacets, onCat, onCats, on
   const t = useT()
   const locale = useLocale()
   const filtered = items.filter(byFacets)
-  const featured = !cats.length && !srcs.length ? sortItems(items.filter((it) => it.featured), 'featured', locale).slice(0, 8) : []
+  // a Featured row only earns its place when it is a subset of a longer list; otherwise it just repeats it
+  const featuredAll = items.filter((it) => it.featured)
+  const showFeatured = !cats.length && !srcs.length && items.length > 8 && featuredAll.length < items.length
+  const featured = showFeatured ? sortItems(featuredAll, 'featured', locale).slice(0, 8) : []
   const pages = Math.ceil(filtered.length / PAGE)
   const shown = sortItems(filtered, sort, locale).slice((page - 1) * PAGE, page * PAGE)
   const catCount = (id: string) => items.filter((it) => it.category === id && (!srcs.length || srcs.includes(sourceOf(it)))).length
@@ -128,12 +131,12 @@ function SkillsView({ items, cats, srcs, sort, page, byFacets, onCat, onCats, on
     <div className={s.split}>
       <aside className={s.side}>
         <Facet title={t('filter.category')}>
-          {catalog.categories.map((c) => (
+          {catalog.categories.filter((c) => catCount(c.id) > 0 || cats.includes(c.id)).map((c) => (
             <Check key={c.id} label={pick(c.title, locale) ?? c.id} count={catCount(c.id)} checked={cats.includes(c.id)} onChange={() => onCat(c.id)} />
           ))}
         </Facet>
         <Facet title={t('filter.source')}>
-          {SOURCES.map((id) => (
+          {SOURCES.filter((id) => srcCount(id) > 0 || srcs.includes(id)).map((id) => (
             <Check key={id} label={t(`source.${id}`)} count={srcCount(id)} checked={srcs.includes(id)} onChange={() => onSrc(id)} />
           ))}
         </Facet>
@@ -149,7 +152,7 @@ function SkillsView({ items, cats, srcs, sort, page, byFacets, onCat, onCats, on
           <SectionHead title={t('tab.all')} count={filtered.length} />
           <div className={s.toolbar}>
             <Pills label={t('filter.category')} value={pillValue}
-              options={[{ value: '', label: t('filter.allCategories') }, ...catalog.categories.map((c) => ({ value: c.id, label: pick(c.title, locale) ?? c.id }))]}
+              options={[{ value: '', label: t('filter.allCategories') }, ...catalog.categories.filter((c) => items.some((it) => it.category === c.id) || cats.includes(c.id)).map((c) => ({ value: c.id, label: pick(c.title, locale) ?? c.id }))]}
               onChange={(v) => onCats(v || null)} />
             <Segmented label="Sort" value={sort} onChange={onSort}
               options={[{ value: 'featured', label: t('sort.featured') }, { value: 'latest', label: t('sort.latest') }]} />
