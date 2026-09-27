@@ -16,10 +16,11 @@
 
 /* breadcrumb + quiet actions */
 .crumbBar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 32px; }
-.crumbs { min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 16px; line-height: 24px; color: var(--m-text-4); }
+.crumbs { min-width: 0; display: flex; align-items: center; flex-wrap: nowrap; white-space: nowrap; gap: 10px; font-size: 16px; line-height: 24px; color: var(--m-text-4); }
 .crumbs a { color: var(--m-text-4); transition: color var(--m-t); }
 .crumbs a:hover { color: var(--m-primary); }
-.crumbSep { color: var(--m-text-4); }
+.crumbSep { color: var(--m-text-4); flex: none; }
+.crumbs > a { flex: none; }
 .crumbNow { color: var(--m-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 
 /* header */
@@ -31,12 +32,12 @@
 }
 .glyphBundle { background: var(--m-primary); }
 .glyphImg { background: var(--m-bg-base); box-shadow: inset 0 0 0 1px var(--m-border); overflow: hidden; }
-.glyphImg img { width: 100%; height: 100%; object-fit: cover; }
+.glyphImg img { width: 70%; height: 70%; object-fit: contain; }
 .headText { min-width: 0; flex: 1; }
 .titleRow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; }
 .title { font-size: 28px; line-height: 38px; font-weight: 500; letter-spacing: -.02em; color: var(--m-text); margin: 0; overflow-wrap: anywhere; }
 .badges { display: flex; gap: 6px; flex-wrap: wrap; }
-.badge { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: var(--m-r-xs); background: var(--m-primary-bg); color: var(--m-primary-text); font-size: 13px; font-weight: 500; line-height: 1; white-space: nowrap; }
+.badge { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: var(--m-r-xs); background: var(--m-tag-bg); color: var(--m-tag-text); font-size: 13px; font-weight: 400; line-height: 1; white-space: nowrap; }
 .badgeGrey { background: var(--m-fill-2); color: var(--m-text-2); }
 .meta { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 4px; font-size: 15px; line-height: 24px; color: var(--m-text-4); }
 .meta a { color: var(--m-text-3); transition: color var(--m-t); }
@@ -221,7 +222,6 @@ h2.tab:hover { color: var(--m-text); }
   .glyph { width: 56px; height: 56px; border-radius: 10px; font-size: 19px; }
   .title { font-size: 22px; line-height: 30px; }
   .meta { font-size: 14px; line-height: 22px; margin-top: 2px; }
-  .head { align-items: center; }
     .desc { font-size: 15px; margin-top: 18px; }
   .kvRow { grid-template-columns: minmax(0, 1fr); }
   .kvKey { padding: 10px 14px 0; border-right: 0; font-size: 13px; background: transparent; }
