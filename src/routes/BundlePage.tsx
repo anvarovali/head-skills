@@ -1,29 +1,26 @@
-import { useEffect } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router'
 import { getBundle, getSkill } from '@/data/catalog'
 import type { Skill } from '@/data/types'
-import { pick, useLocale } from '@/i18n/useLocale'
-import { useDT } from '@/components/skill/strings'
+import { pick, useLocale, useT } from '@/i18n/useLocale'
 import { Badges, Crumbs, Glyph, NotFoundBlock, ShareActions, YouTubeLite, youtubeId } from '@/components/skill/parts'
 import { InstallCard } from '@/components/skill/InstallCard'
 import { ExtensionCard } from '@/components/market/ExtensionCard'
 import { getItems } from '@/components/market/items'
 import { Markdown } from '@/components/skill/Markdown'
 import { GridIcon } from '@/components/skill/icons'
+import { useDocumentMeta } from '@/i18n/useDocumentMeta'
 import s from '@/components/skill/Detail.module.css'
 
 export function BundlePage() {
   const { id = '' } = useParams()
   const bundle = getBundle(id)
   const locale = useLocale()
-  const t = useDT()
+  const t = useT()
   const [search] = useSearchParams()
   const { hash } = useLocation()
   const title = bundle ? pick(bundle.title, locale) ?? bundle.id : ''
 
-  useEffect(() => {
-    if (bundle) document.title = `${title} · HEAD skills`
-  }, [bundle, title])
+  useDocumentMeta(bundle ? title : t('nf.bundle'), bundle ? pick(bundle.summary, locale) : undefined)
 
   if (!bundle) return <NotFoundBlock title={t('nf.bundle')} />
 
@@ -37,7 +34,7 @@ export function BundlePage() {
       <Crumbs current={bundle.id} />
       <header>
         <div className={s.head}>
-          <Glyph title={title} bundle />
+          <Glyph bundle />
           <div className={s.headText}>
             <div className={s.titleRow}>
               <div className={s.titleMain}>

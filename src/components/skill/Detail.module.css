@@ -26,13 +26,10 @@
 /* header */
 .head { display: flex; align-items: center; gap: 20px; margin-top: 16px; }
 .glyph {
-  flex: none; width: 66px; height: 66px; border-radius: 12px; display: grid; place-items: center;
-  background: var(--m-text); color: #fff; font-weight: 600; font-size: 22px; letter-spacing: -.02em; line-height: 1;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / .06);
+  flex: none; width: 66px; height: 66px; border-radius: var(--m-r-xl); display: grid; place-items: center;
+  background: var(--m-bg-base); color: var(--m-text); box-shadow: inset 0 0 0 1px var(--m-border); overflow: hidden;
 }
-.glyphBundle { background: var(--m-primary); }
-.glyphImg { background: var(--m-bg-base); box-shadow: inset 0 0 0 1px var(--m-border); overflow: hidden; }
-.glyphImg img { width: 70%; height: 70%; object-fit: contain; }
+.glyph img { width: 70%; height: 70%; object-fit: contain; }
 .headText { min-width: 0; flex: 1; }
 .titleRow { display: flex; align-items: flex-start; gap: 16px; }
 .titleMain { flex: 1; min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; }
@@ -78,7 +75,7 @@
 h2.tab { margin: 0; }
 h2.tab:hover { color: var(--m-text); }
 .tab[aria-selected="true"], .tabActive { background: var(--m-fill-2); color: var(--m-text); }
-.tabCount { font-size: 13px; color: var(--m-text-4); font-weight: 500; }
+.tabCount { font-size: 13px; color: var(--m-text-2); font-weight: 500; }
 .main { grid-area: main; min-width: 0; }
 .side { grid-area: side; min-width: 0; }
 
@@ -210,12 +207,6 @@ h2.tab:hover { color: var(--m-text); }
 .checks svg { margin-top: 3px; color: var(--m-primary); }
 .note { margin: 16px 0 0; padding: 10px 12px; border-radius: var(--m-r-md); background: var(--m-primary-bg); color: var(--m-primary-text); font-size: 13px; line-height: 20px; }
 
-/* not found */
-.empty { padding: 96px 0 64px; text-align: center; display: grid; justify-items: center; gap: 8px; }
-.empty h1 { font-size: 24px; font-weight: 500; margin: 0; }
-.empty p { margin: 0 0 16px; color: var(--m-text-4); font-size: 15px; }
-
-
 @media (max-width: 1100px) {
   .page { --d-side: 290px; --d-gap: 28px; }
 }
@@ -230,7 +221,8 @@ h2.tab:hover { color: var(--m-text); }
   .metaAuthor { display: none; }
   .crumbs { font-size: 15px; }
   .head { gap: 12px; margin-top: 14px; align-items: flex-start; }
-  .glyph { width: 52px; height: 52px; border-radius: 10px; font-size: 18px; }
+  .glyph { width: 52px; height: 52px; border-radius: var(--m-r-lg); }
+  .glyph svg { width: 24px; height: 24px; }
   .title { font-size: 22px; line-height: 30px; }
   .meta { font-size: 14px; line-height: 22px; margin-top: 2px; }
     .desc { font-size: 15px; margin-top: 18px; max-width: none; text-wrap: wrap; }

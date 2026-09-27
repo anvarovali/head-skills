@@ -1,14 +1,15 @@
-import { useEffect, useId, type ReactNode } from 'react'
+import { useId, type ReactNode } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router'
 import { getSkill } from '@/data/catalog'
-import { pick, useLocale } from '@/i18n/useLocale'
-import { useDT, formatDate } from '@/components/skill/strings'
+import { pick, useLocale, useT } from '@/i18n/useLocale'
+import { formatDate } from '@/i18n/formatDate'
 import { Badges, Crumbs, DownloadAction, Glyph, NotFoundBlock, ShareActions, YouTubeLite, youtubeId } from '@/components/skill/parts'
 import { InstallCard } from '@/components/skill/InstallCard'
 import { FrontmatterTable } from '@/components/skill/FrontmatterTable'
 import { FileBrowser } from '@/components/skill/FileBrowser'
 import { Markdown } from '@/components/skill/Markdown'
 import { DocIcon, FolderIcon } from '@/components/skill/icons'
+import { useDocumentMeta } from '@/i18n/useDocumentMeta'
 import s from '@/components/skill/Detail.module.css'
 
 type Tab = 'guides' | 'files'
@@ -17,7 +18,7 @@ export function SkillPage() {
   const { id = '' } = useParams()
   const skill = getSkill(id)
   const locale = useLocale()
-  const t = useDT()
+  const t = useT()
   const [search] = useSearchParams()
   const { hash } = useLocation()
   const navigate = useNavigate()
@@ -26,9 +27,7 @@ export function SkillPage() {
   const tab: Tab = hash === '#files' || search.get('tab') === 'files' ? 'files' : 'guides'
   const title = skill ? pick(skill.title, locale) ?? skill.name : ''
 
-  useEffect(() => {
-    if (skill) document.title = `${title} · HEAD skills`
-  }, [skill, title])
+  useDocumentMeta(skill ? title : t('nf.skill'), skill ? pick(skill.summary, locale) ?? skill.description : undefined)
 
   if (!skill) return <NotFoundBlock title={t('nf.skill')} />
 
@@ -49,7 +48,7 @@ export function SkillPage() {
       <Crumbs current={skill.id} />
       <header>
         <div className={s.head}>
-          <Glyph title={title} icon={skill.icon} />
+          <Glyph icon={skill.icon} category={skill.category} />
           <div className={s.headText}>
             <div className={s.titleRow}>
               <div className={s.titleMain}>

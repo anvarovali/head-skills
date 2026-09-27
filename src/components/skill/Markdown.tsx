@@ -26,6 +26,9 @@ const slug = (t: string) => t.toLowerCase().replace(/<[^>]+>/g, '').replace(/&[a
 /* A marked instance whose output is safe to inject: raw HTML (block + inline) is escaped, not passed through;
    link/image URLs are allow-listed; code is escaped by marked itself. */
 const md = new Marked({ gfm: true, breaks: false })
+/* The page owns the one <h1>: a README that starts at `#` is rendered a level down (h1 -> h2 …) so the outline stays
+   sane. The look follows the source level (data-h), not the tag. Set per render; parsing is synchronous. */
+let headingShift = 0
 md.use({
   renderer: {
     html(token: Tokens.HTML | Tokens.Tag) {
@@ -47,7 +50,8 @@ md.use({
     },
     heading(this: { parser: { parseInline: (t: Tokens.Heading['tokens']) => string } }, token: Tokens.Heading) {
       const inner = this.parser.parseInline(token.tokens)
-      return `<h${token.depth} id="${esc(slug(inner))}">${inner}</h${token.depth}>\n`
+      const tag = `h${Math.min(6, token.depth + headingShift)}`
+      return `<${tag} id="${esc(slug(inner))}" data-h="${token.depth}">${inner}</${tag}>\n`
     },
     table(this: { parser: { parseInline: (t: Tokens.TableCell['tokens']) => string } }, token: Tokens.Table) {
       const cell = (c: Tokens.TableCell, tag: 'th' | 'td') => {
@@ -62,6 +66,7 @@ md.use({
 })
 
 export function renderMarkdown(src: string): string {
+  headingShift = md.lexer(src).some((t) => t.type === 'heading' && t.depth === 1) ? 1 : 0
   return md.parse(src, { async: false }) as string
 }
 

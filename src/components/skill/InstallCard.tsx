@@ -1,7 +1,6 @@
 import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { agentPrompt, installCommand, pluginCommands, zipUrl } from '@/lib/install'
-import { useLocale } from '@/i18n/useLocale'
-import { useDT } from './strings'
+import { useLocale, useT } from '@/i18n/useLocale'
 import { CopyIconButton } from './parts'
 import { ChevronDownIcon, DownloadIcon } from './icons'
 import s from './Detail.module.css'
@@ -43,7 +42,7 @@ const BAND = 40 // px of plain box ground under the last full line; the expand p
 /** Mono box cut on a line boundary: either after `rows` visual lines, or right after logical line `endAt`
     (measured, so wrapped lines count). Below the cut a fade into the box ground carries an expand pill. */
 function MonoBox({ lines, label, rows = 5, endAt }: { lines: Line[]; label: string; rows?: number; endAt?: number }) {
-  const t = useDT()
+  const t = useT()
   const id = useId()
   const box = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
@@ -89,7 +88,7 @@ function MonoBox({ lines, label, rows = 5, endAt }: { lines: Line[]; label: stri
 /** The owner's core requirement: every skill has two hand-offs, For Agent and For Human. Both blocks share
     one shape, as on Qoder: a label row with icon buttons, then one mono box of whole lines with a bottom fade. */
 export function InstallCard({ ids, pluginId, zips, bundle }: Props) {
-  const t = useDT()
+  const t = useT()
   const locale = useLocale()
   const prompt = agentPrompt(ids, locale)
   const cmd = installCommand(ids)
