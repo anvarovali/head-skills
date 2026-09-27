@@ -1,40 +1,62 @@
 {
   "name": "head-skills",
+  "description": "Agent skills by HEAD (head.uz) and the AI Praktikum community.",
   "owner": {
     "name": "HEAD",
     "url": "https://skills.head.uz"
   },
-  "metadata": {
-    "description": "Agent skills by HEAD (head.uz) and the AI Praktikum community."
-  },
   "plugins": [
     {
-      "name": "apple-design",
-      "description": "Apple's approach to interface design and fluid, physical motion, translated for the web. Use when building or reviewing gesture-driven UI, spring animations, drag/swipe/sheet interactions, momentum and interruptible transitions, translucent materials and depth, typography (optical sizing, tracking, ",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/apple-design"
-      ]
-    },
-    {
-      "name": "gauntlet-loop",
-      "description": "Run a Gauntlet Loop — give an agent a concrete quality bar it can't talk its way around, let it split the work into independently judgeable pieces, pair each piece with a fresh-context critic that blind A/B tests the output against the bar, and keep looping until it wins. Use whenever the user wants",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/gauntlet-loop"
-      ]
-    },
-    {
       "name": "praktikum-starter",
+      "displayName": "AI Praktikum starter pack",
       "description": "The skills from the AI Praktikum course, installed into your agent with one command.",
       "source": "./",
       "strict": false,
       "skills": [
         "./skills/gauntlet-loop",
         "./skills/apple-design"
-      ]
+      ],
+      "author": {
+        "name": "HEAD",
+        "url": "https://skills.head.uz"
+      },
+      "homepage": "https://skills.head.uz/bundle/praktikum-starter",
+      "repository": "https://github.com/anvarovali/head-skills",
+      "category": "bundle"
+    },
+    {
+      "name": "apple-design",
+      "displayName": "Apple Design",
+      "description": "Apple’s approach to interface design and fluid, physical motion for the web: springs, gestures, materials, type, reduced motion.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/apple-design"
+      ],
+      "author": {
+        "name": "HEAD",
+        "url": "https://github.com/anvarovali"
+      },
+      "homepage": "https://skills.head.uz/skill/apple-design",
+      "repository": "https://github.com/anvarovali/head-skills",
+      "category": "design"
+    },
+    {
+      "name": "gauntlet-loop",
+      "displayName": "Gauntlet Loop",
+      "description": "Drive any build past “good enough”: a real quality bar, fresh-context critics, blind A/B, loop until it wins.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/gauntlet-loop"
+      ],
+      "author": {
+        "name": "HEAD",
+        "url": "https://github.com/anvarovali"
+      },
+      "homepage": "https://skills.head.uz/skill/gauntlet-loop",
+      "repository": "https://github.com/anvarovali/head-skills",
+      "category": "workflow"
     }
   ]
 }

@@ -72,15 +72,37 @@ const bundles = existsSync(bundlesDir) ? readdirSync(bundlesDir).filter((f) => f
 const catalog = { repo: REPO, site: SITE, categories, skills, bundles, builtAt: new Date().toISOString() }
 writeFileSync(join(ROOT, 'src/data/catalog.json'), JSON.stringify(catalog, null, 1))
 
-// Claude Code plugin marketplace: one plugin per skill, plus one per bundle.
+// Claude Code plugin marketplace (https://code.claude.com/docs/en/plugins/marketplace-reference):
+// one plugin per skill (`/plugin install <skill>@head-skills`) plus one per bundle (`<bundle>@head-skills`).
+// Every entry uses the repo root as its source and lists exact skill folders: for a root-sourced entry
+// Claude Code then loads only those folders, not the whole skills/ dir. There is no plugin.json, so the
+// entry is the manifest; `strict: false` makes any future root plugin.json that also declares
+// components a hard load error instead of a silent merge, which is why we refuse to build with one.
+//
+// ORDER MATTERS for `npx skills` (vercel-labs/skills, src/plugin-manifest.ts getPluginGroupings): it maps
+// each skill folder to the `name` of the plugin entry that lists it, and a later entry overwrites an
+// earlier one. Bundles go FIRST and single-skill plugins LAST, so every skill is grouped under its own
+// name there instead of under whichever bundle happens to include it.
+if (existsSync(join(ROOT, '.claude-plugin/plugin.json'))) throw new Error('.claude-plugin/plugin.json must not exist: it would conflict with the strict:false marketplace entries')
+const clip = (s, n = 280) => (s.length <= n ? s : s.slice(0, s.lastIndexOf(' ', n - 1)).replace(/[\s,;:—-]+$/, '') + '…')
+const authorOf = (a) => ({ name: a.name, ...(a.github ? { url: `https://github.com/${a.github}` } : {}) })
 mkdirSync(join(ROOT, '.claude-plugin'), { recursive: true })
 const marketplace = {
   name: 'head-skills',
+  description: 'Agent skills by HEAD (head.uz) and the AI Praktikum community.',
   owner: { name: 'HEAD', url: SITE },
-  metadata: { description: 'Agent skills by HEAD (head.uz) and the AI Praktikum community.' },
   plugins: [
-    ...skills.map((s) => ({ name: s.id, description: s.description.slice(0, 300), source: './', strict: false, skills: [`./skills/${s.id}`] })),
-    ...bundles.map((b) => ({ name: b.id, description: b.summary.en, source: './', strict: false, skills: b.skills.map((s) => `./skills/${s}`) })),
+    ...bundles.map((b) => ({
+      name: b.id, displayName: b.title.en, description: b.summary.en,
+      source: './', strict: false, skills: b.skills.map((s) => `./skills/${s}`),
+      author: { name: 'HEAD', url: SITE }, homepage: `${SITE}/bundle/${b.id}`, repository: REPO.url, category: 'bundle',
+    })),
+    ...skills.map((s) => ({
+      name: s.id, displayName: s.title.en, description: clip(s.summary.en || s.description),
+      source: './', strict: false, skills: [`./skills/${s.id}`],
+      author: authorOf(s.author), homepage: `${SITE}/skill/${s.id}`, repository: REPO.url, category: s.category,
+      ...(s.version ? { version: String(s.version) } : {}),
+    })),
   ],
 }
 writeFileSync(join(ROOT, '.claude-plugin/marketplace.json'), JSON.stringify(marketplace, null, 2) + '\n')
