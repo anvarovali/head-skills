@@ -1,0 +1,23 @@
+.root { position: relative; }
+.btn {
+  display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--m-r-full); color: var(--m-text-2);
+  transition: color var(--m-t), background-color var(--m-t);
+}
+.btn:hover, .btn[aria-expanded='true'] { color: var(--m-primary); background: var(--m-bg-hover); }
+.menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; min-width: 176px; padding: 4px;
+  border-radius: var(--m-r-md); background: var(--m-bg-base); box-shadow: var(--m-shadow-pop);
+}
+.item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 36px; padding: 0 10px;
+  border-radius: var(--m-r-sm); font-size: 14px; color: var(--m-text); transition: background-color var(--m-t), color var(--m-t);
+}
+.item:hover { background: var(--m-bg-hover); color: var(--m-primary); }
+.check { color: var(--m-primary); }
+.row { display: flex; gap: 4px; flex-wrap: wrap; }
+.rowItem {
+  padding: 8px 12px; border-radius: var(--m-r-full); font-size: 14px; font-weight: 500; color: var(--m-text-3);
+  transition: color var(--m-t), background-color var(--m-t);
+}
+.rowItem:hover { color: var(--m-primary); background: var(--m-bg-hover); }
+.rowItem[aria-current] { background: var(--m-fill-2); color: var(--m-text); }
