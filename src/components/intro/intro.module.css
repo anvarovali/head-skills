@@ -64,18 +64,30 @@
 .ru .hi { letter-spacing: -.04em; }
 .rest { font-size: clamp(24px, 3vw, 48px); font-weight: 400; letter-spacing: -.02em; line-height: 1.2; color: var(--fg-2); margin-top: .55em; }
 .brand { display: flex; flex-direction: column; align-items: center; will-change: transform; }
-.line { font-family: "Archivo", "Archivo Fallback", Arial, sans-serif; font-size: clamp(52px, 9vw, 148px); font-weight: 440; letter-spacing: -.045em; line-height: 1; white-space: nowrap; will-change: transform; }
+.line { position: relative; width: max-content; font-family: "Archivo", "Archivo Fallback", Arial, sans-serif; font-size: clamp(64px, 17.5vw, 360px); font-weight: 440; letter-spacing: -.045em; line-height: 1; white-space: nowrap; will-change: transform; }
 .word { display: inline-block; }
 .char { display: inline-block; }
 /* the HEAD mark at text size: its letters are 71.75 % of the viewBox height, which is Archivo's cap height at 1em */
 .mark { display: inline-block; height: 1em; width: 2.4654em; vertical-align: -.1225em; margin: 0 .035em 0 .045em; overflow: visible; }
-.line [data-glyph] { opacity: 0; }
+.base { color: #e6e7ec; }
+.base [data-glyph] { opacity: 0; }
+/* the drop's light: a blurred blue copy blooms behind, a white copy is revealed through a moving skewed slit */
+.bloom { position: absolute; left: 0; top: 0; white-space: nowrap; color: #2a4cff; filter: blur(.075em); opacity: 0; pointer-events: none; will-change: opacity, transform; }
+.bloom .slashBlue { color: #2a4cff; }
+.sweep {
+  position: absolute; left: 0; top: -.15em; bottom: -.2em; width: 28%; overflow: hidden; opacity: 0; transform-origin: 0 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent); mask-image: linear-gradient(90deg, transparent, #000 42%, #000 58%, transparent);
+  will-change: transform;
+}
+.sweepIn { position: absolute; left: 0; top: .15em; width: max-content; white-space: nowrap; color: #fff; transform-origin: 0 -.15em; will-change: transform;
+  filter: drop-shadow(0 0 .05em rgba(150, 175, 255, .95)); }
 .rest .word + .word { margin-left: .26em; }
 .tag { font-size: clamp(18px, 1.85vw, 30px); letter-spacing: -.012em; color: var(--fg-2); margin-top: .8em; }
 
 /* folders (drawn, not bitmaps): a back with its tab, the sheets, a front flap that swings open toward you */
 .fBack, .fFront { position: absolute; left: 50%; top: 50%; width: var(--fw); height: calc(var(--fw) * .78); margin: calc(var(--fw) * -.39) 0 0 calc(var(--fw) / -2); opacity: 0; will-change: transform, opacity; }
 .fBack { z-index: 1; }
+.stage { perspective: 1400px; }
 .fFront { z-index: 3; }
 .fBack svg { width: 100%; height: 100%; overflow: visible; }
 .fShadow { position: absolute; left: 6%; right: 6%; bottom: -9%; height: 18%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .75), transparent); }
@@ -88,28 +100,36 @@
 .emboss { width: 13%; height: auto; color: rgba(0, 12, 110, .34); filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .28)); }
 .fCap { position: absolute; top: 100%; left: 0; right: 0; margin-top: calc(var(--fw) * .13); text-align: center; font-size: clamp(14px, 1.05vw, 17px); font-weight: 500; letter-spacing: -.005em; color: var(--fg-2); white-space: nowrap; }
 
-/* skill cards */
-.card {
-  position: absolute; left: 50%; top: 50%; width: var(--cw); height: calc(var(--cw) * .7);
-  margin: calc(var(--cw) * -.35) 0 0 calc(var(--cw) / -2); padding: calc(var(--cw) * .072) calc(var(--cw) * .076);
-  display: flex; flex-direction: column; border-radius: calc(var(--cw) * .066);
-  background: #fff; color: #101113; opacity: 0; z-index: 2; will-change: transform, opacity;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .2), 0 30px 70px -12px rgba(0, 0, 0, .55);
-}
-.cardCat { font-family: var(--font-mono); font-weight: 500; font-size: calc(var(--cw) * .042); letter-spacing: .06em; text-transform: uppercase; color: var(--blue); }
-.cardTitle { font-size: calc(var(--cw) * .088); font-weight: 500; letter-spacing: -.028em; line-height: 1.08; margin-top: .5em; }
-.cardSum { font-size: calc(var(--cw) * .047); line-height: 1.45; color: #5b5f67; margin-top: .6em; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.cardFoot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-weight: 500; font-size: calc(var(--cw) * .041); color: #5b5f67; }
-.cardSlash { width: calc(var(--cw) * .034); height: auto; color: var(--blue); }
+/* the ground's second light: HEAD blue opens like an iris before the page arrives (ink → blue → paper, no hard cut) */
+.blue { position: absolute; left: 50%; top: 50%; width: 170vmax; height: 170vmax; margin: -85vmax 0 0 -85vmax; border-radius: 50%;
+  background: radial-gradient(closest-side, #2a50ff 0%, #0029FF 45%, #0020d0 80%, #001aa8 100%); opacity: 0; will-change: opacity, transform; }
 
-/* the install line, typed out on the beat */
-.cmd {
-  display: inline-flex; align-items: center; gap: .7em; padding: .9em 1.35em; border-radius: 999px; white-space: nowrap;
-  font-family: var(--font-mono); font-weight: 500; font-size: clamp(15px, 1.25vw, 19px); letter-spacing: .005em; color: var(--fg);
-  background: rgba(255, 255, 255, .07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); opacity: 0;
+/* the library wall: a 3D layer between the folder backs and fronts */
+.wall { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 2; transform-style: preserve-3d; will-change: transform; }
+.wcard { position: absolute; left: 0; top: 0; width: 313px; height: 152px; margin: -76px 0 0 -156.5px; box-sizing: border-box; opacity: 0;
+  font-family: var(--m-font); text-align: left; box-shadow: 0 30px 60px -14px rgba(0, 0, 0, .6); will-change: transform, opacity; }
+.blank {
+  display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 12px; color: rgba(255, 255, 255, .72);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .05)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .13), 0 30px 60px -14px rgba(0, 0, 0, .6);
 }
+.blankHead { display: flex; align-items: center; gap: 12px; height: 30px; }
+.blankIcon { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: rgba(255, 255, 255, .1); }
+.bar { display: block; height: 9px; border-radius: 5px; background: rgba(255, 255, 255, .14); }
+.blankHead .bar { height: 11px; background: rgba(255, 255, 255, .22); }
+.chip {
+  position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-mono); font-weight: 500; font-size: 16px; color: rgba(245, 245, 247, .82);
+  background: rgba(255, 255, 255, .07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); opacity: 0; will-change: transform, opacity;
+}
+
+/* the install line as a hero, typed on the 8ths */
+.cmdWrap { display: flex; flex-direction: column; align-items: center; gap: 26px; }
+.cmdCap { font-size: clamp(18px, 1.7vw, 26px); letter-spacing: -.012em; color: var(--fg-2); }
+.cmd { display: inline-flex; align-items: center; gap: .42em; white-space: nowrap; font-family: var(--font-mono); font-weight: 500;
+  font-size: clamp(26px, 4.3vw, 68px); letter-spacing: -.025em; line-height: 1.1; color: var(--fg); opacity: 0; will-change: transform; }
 .cmdPrompt { color: #6B8CFF; }
-.cmd .ch { opacity: 0; }
+.cmdWord { display: inline-block; opacity: 0; }
+.caret { display: inline-block; width: .07em; height: .95em; margin-left: -.18em; border-radius: .03em; background: #6B8CFF; opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .option, .go, .ctl { transition: opacity .2s ease; }
