@@ -1,6 +1,6 @@
 /* qoder search: max 606 x 44, radius 12, 42px left pad for the glass, primary border on focus;
    dropdown 10px below, radius 8, max-height 320, rows 36 with a 20px icon */
-.wrap { position: relative; width: 100%; max-width: 606px; margin-top: 28px; text-align: left; }
+.wrap { position: relative; width: 100%; max-width: 606px; margin-top: 21px; text-align: left; }
 .box { position: relative; }
 .glass { position: absolute; left: 13px; top: 12px; color: var(--m-text-3); pointer-events: none; }
 .input {

@@ -2,10 +2,14 @@
 .header { position: sticky; top: 0; z-index: 50; background: var(--m-bg-layout); }
 .bar { display: flex; align-items: center; height: var(--m-header-h); padding: 0 var(--m-header-x); gap: 48px; }
 .brand { display: inline-flex; align-items: center; gap: 8px; flex: none; color: var(--m-text); }
+.brand { align-items: flex-end; gap: 7px; }
 .mark { height: 18px; width: auto; }
 .slash { color: var(--m-primary); }
-.word { font-size: 19px; line-height: 1; font-weight: 500; letter-spacing: -.01em; transform: translateY(1px); }
-.nav { display: flex; align-items: center; gap: 36px; }
+/* 'skills' set to the mark: its ascenders reach the letters' cap height (12.9px) and it sits on their baseline, 2.2px above the svg's bottom */
+.word { font-size: 17.5px; line-height: 1; font-weight: 500; letter-spacing: -.01em; transform: translateY(-.3px); }
+.nav { display: flex; align-items: center; gap: 32px; }
+@media (max-width: 1239px) { .nav { gap: 24px; } .bar { gap: 32px; } }
+@media (max-width: 1099px) { .link[data-wide] { display: none; } }
 .link {
   display: inline-flex; align-items: center; gap: 3px; font-size: 15px; line-height: 24px; color: var(--m-text-2);
   transition: color var(--m-t);
@@ -15,10 +19,9 @@
 .right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
 .cta {
   display: inline-flex; align-items: center; height: 36px; padding: 0 18px; border-radius: var(--m-r-full);
-  background: var(--m-tag-bg); color: var(--m-primary); font-size: 14px; font-weight: 500;
-  box-shadow: inset 0 0 0 1px rgba(0, 41, 255, .12); transition: background-color var(--m-t), box-shadow var(--m-t);
+  background: var(--m-primary); color: #fff; font-size: 14px; font-weight: 500; transition: background-color var(--m-t);
 }
-.cta:hover { background: #e2e8ff; box-shadow: inset 0 0 0 1px rgba(0, 41, 255, .22); }
+.cta:hover { background: var(--m-primary-deep); }
 .burger { display: none; width: 40px; height: 40px; place-items: center; margin-right: -8px; color: var(--m-text); border-radius: var(--m-r-md); }
 .burger:hover { color: var(--m-primary); }
 .sheet { display: none; }

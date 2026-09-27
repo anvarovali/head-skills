@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router'
+import { Link, useLocation } from 'react-router'
+import { catalog } from '@/data/catalog'
 import { HeadMark } from '@/components/ui/HeadMark'
 import { useHref, useT } from '@/i18n/useLocale'
 import { ArrowUpRight, CloseIcon, MenuIcon } from '@/components/market/icons'
@@ -9,9 +10,26 @@ import s from './Header.module.css'
 export function Header() {
   const t = useT()
   const href = useHref()
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
+  const home = href()
+  const tab = pathname === home || pathname === `${home}/` ? new URLSearchParams(search).get('tab') ?? 'all' : null
+  /* six items like the ref: three places in the marketplace, the contribution guide, and two ways out */
+  const items: { key: string; to: string; label: string; external?: boolean; current?: boolean; wide?: boolean }[] = [
+    { key: 'market', to: home, label: t('nav.marketplace'), current: tab === 'all' },
+    { key: 'skills', to: `${home}?tab=skills`, label: t('tab.skills'), current: tab === 'skills' },
+    { key: 'bundles', to: `${home}?tab=bundles`, label: t('tab.bundles'), current: tab === 'bundles' },
+    { key: 'guide', to: href('submit'), label: t('nav.guide'), current: pathname.endsWith('/submit'), wide: true },
+    { key: 'github', to: catalog.repo.url, label: t('footer.github'), external: true, wide: true },
+    { key: 'headuz', to: 'https://head.uz', label: t('nav.headuz'), external: true },
+  ]
+  const renderItem = (it: (typeof items)[number], cls: string, arrow: number) =>
+    it.external ? (
+      <a key={it.key} href={it.to} className={cls} data-wide={it.wide || undefined} target="_blank" rel="noreferrer">{it.label}<ArrowUpRight size={arrow} /></a>
+    ) : (
+      <Link key={it.key} to={it.to} className={cls} data-wide={it.wide || undefined} aria-current={it.current ? 'page' : undefined}>{it.label}</Link>
+    )
   const [open, setOpen] = useState(false)
-  useEffect(() => { setOpen(false) }, [pathname])
+  useEffect(() => { setOpen(false) }, [pathname, search])
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
@@ -27,8 +45,7 @@ export function Header() {
           <span className={s.word}>skills</span>
         </Link>
         <nav className={s.nav} aria-label="Primary">
-          <NavLink to={href()} end className={s.link}>{t('nav.marketplace')}</NavLink>
-          <a href="https://head.uz" className={s.link} target="_blank" rel="noreferrer">{t('nav.headuz')}<ArrowUpRight size={14} /></a>
+          {items.map((it) => renderItem(it, s.link, 14))}
         </nav>
         <div className={s.right}>
           <LangSwitch />
@@ -41,9 +58,7 @@ export function Header() {
       </div>
       <div id="m-menu" className={s.sheet} hidden={!open}>
         <nav className={s.sheetNav} aria-label="Mobile">
-          <NavLink to={href()} end className={s.sheetLink}>{t('nav.marketplace')}</NavLink>
-          <NavLink to={href('submit')} className={s.sheetLink}>{t('nav.submit')}</NavLink>
-          <a href="https://head.uz" className={s.sheetLink} target="_blank" rel="noreferrer">{t('nav.headuz')}<ArrowUpRight size={16} /></a>
+          {items.map((it) => renderItem(it, s.sheetLink, 16))}
         </nav>
         <div className={s.sheetLang}>
           <span className={s.sheetLabel}>{t('nav.language')}</span>

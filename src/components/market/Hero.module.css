@@ -27,12 +27,12 @@
 /* Desktop. x is measured from the headline's nearer end to the tile's centre; every tile keeps >= 70px of clear air
    between its own edge and the words, the same on both sides (inner tiles 70 + half their size). Heights stagger. */
 @media (min-width: 768px) {
-  .braces { left: 0;    --sz: 38px; --x: -196px; --y: 24px;  --r: -8deg; --d: -1s; }
-  .skillA { left: 0;    --sz: 46px; --x: -93px;  --y: -6px;  --r: 6deg;  --d: -3s; }
-  .head   { left: 0;    --sz: 38px; --x: -150px; --y: -70px; --r: 8deg;  --d: -2s; }
-  .skillB { left: 100%; --sz: 46px; --x: 93px;   --y: 8px;   --r: 8deg;  --d: -4s; }
-  .prompt { left: 100%; --sz: 40px; --x: 196px;  --y: 18px;  --r: 10deg; --d: -.5s; }
-  .stack  { left: 100%; --sz: 36px; --x: 150px;  --y: -66px; --r: -9deg; --d: -2.5s; }
+  .braces { left: 0;    --sz: 34px; --x: -156px; --y: 26px;  --r: -8deg; --d: -1s; }
+  .skillA { left: 0;    --sz: 52px; --x: -96px;  --y: -8px;  --r: 6deg;  --d: -3s; }
+  .head   { left: 0;    --sz: 40px; --x: -112px; --y: -72px; --r: 8deg;  --d: -2s; }
+  .skillB { left: 100%; --sz: 46px; --x: 93px;   --y: 14px;  --r: 8deg;  --d: -4s; }
+  .prompt { left: 100%; --sz: 40px; --x: 170px;  --y: -2px;  --r: 10deg; --d: -.5s; }
+  .stack  { left: 100%; --sz: 34px; --x: 118px;  --y: -52px; --r: -9deg; --d: -2.5s; }
 }
 
 @media (max-width: 767px) {

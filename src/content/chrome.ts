@@ -17,6 +17,7 @@ const uz = {
   'footer.replay': 'Introni qayta ko‘rish',
   /* shell */
   'nav.menu': 'Menyu',
+  'nav.guide': 'Qo‘llanma',
   'nav.language': 'Til',
   'search.clear': 'Tozalash',
   'search.results': '“{q}” bo‘yicha natijalar',
@@ -75,6 +76,7 @@ const ru: Dict = {
   'footer.replay': 'Посмотреть интро снова',
   /* shell */
   'nav.menu': 'Меню',
+  'nav.guide': 'Руководство',
   'nav.language': 'Язык',
   'search.clear': 'Очистить',
   'search.results': 'Результаты по «{q}»',
@@ -130,6 +132,7 @@ const en: Dict = {
   'footer.replay': 'Replay the intro',
   /* shell */
   'nav.menu': 'Menu',
+  'nav.guide': 'Guide',
   'nav.language': 'Language',
   'search.clear': 'Clear',
   'search.results': 'Results for “{q}”',
