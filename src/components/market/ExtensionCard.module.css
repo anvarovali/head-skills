@@ -1,11 +1,20 @@
 /* qoder ExtensionCard: radius 12, 1px border, padding 20 20 16, column gap 16; hover changes only the ground */
 .card {
-  display: flex; flex-direction: column; gap: 16px; min-width: 0;
+  position: relative; display: flex; flex-direction: column; gap: 16px; min-width: 0;
   padding: 20px 20px 16px; border: 1px solid var(--m-border); border-radius: var(--m-r-xl);
   background: var(--m-bg-card); color: var(--m-text); transition: background-color var(--m-t), border-color var(--m-t);
 }
 .card:hover { background: var(--m-bg-hover); border-color: #dfe4fb; }
-.card:focus-visible { outline: 2px solid var(--m-primary); outline-offset: 2px; }
+.card:has(.link:focus-visible) { outline: 2px solid var(--m-primary); outline-offset: 2px; }
+.link { color: inherit; }
+.link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.link:focus-visible { outline: none; }
+.copy {
+  position: relative; z-index: 1; flex: none; display: grid; place-items: center; width: 24px; height: 24px; margin-right: -4px;
+  border-radius: var(--m-r-sm); color: var(--m-text-4); transition: color var(--m-t), background-color var(--m-t);
+}
+.copy:hover { color: var(--m-primary); background: rgba(0, 41, 255, .07); }
+.copy[data-copied] { color: var(--m-primary); }
 .head { display: flex; align-items: center; gap: 12px; min-width: 0; height: 30px; }
 .icon {
   flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--m-r-md);

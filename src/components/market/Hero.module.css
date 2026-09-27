@@ -1,7 +1,7 @@
 /* qoder hero: bg-layout, max 1440, padding 72 top / 42 bottom; title 32/42 w500, sub 16 tertiary, search 606 x 44 */
 .hero { background: var(--m-bg-layout); }
 .inner {
-  max-width: var(--m-max); margin: 0 auto; padding: 117px var(--m-page-x) 43px;
+  max-width: var(--m-max); margin: 0 auto; padding: 119px var(--m-page-x) 43px;
   display: flex; flex-direction: column; align-items: center; text-align: center;
 }
 .titleWrap { position: relative; max-width: 760px; }
@@ -19,19 +19,23 @@
   animation: bob 7s ease-in-out infinite; animation-delay: var(--d, 0s);
 }
 .tile img { width: 62%; height: 62%; }
-.tile[data-tone='far'] { filter: blur(.4px); opacity: .9; box-shadow: 0 1px 2px rgba(16, 17, 19, .04), 0 4px 10px -4px rgba(16, 17, 19, .08); }
-.tile[data-tone='blue'] { background: var(--m-primary); color: #fff; }
 @keyframes bob { 50% { translate: 0 -3px; } }
-/* x from the headline's nearer edge (a-c: left edge, d-f: right edge), y from its middle; deliberately not mirrored */
-.a { left: 0; --sz: 52px; --x: -102px; --y: 14px; --r: -8deg; --d: -1s; }
-.b { left: 0; --sz: 38px; --x: -176px; --y: -44px; --r: 12deg; --d: -3s; }
-.c { left: 0; --sz: 40px; --x: 18px; --y: -96px; --r: 10deg; --d: -2s; }
-.d { left: 100%; --sz: 46px; --x: 88px; --y: -40px; --r: 9deg; --d: -4s; }
-.e { left: 100%; --sz: 36px; --x: 160px; --y: 26px; --r: -7deg; --d: -5s; }
-.f { left: 100%; --sz: 32px; --x: -72px; --y: -90px; --r: 16deg; --d: -.5s; }
-.slash { height: 20px; width: auto; color: #fff; }
+.slash { height: 20px; width: auto; color: var(--m-primary); }
 @media (prefers-reduced-motion: reduce) { .tile { animation: none; } }
-@media (max-width: 1199px) and (min-width: 768px) { .b, .e { display: none; } }
+
+/* Desktop: qoder's own composition, measured on refs/qoder/list.desktop.viewport.png and converted to CSS px. Every tile
+   is anchored to the headline's nearer end (x) and its middle (y), so the inner tiles hug the actual ends of a longer
+   uz/ru line and the outer ones keep the ref's spacing. All white, one neutral shadow; the slash glyph is the blue. */
+@media (min-width: 768px) {
+  .f { left: 0;    --sz: 37px; --x: -174px; --y: 1px;   --r: -8deg; --d: -1s; }   /* </> outer left      (470,285) 52 */
+  .a { left: 0;    --sz: 45px; --x: -67px;  --y: 3px;   --r: 6deg;  --d: -3s; }   /* skill mark          (618,287) 62 */
+  .c { left: 0;    --sz: 35px; --x: -24px;  --y: -53px; --r: 10deg;  --d: -2s; }  /* HEAD slash, high    (678,210) 48 */
+  .b { left: 100%; --sz: 32px; --x: 6px;    --y: -38px; --r: 8deg;  --d: -4s; }   /* sparkle, high       (1298,230) 44 */
+  .d { left: 100%; --sz: 45px; --x: 51px;   --y: 10px;  --r: 8deg;  --d: -5s; }   /* skill mark          (1360,297) 62 */
+  .e { left: 100%; --sz: 43px; --x: 141px;  --y: -23px; --r: 12deg; --d: -.5s; }  /* terminal outer right (1485,252) 60 */
+  .tile svg { width: 48%; height: 48%; }
+  .tile .slash { width: auto; height: 50%; }
+}
 
 @media (max-width: 767px) {
   .inner { padding: 100px var(--m-page-x) 40px; }
@@ -45,7 +49,9 @@
   .d { left: 80%; --sz: 32px; --x: 0px; --y: -4px; }
   .e { left: 95%; --sz: 24px; --x: 0px; --y: 16px; }
   .f { left: 62%; --sz: 24px; --x: 0px; --y: -22px; }
-  .slash { height: 14px; }
+  .slash { height: 14px; color: #fff; }
+  .tile[data-tone='blue'] { background: var(--m-primary); color: #fff; }
+  .tile[data-tone='far'] { filter: blur(.4px); opacity: .9; }
   .tile svg { width: 13px; height: 13px; }
   .tile[data-tone='blue'] svg { width: auto; height: 14px; }
 }

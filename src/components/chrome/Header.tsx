@@ -28,7 +28,6 @@ export function Header() {
         </Link>
         <nav className={s.nav} aria-label="Primary">
           <NavLink to={href()} end className={s.link}>{t('nav.marketplace')}</NavLink>
-          <NavLink to={href('submit')} className={s.link}>{t('nav.submit')}</NavLink>
           <a href="https://head.uz" className={s.link} target="_blank" rel="noreferrer">{t('nav.headuz')}<ArrowUpRight size={14} /></a>
         </nav>
         <div className={s.right}>
