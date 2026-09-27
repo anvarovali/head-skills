@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { useHref } from '@/i18n/useLocale'
 import { useCopy } from './useCopy'
 import { useDT, type DetailKey } from './strings'
-import { CheckIcon, CopyIcon, LinkIcon, PlayIcon, ShareIcon } from './icons'
+import { CheckIcon, CopyIcon, DownloadIcon, LinkIcon, PlayIcon, ShareIcon } from './icons'
 import s from './Detail.module.css'
 
 /** Square icon: the skill's own image when it has one, else its initials on ink (bundles on blue). */
@@ -30,15 +30,18 @@ export function Badges({ ids, extra }: { ids: string[]; extra?: ReactNode }) {
   )
 }
 
-export function Crumbs({ current }: { current: string }) {
+export function Crumbs({ current, actions }: { current: string; actions?: ReactNode }) {
   const t = useDT()
   const href = useHref()
   return (
-    <nav className={s.crumbs} aria-label="Breadcrumb">
-      <Link to={href('')}>{t('crumb.market')}</Link>
-      <span className={s.crumbSep} aria-hidden>/</span>
-      <span className={s.crumbNow} aria-current="page">{current}</span>
-    </nav>
+    <div className={s.crumbBar}>
+      <nav className={s.crumbs} aria-label="Breadcrumb">
+        <Link to={href('')}>{t('crumb.market')}</Link>
+        <span className={s.crumbSep} aria-hidden>/</span>
+        <span className={s.crumbNow} aria-current="page">{current}</span>
+      </nav>
+      {actions && <div className={s.actions}>{actions}</div>}
+    </div>
   )
 }
 
@@ -65,8 +68,8 @@ export function Command({ text, label }: { text: string; label?: string }) {
   )
 }
 
-/** Share (native sheet where available, else copies) + Copy link. */
-export function ShareActions({ title, className }: { title: string; className?: string }) {
+/** Share (native sheet where available, else copies) + Copy link, as quiet icon buttons with tooltips. */
+export function ShareActions({ title }: { title: string }) {
   const t = useDT()
   const link = useCopy()
   const share = useCopy()
@@ -78,18 +81,23 @@ export function ShareActions({ title, className }: { title: string; className?: 
     }
     share.copy(url())
   }
+  const shareLabel = share.copied ? t('act.linkCopied') : t('act.share')
+  const linkLabel = link.copied ? t('act.linkCopied') : t('act.copyLink')
   return (
     <>
-      <button type="button" className={clsx(s.action, s.actionIcon, className)} onClick={onShare} data-done={share.copied || undefined}
-        aria-label={share.copied ? t('act.linkCopied') : t('act.share')}>
-        {share.copied ? <CheckIcon /> : <ShareIcon />}<span className={s.actionLabel}>{share.copied ? t('act.linkCopied') : t('act.share')}</span>
+      <button type="button" className={s.action} onClick={onShare} data-done={share.copied || undefined} aria-label={shareLabel} data-tip={shareLabel}>
+        {share.copied ? <CheckIcon /> : <ShareIcon />}
       </button>
-      <button type="button" className={clsx(s.action, s.actionIcon, className)} onClick={() => link.copy(url())} data-done={link.copied || undefined}
-        aria-label={link.copied ? t('act.linkCopied') : t('act.copyLink')}>
-        {link.copied ? <CheckIcon /> : <LinkIcon />}<span className={s.actionLabel}>{link.copied ? t('act.linkCopied') : t('act.copyLink')}</span>
+      <button type="button" className={s.action} onClick={() => link.copy(url())} data-done={link.copied || undefined} aria-label={linkLabel} data-tip={linkLabel}>
+        {link.copied ? <CheckIcon /> : <LinkIcon />}
       </button>
     </>
   )
+}
+
+export function DownloadAction({ href }: { href: string }) {
+  const t = useDT()
+  return <a className={s.action} href={href} download aria-label={t('dl.zip')} data-tip={t('dl.zip')}><DownloadIcon /></a>
 }
 
 /** Lite YouTube: a poster and a play button; the (nocookie) iframe only loads on click. */

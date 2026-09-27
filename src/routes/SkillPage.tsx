@@ -3,12 +3,12 @@ import { useLocation, useNavigate, useParams, useSearchParams } from 'react-rout
 import { getSkill } from '@/data/catalog'
 import { pick, useLocale } from '@/i18n/useLocale'
 import { useDT, formatDate } from '@/components/skill/strings'
-import { Badges, Crumbs, Glyph, NotFoundBlock, ShareActions, YouTubeLite, youtubeId } from '@/components/skill/parts'
+import { Badges, Crumbs, DownloadAction, Glyph, NotFoundBlock, ShareActions, YouTubeLite, youtubeId } from '@/components/skill/parts'
 import { InstallCard } from '@/components/skill/InstallCard'
 import { FrontmatterTable } from '@/components/skill/FrontmatterTable'
 import { FileBrowser } from '@/components/skill/FileBrowser'
 import { Markdown } from '@/components/skill/Markdown'
-import { DocIcon, DownloadIcon, FolderIcon } from '@/components/skill/icons'
+import { DocIcon, FolderIcon } from '@/components/skill/icons'
 import s from '@/components/skill/Detail.module.css'
 
 type Tab = 'guides' | 'files'
@@ -46,7 +46,7 @@ export function SkillPage() {
 
   return (
     <article className={s.page}>
-      <Crumbs current={skill.id} />
+      <Crumbs current={skill.id} actions={<><ShareActions title={title} /><DownloadAction href={skill.zip} /></>} />
       <header>
         <div className={s.head}>
           <Glyph title={title} icon={skill.icon} />
@@ -57,23 +57,15 @@ export function SkillPage() {
             </div>
             <div className={s.meta}>
               <span>{t('meta.updated', { date: formatDate(skill.updated, locale) })}</span>
-              <span>
+              <span className={s.metaAuthor}>
                 {skill.author.github
                   ? <a href={`https://github.com/${skill.author.github}`} target="_blank" rel="noopener noreferrer">{t('meta.by', { name: skill.author.name })}</a>
                   : t('meta.by', { name: skill.author.name })}
               </span>
             </div>
           </div>
-          <div className={s.actions}>
-            <ShareActions title={title} />
-            <a className={s.action} href={skill.zip} download><DownloadIcon /><span className={s.actionLabel}>{t('act.download')}</span></a>
-          </div>
         </div>
         <p className={s.desc}>{pick(skill.summary, locale) ?? skill.description}</p>
-        <div className={s.mobileActions}>
-          <ShareActions title={title} />
-          <a className={s.action} href={skill.zip} download><DownloadIcon /><span className={s.actionLabel}>{t('act.download')}</span></a>
-        </div>
       </header>
 
       <div className={s.grid}>

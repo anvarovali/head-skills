@@ -4,7 +4,7 @@ import { catalog } from '@/data/catalog'
 import { useDT } from '@/components/skill/strings'
 import { Crumbs, Command } from '@/components/skill/parts'
 import { Markdown } from '@/components/skill/Markdown'
-import { checksList, folderTemplate, submitGuide } from '@/components/skill/submitContent'
+import { checkCommand, checksList, folderTemplate, submitGuide } from '@/components/skill/submitContent'
 import { CheckIcon, GithubIcon } from '@/components/skill/icons'
 import s from '@/components/skill/Detail.module.css'
 
@@ -50,6 +50,10 @@ export function Submit() {
                 {checksList[locale].map((c) => <li key={c}><CheckIcon />{c}</li>)}
               </ul>
               <p className={s.note}>{t('submit.review')}</p>
+            </div>
+            <div className={s.block}>
+              <div className={s.blockHead}><span className={s.blockLabel}>{t('submit.local')}</span></div>
+              <Command text={checkCommand} />
             </div>
           </section>
         </aside>

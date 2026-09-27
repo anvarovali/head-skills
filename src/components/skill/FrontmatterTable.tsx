@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import type { Skill } from '@/data/types'
 import { categoryTitle } from '@/data/catalog'
 import { pick, useLocale } from '@/i18n/useLocale'
@@ -16,6 +16,33 @@ function show(v: unknown): string {
   return JSON.stringify(v)
 }
 
+/** Long values clamp to four lines with a toggle; the toggle only appears when the text actually overflows. */
+function Clamp({ text }: { text: string }) {
+  const t = useDT()
+  const ref = useRef<HTMLDivElement>(null)
+  const [open, setOpen] = useState(false)
+  const [over, setOver] = useState(false)
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el || open) return
+    const measure = () => setOver(el.scrollHeight > el.clientHeight + 1)
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [open, text])
+  return (
+    <>
+      <div ref={ref} className={open ? undefined : s.clamp}>{text}</div>
+      {(over || open) && (
+        <button type="button" className={s.more} aria-expanded={open} onClick={() => setOpen(!open)}>
+          {open ? t('fm.less') : t('fm.more')}
+        </button>
+      )}
+    </>
+  )
+}
+
 /** SKILL.md frontmatter as Qoder's key/value table, plus the catalog facts a reader wants (category, author, folder). */
 export function FrontmatterTable({ skill }: { skill: Skill }) {
   const t = useDT()
@@ -24,7 +51,7 @@ export function FrontmatterTable({ skill }: { skill: Skill }) {
   const rows: { k: string; v: ReactNode }[] = []
   rows.push({ k: t('fm.name'), v: skill.name })
   if (skill.version) rows.push({ k: t('fm.version'), v: skill.version })
-  rows.push({ k: t('fm.description'), v: skill.description })
+  rows.push({ k: t('fm.description'), v: <Clamp text={skill.description} /> })
   for (const [key, val] of Object.entries(fm)) {
     if (key === 'name' || key === 'description' || key === 'version') continue
     rows.push({ k: KNOWN[key] ? t(KNOWN[key]) : key, v: show(val) })
@@ -32,10 +59,10 @@ export function FrontmatterTable({ skill }: { skill: Skill }) {
   const cat = pick(categoryTitle(skill.category), locale)
   if (cat) rows.push({ k: t('fm.category'), v: cat })
   const author = skill.author.github
-    ? <a href={`https://github.com/${skill.author.github}`} target="_blank" rel="noopener noreferrer">{skill.author.name}</a>
+    ? <a className={s.kvLink} href={`https://github.com/${skill.author.github}`} target="_blank" rel="noopener noreferrer">{skill.author.name}</a>
     : skill.author.name
   rows.push({ k: t('fm.author'), v: author })
-  rows.push({ k: t('fm.folder'), v: <a href={repoFolderUrl(skill.id)} target="_blank" rel="noopener noreferrer"><code>{skill.repoPath}</code></a> })
+  rows.push({ k: t('fm.folder'), v: <a className={s.kvLink} href={repoFolderUrl(skill.id)} target="_blank" rel="noopener noreferrer">{skill.repoPath}</a> })
 
   return (
     <div className={s.kv} role="table" aria-label="SKILL.md">
