@@ -6,7 +6,7 @@
 //   node scripts/validate-uz.mjs --files a.ts,b.ts [--all]   # scan these files instead (--all: whole file, not just uz:{})
 //
 // Rules (only inside string literals — keys, code and comments are not touched):
-//   o' g' O' G' (straight ' or U+2019 ’) after o/g      → must be ʻ  U+02BB  (oʻzbek, gʻoya)
+//   o' g' O' G' (straight ', U+2019 ’ or U+2018 ‘) after o/g      → must be ʻ  U+02BB  (oʻzbek, gʻoya)
 //   ' or ’ inside any other word (letter on both sides)  → must be ʼ  U+02BC  (taʼlim, maʼno)
 //   — U+2014                                             → use -
 //   emoji U+1F300–1FAFF, U+2600–27BF                     → none in copy (reported, not auto-fixed)
@@ -48,7 +48,7 @@ function help() {
 /** [start, end) offsets of the `uz: {` … matching `}` block(s) in a chrome.ts-style file */
 function uzBlocks(src) {
   const blocks = [];
-  const re = /\buz\s*:\s*\{/g;
+  const re = /\buz\s*[:=]\s*\{/g; // `uz: {` in a record, or `const uz = {`
   let m;
   while ((m = re.exec(src))) {
     const open = m.index + m[0].length - 1;
@@ -105,8 +105,8 @@ function stringLiterals(src, start = 0, end = src.length) {
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
 const L = '\\p{L}';
 const RULES = [
-  { id: 'og-apostrophe', re: new RegExp(`(?<=[oOgG])\\\\?['’]`, 'gu'), msg: "' after o/g → ʻ (U+02BB)", fix: 'ʻ' },
-  { id: 'in-word-apostrophe', re: new RegExp(`(?<=${L})(?<![oOgG])\\\\?['’](?=${L})`, 'gu'), msg: "in-word ' → ʼ (U+02BC)", fix: 'ʼ' },
+  { id: 'og-apostrophe', re: new RegExp(`(?<=[oOgG])\\\\?['’‘]`, 'gu'), msg: "' after o/g → ʻ (U+02BB)", fix: 'ʻ' },
+  { id: 'in-word-apostrophe', re: new RegExp(`(?<=${L})(?<![oOgG])\\\\?['’‘](?=${L})`, 'gu'), msg: "in-word ' → ʼ (U+02BC)", fix: 'ʼ' },
   { id: 'em-dash', re: /—/gu, msg: '— (U+2014) → -', fix: '-' },
   { id: 'emoji', re: new RegExp(EMOJI.source, 'gu'), msg: 'emoji in copy', fix: null },
 ];

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { Skill, SkillFile } from '@/data/types'
-import { useDT } from './strings'
+import { useT } from '@/i18n/useLocale'
 import { CopyIconButton } from './parts'
 import { DownloadIcon, FileIcon, FolderIcon } from './icons'
 import s from './Detail.module.css'
@@ -32,7 +32,7 @@ function toEntries(files: SkillFile[]): Entry[] {
 }
 
 export function FileBrowser({ skill }: { skill: Skill }) {
-  const t = useDT()
+  const t = useT()
   const entries = useMemo(() => toEntries(skill.files), [skill.files])
   const [current, setCurrent] = useState(skill.files[0]?.path)
   const file = skill.files.find((f) => f.path === current) ?? skill.files[0]

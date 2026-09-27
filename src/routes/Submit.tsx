@@ -1,17 +1,16 @@
-import { useEffect } from 'react'
-import { useLocale } from '@/i18n/useLocale'
+import { useLocale, useT } from '@/i18n/useLocale'
 import { catalog } from '@/data/catalog'
-import { useDT } from '@/components/skill/strings'
 import { Crumbs, Command } from '@/components/skill/parts'
 import { Markdown } from '@/components/skill/Markdown'
 import { checkCommand, checksList, folderTemplate, submitGuide } from '@/components/skill/submitContent'
 import { CheckIcon, GithubIcon } from '@/components/skill/icons'
+import { useDocumentMeta } from '@/i18n/useDocumentMeta'
 import s from '@/components/skill/Detail.module.css'
 
 export function Submit() {
   const locale = useLocale()
-  const t = useDT()
-  useEffect(() => { document.title = `${t('submit.title')} · HEAD skills` }, [t])
+  const t = useT()
+  useDocumentMeta(t('submit.title'), t('submit.lead'))
 
   return (
     <article className={s.page}>

@@ -1,12 +1,12 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import type { Skill } from '@/data/types'
 import { categoryTitle } from '@/data/catalog'
-import { pick, useLocale } from '@/i18n/useLocale'
+import { pick, useLocale, useT } from '@/i18n/useLocale'
 import { repoFolderUrl } from '@/lib/install'
-import { useDT, type DetailKey } from './strings'
+import type { ChromeKey } from '@/content/chrome'
 import s from './Detail.module.css'
 
-const KNOWN: Record<string, DetailKey> = { name: 'fm.name', version: 'fm.version', description: 'fm.description', license: 'fm.license' }
+const KNOWN: Record<string, ChromeKey> = { name: 'fm.name', version: 'fm.version', description: 'fm.description', license: 'fm.license' }
 
 function show(v: unknown): string {
   if (v == null) return ''
@@ -18,7 +18,7 @@ function show(v: unknown): string {
 
 /** Long values clamp to four lines with a toggle; the toggle only appears when the text actually overflows. */
 function Clamp({ text }: { text: string }) {
-  const t = useDT()
+  const t = useT()
   const ref = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
   const [over, setOver] = useState(false)
@@ -46,7 +46,7 @@ function Clamp({ text }: { text: string }) {
 
 /** SKILL.md frontmatter as Qoder's key/value table, plus the catalog facts a reader wants (category, author, folder). */
 export function FrontmatterTable({ skill }: { skill: Skill }) {
-  const t = useDT()
+  const t = useT()
   const locale = useLocale()
   const fm = skill.frontmatter ?? {}
   const rows: { k: string; v: ReactNode }[] = []
