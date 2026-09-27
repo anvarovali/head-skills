@@ -10,14 +10,14 @@
 .link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
 .link:focus-visible { outline: none; }
 .copy {
-  position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: 4px;
-  padding: 2px 8px; border-radius: var(--m-r-xs); background: var(--m-tag-bg); color: var(--m-tag-text);
-  font-size: 11px; line-height: 16px; font-weight: 500; white-space: nowrap;
-  transition: color var(--m-t), background-color var(--m-t);
+  position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: 4px; margin: -4px -6px; padding: 4px 6px;
+  border-radius: var(--m-r-sm); font-size: 12px; line-height: 16px; font-weight: 500; color: var(--m-text-3); white-space: nowrap;
+  transition: color var(--m-t);
 }
-.copy:hover { background: #e2e8ff; color: var(--m-primary); }
-.copy[data-copied] { color: var(--m-primary); background: #e2e8ff; }
-.head { display: flex; align-items: center; gap: 12px; min-width: 0; height: 30px; }
+.copy:hover, .copy:focus-visible { color: var(--m-primary); }
+.copy:focus-visible { outline: 2px solid var(--m-primary); outline-offset: 0; }
+.copy[data-copied] { color: var(--m-primary); }
+.head { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 30px; }
 .icon {
   flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--m-r-md);
   border: 1px solid rgba(16, 17, 19, .06); background: #f3f5fa; color: var(--m-text); overflow: hidden;
@@ -25,7 +25,8 @@
 .icon img { width: 22px; height: 22px; object-fit: contain; }
 .name {
   flex: 1 1 auto; min-width: 0; font-size: 16px; line-height: 22px; font-weight: 500; letter-spacing: -.005em;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  /* full titles: wrap to a second line before ever cutting a word off */
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
 }
 .badge {
   flex: none; font-size: 10px; line-height: 14px; font-weight: 400; padding: 2px 6px; border-radius: var(--m-r-xs);
@@ -37,5 +38,7 @@
 }
 .foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 16px; color: var(--m-text-3); min-width: 0; }
 .by { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.metaRow { min-width: 0; display: inline-flex; align-items: center; gap: 10px; }
+.by .badge { margin-left: 8px; }
 .meta { flex: none; display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
 .meta svg { flex: none; }

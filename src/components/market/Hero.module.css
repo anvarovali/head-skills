@@ -31,8 +31,8 @@
   .skillA { left: 0;    --sz: 46px; --x: -93px;  --y: -6px;  --r: 6deg;  --d: -3s; }
   .head   { left: 0;    --sz: 38px; --x: -150px; --y: -70px; --r: 8deg;  --d: -2s; }
   .skillB { left: 100%; --sz: 46px; --x: 93px;   --y: 8px;   --r: 8deg;  --d: -4s; }
-  .prompt { left: 100%; --sz: 40px; --x: 190px;  --y: -30px; --r: 12deg; --d: -.5s; }
-  .stack  { left: 100%; --sz: 34px; --x: 110px;  --y: -90px; --r: -9deg; --d: -2.5s; }
+  .prompt { left: 100%; --sz: 40px; --x: 196px;  --y: 18px;  --r: 10deg; --d: -.5s; }
+  .stack  { left: 100%; --sz: 36px; --x: 150px;  --y: -66px; --r: -9deg; --d: -2.5s; }
 }
 
 @media (max-width: 767px) {

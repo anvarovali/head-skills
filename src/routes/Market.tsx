@@ -4,7 +4,7 @@ import { catalog } from '@/data/catalog'
 import { pick, useLocale, useT } from '@/i18n/useLocale'
 import { Hero } from '@/components/market/Hero'
 import { getItems, matches, sortItems, sourceOf, SOURCES, type Item, type Sort } from '@/components/market/items'
-import { Check, CtaBand, Empty, Facet, Grid, Pager, Pills, SectionHead, Segmented } from '@/components/market/parts'
+import { Check, CtaBand, Empty, Facet, Grid, Pager, Pills, SectionHead, Segmented, SideCta } from '@/components/market/parts'
 import s from '@/components/market/Market.module.css'
 
 type Tab = 'all' | 'skills' | 'bundles'
@@ -140,6 +140,7 @@ function SkillsView({ items, cats, srcs, sort, page, byFacets, onCat, onCats, on
             <Check key={id} label={t(`source.${id}`)} count={srcCount(id)} checked={srcs.includes(id)} onChange={() => onSrc(id)} />
           ))}
         </Facet>
+        <SideCta />
       </aside>
       <div className={s.main}>
         {featured.length ? (
