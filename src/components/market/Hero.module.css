@@ -19,7 +19,8 @@
   animation: bob 7s ease-in-out infinite; animation-delay: var(--d, 0s);
 }
 .tile img { width: 64%; height: 64%; }
-.tile svg { width: 50%; height: 50%; }
+.tile svg { width: 55%; height: 55%; }
+.tile[data-far] { filter: blur(.4px); opacity: .92; box-shadow: 0 1px 2px rgba(16, 17, 19, .04), 0 4px 10px -4px rgba(16, 17, 19, .08); }
 .tile .slash { width: auto; height: 56%; color: var(--m-primary); }
 @keyframes bob { 50% { translate: 0 -3px; } }
 @media (prefers-reduced-motion: reduce) { .tile { animation: none; } }
@@ -27,12 +28,12 @@
 /* Desktop. x is measured from the headline's nearer end to the tile's centre. Every tile's nearest (rotated) corner keeps
    >= 90px of air to the words on both sides; the right side sits ~20px off the left's heights so it isn't a mirror. */
 @media (min-width: 768px) {
-  .braces { left: 0;    --sz: 34px; --x: -206px; --y: 28px;  --r: -8deg; --d: -1s; }
-  .skillA { left: 0;    --sz: 52px; --x: -122px; --y: -6px;  --r: 6deg;  --d: -3s; }
-  .head   { left: 0;    --sz: 40px; --x: -150px; --y: -74px; --r: 8deg;  --d: -2s; }
-  .skillB { left: 100%; --sz: 46px; --x: 118px;  --y: 14px;  --r: 8deg;  --d: -4s; }
-  .prompt { left: 100%; --sz: 40px; --x: 204px;  --y: -4px;  --r: 10deg; --d: -.5s; }
-  .stack  { left: 100%; --sz: 34px; --x: 150px;  --y: -56px; --r: -9deg; --d: -2.5s; }
+  .braces { left: 0;    --sz: 34px; --x: -210px; --y: 30px;  --r: -9deg; --d: -1s; }   /* Cursor, far */
+  .skillA { left: 0;    --sz: 52px; --x: -122px; --y: -4px;  --r: 6deg;  --d: -3s; }   /* Claude, near */
+  .head   { left: 0;    --sz: 42px; --x: -156px; --y: -76px; --r: -6deg; --d: -2s; }   /* skill mark, high */
+  .skillB { left: 100%; --sz: 48px; --x: 120px;  --y: 16px;  --r: 10deg; --d: -4s; }   /* Gemini, near */
+  .prompt { left: 100%; --sz: 44px; --x: 206px;  --y: -18px; --r: 14deg; --d: -.5s; }   /* skill mark */
+  .stack  { left: 100%; --sz: 34px; --x: 142px;  --y: -64px; --r: -8deg; --d: -2.5s; }  /* Copilot, far */
 }
 
 @media (max-width: 767px) {
