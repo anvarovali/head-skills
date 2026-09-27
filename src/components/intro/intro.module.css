@@ -1,0 +1,123 @@
+/* The intro stage. Keynote black, one HEAD blue, Archivo display (Onest on ru), Poppins for the small UI.
+   Everything that moves is moved by GSAP with transform/opacity only; the static styling lives here. */
+.root {
+  --ink0: #050506; --fg: #f5f5f7; --fg-2: rgba(245, 245, 247, .66); --fg-3: rgba(245, 245, 247, .44);
+  --blue: #0029FF;
+  --fw: clamp(150px, 13.5vw, 224px);
+  position: fixed; inset: 0; z-index: 1000; overflow: hidden; color: var(--fg);
+  font-family: var(--font-sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+.ru { font-family: "Onest", Arial, sans-serif; }
+.ground { position: absolute; inset: 0; background: var(--ink0); }
+/* the one light in the room: HEAD blue, behind the wordmark; it only ever changes opacity/scale */
+.light {
+  position: absolute; left: 50%; top: 50%; width: 110vmax; height: 110vmax; margin: -55vmax 0 0 -55vmax;
+  background: radial-gradient(closest-side, rgba(0, 41, 255, .42), rgba(0, 41, 255, .16) 42%, rgba(0, 41, 255, .04) 66%, transparent 78%);
+  opacity: 0; pointer-events: none; will-change: opacity, transform;
+}
+.fill { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+
+/* ---------- language picker ---------- */
+.picker { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px 16px; }
+.pickerInner { display: flex; flex-direction: column; align-items: center; gap: clamp(28px, 5vh, 56px); }
+.pickerMark { width: clamp(72px, 6.4vw, 96px); height: auto; color: var(--fg); }
+.slashBlue { color: var(--blue); }
+.hint { font-family: var(--font-mono); font-weight: 500; font-size: 14px; line-height: 1.4; letter-spacing: .01em; color: var(--fg-3); text-align: center; }
+.options { display: flex; flex-direction: column; align-items: center; gap: .08em; font-size: clamp(44px, 6.6vw, 108px); }
+.option {
+  position: relative; display: inline-block; padding: .02em .16em .06em; border-radius: .18em;
+  font-weight: 500; line-height: 1.08; letter-spacing: -.035em; color: var(--fg);
+  transition: opacity .28s var(--ease-out), transform .1s ease-out;
+}
+.optionRu { font-family: "Onest", Arial, sans-serif; letter-spacing: -.025em; }
+.options:has(.option:hover, .option:focus-visible) .option:not(:hover, :focus-visible) { opacity: .26; }
+.option:active { transform: scale(.975); }
+.option:focus-visible { outline: none; }
+/* a blue disc with an arrow slides in beside the word you are about to choose */
+.go {
+  position: absolute; left: 100%; top: 50%; width: .42em; height: .42em; margin: -.19em 0 0 .06em;
+  border-radius: 50%; background: var(--blue); display: grid; place-items: center;
+  opacity: 0; transform: translateX(-.18em) scale(.7); transition: opacity .25s var(--ease-out), transform .45s var(--ease-out);
+}
+.go svg { width: 46%; height: 46%; color: #fff; }
+.option:hover .go, .option:focus-visible .go { opacity: 1; transform: none; }
+
+/* ---------- controls ---------- */
+.controls { position: absolute; right: clamp(16px, 2vw, 28px); bottom: clamp(16px, 2vw, 28px); display: flex; gap: 8px; z-index: 5; }
+.ctl {
+  height: 40px; padding: 0 18px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-mono); font-weight: 500; font-size: 13px; letter-spacing: .01em; color: var(--fg);
+  background: rgba(255, 255, 255, .1); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1);
+  -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%);
+  transition: background-color .2s ease, transform .1s ease-out;
+}
+.ctl:hover { background: rgba(255, 255, 255, .17); }
+.ctl:active { transform: scale(.95); }
+.ctl:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.ctlRound { width: 40px; padding: 0; }
+.ctl svg { width: 18px; height: 18px; }
+
+/* ---------- stage ---------- */
+.stage { position: absolute; inset: 0; pointer-events: none; }
+.greet { text-align: center; padding: 0 16px; }
+.hi { font-size: clamp(84px, 14.5vw, 236px); font-weight: 500; letter-spacing: -.05em; line-height: .96; }
+.ru .hi { letter-spacing: -.04em; }
+.rest { font-size: clamp(24px, 3vw, 48px); font-weight: 400; letter-spacing: -.02em; line-height: 1.2; color: var(--fg-2); margin-top: .55em; }
+.brand { display: flex; flex-direction: column; align-items: center; will-change: transform; }
+.line { font-family: "Archivo", "Archivo Fallback", Arial, sans-serif; font-size: clamp(52px, 9vw, 148px); font-weight: 440; letter-spacing: -.045em; line-height: 1; white-space: nowrap; will-change: transform; }
+.word { display: inline-block; }
+.char { display: inline-block; }
+/* the HEAD mark at text size: its letters are 71.75 % of the viewBox height, which is Archivo's cap height at 1em */
+.mark { display: inline-block; height: 1em; width: 2.4654em; vertical-align: -.1225em; margin: 0 .035em 0 .045em; overflow: visible; }
+.line [data-glyph] { opacity: 0; }
+.rest .word + .word { margin-left: .26em; }
+.tag { font-size: clamp(18px, 1.85vw, 30px); letter-spacing: -.012em; color: var(--fg-2); margin-top: .8em; }
+
+/* folders (drawn, not bitmaps): a back with its tab, the sheets, a front flap that swings open toward you */
+.fBack, .fFront { position: absolute; left: 50%; top: 50%; width: var(--fw); height: calc(var(--fw) * .78); margin: calc(var(--fw) * -.39) 0 0 calc(var(--fw) / -2); opacity: 0; will-change: transform, opacity; }
+.fBack { z-index: 1; }
+.fFront { z-index: 3; }
+.fBack svg { width: 100%; height: 100%; overflow: visible; }
+.fShadow { position: absolute; left: 6%; right: 6%; bottom: -9%; height: 18%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0, 0, 0, .75), transparent); }
+.flap {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 77%; border-radius: calc(var(--fw) * .062);
+  background: linear-gradient(180deg, #6a85ff 0%, #3558ff 28%, #1a3cff 70%, #0a2de0 100%);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .55), inset 0 -1px 0 rgba(0, 0, 60, .35), 0 20px 44px -8px rgba(0, 0, 0, .6);
+  display: grid; place-items: center;
+}
+.emboss { width: 13%; height: auto; color: rgba(0, 12, 110, .34); filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .28)); }
+.fCap { position: absolute; top: 100%; left: 0; right: 0; margin-top: calc(var(--fw) * .13); text-align: center; font-size: clamp(14px, 1.05vw, 17px); font-weight: 500; letter-spacing: -.005em; color: var(--fg-2); white-space: nowrap; }
+
+/* skill cards */
+.card {
+  position: absolute; left: 50%; top: 50%; width: var(--cw); height: calc(var(--cw) * .7);
+  margin: calc(var(--cw) * -.35) 0 0 calc(var(--cw) / -2); padding: calc(var(--cw) * .072) calc(var(--cw) * .076);
+  display: flex; flex-direction: column; border-radius: calc(var(--cw) * .066);
+  background: #fff; color: #101113; opacity: 0; z-index: 2; will-change: transform, opacity;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .2), 0 30px 70px -12px rgba(0, 0, 0, .55);
+}
+.cardCat { font-family: var(--font-mono); font-weight: 500; font-size: calc(var(--cw) * .042); letter-spacing: .06em; text-transform: uppercase; color: var(--blue); }
+.cardTitle { font-size: calc(var(--cw) * .088); font-weight: 500; letter-spacing: -.028em; line-height: 1.08; margin-top: .5em; }
+.cardSum { font-size: calc(var(--cw) * .047); line-height: 1.45; color: #5b5f67; margin-top: .6em; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.cardFoot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-weight: 500; font-size: calc(var(--cw) * .041); color: #5b5f67; }
+.cardSlash { width: calc(var(--cw) * .034); height: auto; color: var(--blue); }
+
+/* the install line, typed out on the beat */
+.cmd {
+  display: inline-flex; align-items: center; gap: .7em; padding: .9em 1.35em; border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-mono); font-weight: 500; font-size: clamp(15px, 1.25vw, 19px); letter-spacing: .005em; color: var(--fg);
+  background: rgba(255, 255, 255, .07); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); opacity: 0;
+}
+.cmdPrompt { color: #6B8CFF; }
+.cmd .ch { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .option, .go, .ctl { transition: opacity .2s ease; }
+  .option:active, .ctl:active { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .ctl { background: #2a2b2e; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (max-width: 767px) {
+  .root { --fw: clamp(96px, 26vw, 150px); }
+}
