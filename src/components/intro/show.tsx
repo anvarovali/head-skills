@@ -8,7 +8,7 @@ import { pick } from '@/i18n/useLocale'
 import { LOCALES, LOCALE_NAMES, switchLocale, type Locale } from '@/i18n/locales'
 import { HeadMark, Slash } from '@/components/ui/HeadMark'
 import { ItemIcon } from '@/components/market/ExtensionCard'
-import { CategoryGlyph } from '@/components/market/icons'
+import { CategoryGlyph, ClockIcon, CopyIcon, StackIcon } from '@/components/market/icons'
 import { BADGE_LABEL, getItems, type Item } from '@/components/market/items'
 import cardCss from '@/components/market/ExtensionCard.module.css'
 import { INTRO_AUDIO, SEEN_KEY } from './replay'
@@ -330,7 +330,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     // (opacity on the preserve-3d wall would flatten its depth, so the cards dim one by one instead)
     tl.to(wall!, { scale: 0.72, y: vh * 0.04, ...spring(1, 0.7) }, T.bar4 - 0.06)
     tl.to(cards, { opacity: 0.07, duration: 0.45, ease: 'power2.out' }, T.bar4 - 0.06)
-    tl.to(chips, { opacity: 0, duration: 0.5, ease: 'power1.in' }, T.bar4)
+    tl.to(chips, { opacity: 0, duration: 0.5, ease: 'power1.in', overwrite: 'auto' }, T.bar4) // outruns their long entrance spring
     tl.to(brand!, { opacity: 0.5, duration: 0.4 }, T.bar4)
     tl.fromTo(cmdCap!, { opacity: 0, y: 14 }, { opacity: 1, y: 0, ...spring(1, 0.5) }, T.bar4 - 0.12)
     tl.set(cmdBox!, { opacity: 1 }, T.bar4)
@@ -398,9 +398,10 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
 
   const isRu = locale === 'ru'
   const by = (name?: string) => (name ? (chrome[locale]['card.by'] ?? chrome.en['card.by']).replace('{name}', `@${name}`) : null)
+  // the same foot as ExtensionCard: a stack count for bundles, clock + short date for skills
   const meta = (it: Item) => it.kind === 'bundle'
-    ? (chrome[locale]['card.skillsN'] ?? '').replace('{n}', String(it.skillCount ?? 0))
-    : it.category ? pick(categoryTitle(it.category), locale) : undefined
+    ? <><StackIcon size={13} /><span>{it.skillCount ?? 0}</span></>
+    : it.updated ? <><ClockIcon size={13} /><span>{shortDate(it.updated, locale)}</span></> : null
   const badge = (it: Item) => it.badges.map((b) => BADGE_LABEL[b]).find(Boolean)
   const lineText = (
     <>
@@ -444,6 +445,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
                 <ItemIcon item={slot.real} />
                 <h3 className={cardCss.name}>{pick(slot.real.title, locale) ?? slot.real.id}</h3>
                 {badge(slot.real) ? <span className={cardCss.badge}>{badge(slot.real)}</span> : null}
+                <span className={cardCss.copy}><CopyIcon size={14} /></span>
               </div>
               <p className={cardCss.desc}>{pick(slot.real.summary, locale)}</p>
               <div className={cardCss.foot}><span className={cardCss.by}>{by(slot.real.author)}</span><span className={cardCss.meta}>{meta(slot.real)}</span></div>
@@ -520,6 +522,18 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
       </div>
     </div>
   )
+}
+
+/* mirrors ExtensionCard's hand-made short dates (Chromium has no Uzbek month names) */
+const MONTHS: Record<Locale, string[]> = {
+  uz: ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek'],
+  ru: ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+}
+function shortDate(iso: string, locale: Locale) {
+  const d = new Date(iso)
+  const m = MONTHS[locale][d.getMonth()]
+  return locale === 'uz' ? `${d.getDate()}-${m}` : `${d.getDate()} ${m}`
 }
 
 /* ---------- drawn bits ---------- */
