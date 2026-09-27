@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schemas/head.schema.json",
+  "title": {
+    "uz": "Telegram post yozuvchi",
+    "ru": "Автор постов для Telegram",
+    "en": "Telegram Post Writer"
+  },
+  "summary": {
+    "uz": "Kanalingiz ohangida Telegram postlar yozadi: kuchli birinchi qator, qisqa xatboshilar, bitta aniq chaqiriq.",
+    "ru": "Пишет посты для Telegram в стиле вашего канала: цепляющая первая строка, короткие абзацы, один призыв к действию.",
+    "en": "Writes Telegram posts in your channel's voice: a strong first line, short paragraphs, one clear call to action."
+  },
+  "category": "content",
+  "author": { "name": "Your Name", "github": "your-github-username" },
+  "youtube": {}
+}
