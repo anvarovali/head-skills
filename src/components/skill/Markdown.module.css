@@ -1,6 +1,6 @@
 /* README typography, measured on Qoder's skill detail (1440 viewport): h1 28/1.3 semibold, h2 24, h3 18, body 16/1.75
    in the secondary grey, lists with 8px rhythm, code blocks on a white bordered card. */
-.md { color: var(--m-text-2); font-size: 15px; line-height: 1.65; overflow-wrap: break-word; }
+.md { color: #2b2e33; font-size: 15px; line-height: 1.65; font-weight: 400; overflow-wrap: break-word; }
 .md > :first-child { margin-top: 0; }
 .md :where(h1, h2, h3, h4, h5, h6) { color: var(--m-text); font-weight: 600; letter-spacing: -.01em; scroll-margin-top: 88px; text-wrap: balance; }
 .md h1 { font-size: 26px; line-height: 1.3; margin: 44px 0 14px; letter-spacing: -.02em; }
