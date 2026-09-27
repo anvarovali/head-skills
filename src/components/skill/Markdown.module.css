@@ -1,0 +1,42 @@
+/* README typography, measured on Qoder's skill detail (1440 viewport): h1 28/1.3 semibold, h2 24, h3 18, body 16/1.75
+   in the secondary grey, lists with 8px rhythm, code blocks on a white bordered card. */
+.md { color: var(--m-text-2); font-size: 16px; line-height: 1.75; overflow-wrap: anywhere; }
+.md > :first-child { margin-top: 0; }
+.md :where(h1, h2, h3, h4, h5, h6) { color: var(--m-text); font-weight: 600; letter-spacing: -.01em; scroll-margin-top: 88px; text-wrap: balance; }
+.md h1 { font-size: 30px; line-height: 1.3; margin: 48px 0 16px; letter-spacing: -.02em; }
+.md h2 { font-size: 24px; line-height: 1.35; margin: 44px 0 14px; letter-spacing: -.015em; }
+.md h3 { font-size: 19px; line-height: 1.45; margin: 32px 0 10px; }
+.md h4 { font-size: 16px; line-height: 1.5; margin: 24px 0 8px; }
+.md h5, .md h6 { font-size: 14px; margin: 20px 0 6px; }
+.md p { margin: 0 0 16px; }
+.md strong { color: var(--m-text); font-weight: 600; }
+.md a { color: var(--m-primary); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--m-primary) 35%, transparent); text-underline-offset: 3px; transition: text-decoration-color var(--m-t); }
+.md a:hover { text-decoration-color: var(--m-primary); }
+.md ul, .md ol { margin: 0 0 18px; padding-left: 22px; }
+.md ul { list-style: disc; }
+.md ol { list-style: decimal; }
+.md li { margin: 6px 0; padding-left: 4px; }
+.md li::marker { color: var(--m-text-4); }
+.md li > ul, .md li > ol { margin: 6px 0 0; }
+.md li > p { margin: 0; }
+.md hr { border: 0; border-top: 1px solid var(--m-border); margin: 40px 0; }
+.md blockquote { margin: 0 0 18px; padding: 12px 18px; border: 1px solid var(--m-border); background: var(--m-bg-elevated); border-radius: var(--m-r-lg); color: var(--m-text-2); }
+.md blockquote > :last-child { margin-bottom: 0; }
+.md :not(pre) > code { font-family: var(--m-font-code); font-size: .84em; padding: .15em .42em; border-radius: var(--m-r-xs); background: var(--m-fill-2); color: var(--m-text); overflow-wrap: anywhere; }
+.md pre { margin: 0 0 20px; padding: 16px 20px; background: var(--m-bg-base); border: 1px solid var(--m-border); border-radius: var(--m-r-lg); overflow-x: auto; }
+.md pre code { font-family: var(--m-font-code); font-size: 13px; line-height: 1.65; color: var(--m-text); white-space: pre; overflow-wrap: normal; }
+.md img { max-width: 100%; border-radius: var(--m-r-lg); border: 1px solid var(--m-border); margin: 8px 0 20px; }
+.tableWrap { margin: 0 0 20px; overflow-x: auto; border: 1px solid var(--m-border); border-radius: var(--m-r-lg); background: var(--m-bg-base); }
+.md table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.6; }
+.md th, .md td { padding: 10px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--m-border); }
+.md th { color: var(--m-text); font-weight: 600; background: var(--m-bg-elevated); }
+.md tr:last-child td { border-bottom: 0; }
+.md tbody tr:nth-child(even) td { background: var(--m-bg-elevated); }
+
+@media (max-width: 767px) {
+  .md { font-size: 15px; }
+  .md h1 { font-size: 24px; margin-top: 36px; }
+  .md h2 { font-size: 21px; margin-top: 34px; }
+  .md h3 { font-size: 17px; }
+  .md pre { padding: 14px 16px; }
+}
