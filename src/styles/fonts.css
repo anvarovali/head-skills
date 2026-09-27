@@ -1,0 +1,30 @@
+/* Self-hosted subsets built by scripts/fonts/build.sh. Archivo (uz/en) carries U+02BB via a cmap patch;
+   Onest (ru) has native Cyrillic; Poppins (fontsource latin + latin-ext, 400/500/600) is the label face; Cyrillic labels fall to SF Pro / system-ui. */
+@font-face { font-family: "Archivo"; src: url(/fonts/archivo-latin.woff2) format("woff2"); font-weight: 100 900; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Onest"; src: url(/fonts/onest-latin.woff2) format("woff2"); font-weight: 400 800; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Onest"; src: url(/fonts/onest-cyrillic.woff2) format("woff2"); font-weight: 400 800; font-display: swap;
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: "Poppins"; src: url(/fonts/poppins-400-latin.woff2) format("woff2"); font-weight: 400; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Poppins"; src: url(/fonts/poppins-400-latin-ext.woff2) format("woff2"); font-weight: 400; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Poppins"; src: url(/fonts/poppins-500-latin.woff2) format("woff2"); font-weight: 500; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Poppins"; src: url(/fonts/poppins-500-latin-ext.woff2) format("woff2"); font-weight: 500; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Poppins"; src: url(/fonts/poppins-600-latin.woff2) format("woff2"); font-weight: 600; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Poppins"; src: url(/fonts/poppins-600-latin-ext.woff2) format("woff2"); font-weight: 600; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Archivo Fallback"; src: local("Arial"); size-adjust: 98%; ascent-override: 90%; descent-override: 22%; line-gap-override: 0%; }
+:root {
+  --font-sans: "Archivo", "Archivo Fallback", Arial, sans-serif;
+  /* the label face (kickers, nav, numerals, captions). JetBrains Mono is BANNED by the owner ("AI slop", 2026-09-23):
+     Poppins, with SF Pro (the Apple system face) for Cyrillic and any glyph Poppins lacks. The variable keeps its name. */
+  --font-mono: "Poppins", -apple-system, "SF Pro Text", system-ui, sans-serif;
+  --wght-display: 400; --wght-heading: 500; --wght-body: 400; --wght-strong: 600;
+  --track-display: -.03em;
+}
+html[lang="ru"] { --font-sans: "Onest", Arial, sans-serif; --wght-display: 400; --wght-heading: 500; --track-display: -.02em; }

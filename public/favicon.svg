@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56">
+  <!-- The favicon is the /A of the HE/AD mark: the A whose left leg IS
+       the slash. Geometry copied verbatim from components/layout/
+       head-mark.tsx (slash x 56.72-72.89, A x 69.97-83.77), centred in
+       a 56-unit square. No background plate by request — the letter
+       flips ink/white with the tab bar's scheme so it stays legible on
+       both; the slash carries the primary blue exactly as in the
+       wordmark — the literal below is PALETTE.primary from
+       lib/design/palette.ts, and the unit test string-matches it. -->
+  <style>
+    .a { fill: #000000; }
+    @media (prefers-color-scheme: dark) { .a { fill: #ffffff; } }
+  </style>
+  <g transform="translate(-42.24, 5.1)">
+    <polygon fill="#2B4FD6" points="70.0607 11.2475 72.89 0 68.1721 0 56.7156 45.7984 61.3637 45.7984 64.1094 34.8854 65.4746 29.0037 65.4753 29.0037 70.0607 11.2475"/>
+    <polygon class="a" points="75.8945 8.8764 73.4945 18.4063 76.0045 28.1363 71.0445 28.1363 69.9745 32.3563 76.9845 32.3563 79.0145 40.1864 83.7745 40.1864 75.8945 8.8764"/>
+  </g>
+</svg>

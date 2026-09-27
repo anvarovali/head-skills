@@ -1,0 +1,36 @@
+.h0 { font-size: var(--fs-h0); line-height: var(--lh-90); letter-spacing: var(--ls-2x-tight); font-weight: var(--wght-display); text-wrap: balance; }
+.h1 { font-size: var(--fs-h1); line-height: .95; letter-spacing: var(--ls-x-tight); font-weight: var(--wght-display); text-wrap: balance; }
+.h2 { font-size: var(--fs-h2); line-height: 1.05; letter-spacing: var(--ls-x-tight); font-weight: var(--wght-display); text-wrap: balance; }
+.h3 { font-size: var(--fs-h3); line-height: var(--lh-120); letter-spacing: var(--ls-tight); font-weight: var(--wght-heading); }
+.h4 { font-size: var(--fs-h4); line-height: var(--lh-130); letter-spacing: var(--ls-tight); font-weight: var(--wght-heading); }
+.statement { font-size: 3.43em; line-height: var(--lh-120); letter-spacing: var(--ls-x-tight); font-weight: var(--wght-display); }
+.quaternary { color: var(--muted); }
+.text-2xl { font-size: var(--fs-2xl); line-height: var(--lh-120); }
+.text-xl { font-size: var(--fs-xl); line-height: var(--lh-130); }
+.text-lg { font-size: var(--fs-lg); line-height: var(--lh-130); }
+.text-md { font-size: var(--fs-md); line-height: var(--lh-140); }
+.text-semi { font-size: var(--fs-semi); line-height: var(--lh-140); }
+.text-body { font-size: var(--fs-body); line-height: var(--lh-150); }
+.text-sm { font-size: var(--fs-sm); line-height: var(--lh-150); }
+.text-xs { font-size: var(--fs-xs); line-height: var(--lh-140); }
+.mono { font-family: var(--font-mono); font-weight: 500; }
+.label { font-family: var(--font-mono); font-size: var(--fs-2xs); line-height: var(--lh-110); letter-spacing: var(--ls-5x-wide); text-transform: uppercase; color: var(--muted-2); }
+.muted { color: var(--muted); }
+.balance { text-wrap: balance; }
+.measure-sm { max-width: var(--mw-sm); } .measure-md { max-width: var(--mw-md); } .measure-lg { max-width: var(--mw-lg); }
+.measure-xl { max-width: var(--mw-xl); } .measure-2xl { max-width: var(--mw-2xl); } .measure-3xl { max-width: var(--mw-3xl); }
+@media (max-width: 767px) {
+  .h0 { font-size: 4.5em; } .h1 { font-size: 4em; } .h2 { font-size: 2.5em; } .statement { font-size: 2.5em; }
+}
+@media (max-width: 479px) {
+  .h0 { font-size: 3.5em; } .h1 { font-size: 3.25em; } .h2 { font-size: 2.125em; } .statement { font-size: 2.125em; }
+}
+
+/* 2026-09 system roles (kott / lircle / GM). Archivo is pinned on the giant word: Onest has no thin weight. */
+.giant { font-family: "Archivo", "Archivo Fallback", Arial, sans-serif; font-size: 26vw; font-weight: 100; line-height: 1; letter-spacing: -.04em; white-space: nowrap; }
+.h-caps { font-size: clamp(36px, 5vw, 68px); font-weight: 600; line-height: .9; letter-spacing: -.03em; text-transform: uppercase; text-wrap: balance; }
+.row-name { font-size: clamp(34px, 5.2vw, 80px); font-weight: 500; line-height: 1; letter-spacing: -.03em; }
+.h-team { font-size: clamp(40px, 5vw, 71px); font-weight: 600; line-height: .95; letter-spacing: -.02em; text-transform: uppercase; }
+/* section label: plain mono caps, no leading rule/dash (owner 2026-09-22: the thin line before a label is banned) */
+.sec-lbl { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+@media (max-width: 767px) { .giant { font-size: 38vw; } }

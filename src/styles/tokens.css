@@ -1,0 +1,70 @@
+/* HEAD design tokens. Every variable of the Axiom reference stylesheet mapped to the HEAD blue system.
+   Orange (#ff4d00 family) -> cobalt: fills #2B4FD6, text-on-ink #6B8CFF, deep #1E3AA6, gradient stops #0b2a6f/#0a1f5c. */
+:root {
+  /* ground + surfaces */
+  --ground: #0b0c0d; --black: #000;
+  --surface-1: #141517; --surface-2: #1e2124; --surface-3: #2b2f33;
+  --hairline: #2e3236; --line-ghost: #5e6266;
+  --glass-nav: #1c1d1f9e; --glass-panel: #121315f0; --scrim: #0b0c0d80;
+  --blur-chip: 12px; --blur-nav: 18px; --blur-panel: 22px; --blur-scrim: 16px;
+  /* 2026-09 system (kott / lircle / GM): two grounds, one blue. paper + ink from kott.studio, ink-2 is lircle's
+     footer / GM's ground, the lines and the muted greys are lircle's. */
+  --paper: #f4f5f7; --paper-2: #eceef1; --ink: #101113; --ink-2: #0a0a0a; --ink-3: #868d99;
+  --line-paper: #dcdcd4; --line-ink: #262626; --paper-line: var(--line-paper);
+  --on-paper: var(--ink); --on-paper-muted: #666662; --on-ink: #e7e7e7; --on-ink-muted: #7d7d7d;
+  /* legacy alias (Eyebrow/SectionHeader light tone) */
+  --ink-2-legacy: #4a4f59;
+  /* text + layers */
+  --text: #f3f1ec; --text-2: #eae8e2; --text-3: #d8d5cc; --muted: #a5a29a; --muted-2: #83847d; --muted-3: #6e6b63;
+  /* the warm muted grey reads tan over a large area (a 3.5em quote): a cool neutral for display-size secondary type */
+  --muted-cool: #9a9ea4;
+  --light-10: #f3f1ec1a; --light-20: #f3f1ec33; --light-40: #f3f1ec66; --light-60: #f3f1ec99; --light-70: #f3f1ecb3; --light-80: #f3f1eccc;
+  --dark-10: #0b0c0d1a; --dark-25: #0b0c0d40; --dark-50: #0b0c0d80; --dark-60: #0b0c0d99; --dark-75: #0b0c0dbf; --dark-90: #0b0c0de6;
+  /* accent (brand-200/400/500/600/700/800 of the reference -> HEAD blue) */
+  /* the accent is HEAD's own mark blue (public/brand/head-mark-blue.svg); it reads electric on paper like kott's */
+  --accent: #0029FF; --accent-hover: #2247FF; --accent-deep: #001FBF; --accent-700: #0b2a6f; --accent-800: #0a1f5c;
+  --accent-text: #6B8CFF; --accent-tint: rgba(0, 98, 255, .06); --accent-tint-2: #D5DFFF;
+  --panel-gradient: linear-gradient(135deg, #0a1f5c 0%, #123fa8 42%, #1d5be0 72%, #0b2a6f 100%);
+  --panel-gradient-hover: linear-gradient(135deg, #0c2468 0%, #1546b8 42%, #2264ec 72%, #0d2f7a 100%);
+  --panel-rim: inset 0 0 0 1px rgba(255, 255, 255, .10); --panel-glow: 0 10px 40px rgba(20, 70, 200, .25);
+  --on-panel: #f3f1ec; --on-panel-muted: rgba(243, 241, 236, .72);
+  /* buttons */
+  --btn-primary-bg: var(--accent); --btn-primary-text: #f3f1ec; --btn-primary-bg-hover: var(--accent-deep);
+  --btn-base-bg: #f3f1ec; --btn-base-text: #0b0c0d; --btn-base-bg-hover: #ffffff;
+  --btn-ghost-border: #5e6266; --btn-ghost-text: #f3f1ec; --btn-ghost-bg-hover: var(--light-10);
+  --btn-dark-bg: #0b0c0d; --btn-dark-text: #f3f1ec; --btn-dark-bg-hover: #1e2124;
+  /* radii + strokes */
+  --r-3xs: .25rem; --r-2xs: .375rem; --r-xs: .5rem; --r-sm: .75rem; --r-md: 1.25rem; --r-lg: 1.5rem; --r-round: 50%; --r-panel: 0;
+  --stroke: 1px; --stroke-lg: 3px;
+  /* fluid base, measured on the reference: 14px at 1440 rising to 18.67px at 1920; 100vw/90 capped at 14px on
+     smaller desktops; 100vw/72 on tablets; a flat 14.4px on phones. Set as font-size on every .section. */
+  --container: clamp(768px, 100vw, 1920px);
+  --fs-base: calc(clamp(1440px, 100vw, 1920px) / 1440 * 14);
+  /* type scale (em, against --fs-base set on .section) */
+  --fs-h0: 7em; --fs-h1: 5em; --fs-h2: 3em; --fs-h3: 1.5em; --fs-h4: 1.25em; --fs-statement: 4em; --fs-wordmark: 13.7em;
+  --fs-2xl: 2em; --fs-xl: 1.75em; --fs-lg: 1.5em; --fs-md: 1.25em; --fs-semi: 1.125em; --fs-body: 1em; --fs-sm: .875em; --fs-xs: .75em; --fs-2xs: .7em;
+  --lh-70: .7; --lh-90: .9; --lh-100: 1; --lh-110: 1.1; --lh-120: 1.2; --lh-130: 1.3; --lh-140: 1.4; --lh-150: 1.5;
+  --ls-2x-tight: -.06em; --ls-x-tight: -.03em; --ls-tight: -.01em; --ls-wide: .01em; --ls-x-wide: .03em; --ls-2x-wide: .06em;
+  --ls-3x-wide: .08em; --ls-4x-wide: .1em; --ls-5x-wide: .12em; --ls-6x-wide: .15em; --ls-7x-wide: .2em;
+  /* spacing (em) */
+  --s-4xs: .25em; --s-3xs: .375em; --s-2xs: .5em; --s-xs: .75em; --s-sm: .875em; --s-md: 1em; --s-lg: 1.25em; --s-xl: 1.5em;
+  --s-2xl: 2em; --s-3xl: 2.5em; --s-4xl: 3em; --s-5xl: 4em; --s-6xl: 4.5em; --s-7xl: 5em; --s-8xl: 6em; --s-10xl: 7em; --s-12xl: 8em;
+  /* the page column: 4em = 56px at 1440, the edge the nav, the hero copy, the offer head and the footer sit on */
+  --pad-x: 4em; --pad-x-sm: 1.25rem; --pad-y: var(--s-12xl);
+  --mw-3xs: 13.5em; --mw-2xs: 15em; --mw-xs: 20em; --mw-sm: 23em; --mw-md: 25em; --mw-semi: 32.5em; --mw-lg: 40em; --mw-xl: 46em;
+  --mw-2xl: 50em; --mw-3xl: 55em; --mw-4xl: 65em; --mw-5xl: 70em; --mw-6xl: 83em;
+  /* image grading (exact reference filters) */
+  --grade-hero: grayscale(50%) contrast(106%) brightness(84%);
+  --grade-card: grayscale(35%) contrast(106%) brightness(74%);
+  /* motion */
+  --ease-ui: cubic-bezier(.77, 0, .175, 1); --dur-ui: .24s; --dur-ui-slow: .3s;
+  --ease-img: cubic-bezier(.25, 1, .5, 1); --dur-img: .72s;
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1); /* lircle's row hover */
+  --r-card: 21px; /* GM's card radius */
+  --marquee-gap: 8em; --marquee-dur: 40s;
+  --nav-h: 4.5em;
+}
+@media (max-width: 1439px) { :root { --fs-base: min(calc(100vw / 90), 14px); } }
+@media (max-width: 991px) { :root { --fs-base: clamp(12px, calc(100vw / 72), 14px); } }
+@media (max-width: 767px) { :root { --fs-base: 14.4px; --pad-x: 1.25rem; } }

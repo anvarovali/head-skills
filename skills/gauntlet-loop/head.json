@@ -1,0 +1,13 @@
+{
+  "title": { "en": "Gauntlet Loop", "uz": "Gauntlet Loop", "ru": "Gauntlet Loop" },
+  "summary": {
+    "en": "Drive any build past “good enough”: a real quality bar, fresh-context critics, blind A/B, loop until it wins.",
+    "uz": "Har qanday ishni “yetarli”dan yuqoriga olib chiqing: aniq sifat mezoni, mustaqil tanqidchilar, ko‘r A/B sinov va g‘alabagacha takrorlash.",
+    "ru": "Доводит любую работу дальше «достаточно хорошо»: реальная планка качества, независимые критики, слепой A/B и цикл до победы."
+  },
+  "category": "workflow",
+  "author": { "name": "HEAD", "github": "anvarovali" },
+  "featured": true,
+  "badges": ["official"],
+  "youtube": {}
+}

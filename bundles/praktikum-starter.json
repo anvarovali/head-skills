@@ -1,0 +1,11 @@
+{
+  "title": { "en": "AI Praktikum starter pack", "uz": "AI Praktikum boshlang‘ich to‘plami", "ru": "Стартовый набор AI Praktikum" },
+  "summary": {
+    "en": "The skills from the AI Praktikum course, installed into your agent with one command.",
+    "uz": "AI Praktikum kursidagi skill’lar — bitta buyruq bilan agentingizga o‘rnatiladi.",
+    "ru": "Скиллы из курса AI Praktikum — устанавливаются в вашего агента одной командой."
+  },
+  "skills": ["gauntlet-loop", "apple-design"],
+  "badges": ["praktikum-2026"],
+  "youtube": {}
+}

@@ -1,0 +1,41 @@
+{
+  "name": "head-skills",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=22.12" },
+  "scripts": {
+    "catalog": "node scripts/build-catalog.mjs",
+    "dev": "node scripts/build-catalog.mjs && vite --port 5180 --strictPort",
+    "build": "node scripts/build-catalog.mjs && tsc -b && vite build",
+    "preview": "vite preview --port 4180 --strictPort",
+    "typecheck": "tsc -b --noEmit",
+    "lint": "oxlint src",
+    "validate:uz": "node scripts/validate-uz.mjs",
+    "validate:skills": "node scripts/validate-skills.mjs",
+    "refs": "node scripts/capture-refs.mjs",
+    "shoot": "node scripts/shoot.mjs",
+    "progress": "node scripts/progress.mjs"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "clsx": "^2.1.1",
+    "gsap": "^3.15.0",
+    "marked": "^16.0.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router": "^7.18.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.5.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "fflate": "^0.8.2",
+    "oxlint": "^1.83.0",
+    "typescript": "~6.0.0",
+    "vite": "^8.3.0",
+    "yaml": "^2.8.0"
+  }
+}

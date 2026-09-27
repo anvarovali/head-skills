@@ -1,0 +1,8 @@
+[
+  { "id": "workflow", "title": { "en": "Workflow", "uz": "Ish jarayoni", "ru": "Рабочий процесс" } },
+  { "id": "design", "title": { "en": "Design", "uz": "Dizayn", "ru": "Дизайн" } },
+  { "id": "frontend", "title": { "en": "Frontend", "uz": "Frontend", "ru": "Фронтенд" } },
+  { "id": "backend", "title": { "en": "Backend", "uz": "Backend", "ru": "Бэкенд" } },
+  { "id": "content", "title": { "en": "Content", "uz": "Kontent", "ru": "Контент" } },
+  { "id": "productivity", "title": { "en": "Productivity", "uz": "Samaradorlik", "ru": "Продуктивность" } }
+]

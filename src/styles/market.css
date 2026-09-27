@@ -1,0 +1,32 @@
+/* Marketplace system: Qoder's marketplace token roles (Ant Design, light theme), re-pointed at the HEAD palette.
+   Measurements (radii, sizes) are Qoder's; colours are HEAD's (paper/ink, one blue). */
+:root {
+  --m-primary: var(--accent);            /* qoder #80c776 -> HEAD blue */
+  --m-primary-hover: var(--accent-hover);
+  --m-primary-bg: #e8edff;               /* qoder primary-bg #eaf7e7 -> blue tint */
+  --m-primary-text: #0021cc;
+  --m-bg-base: #ffffff;
+  --m-bg-layout: var(--paper);           /* #f4f5f7 (qoder #f2f4f2) */
+  --m-bg-container: #eef0f3;
+  --m-bg-elevated: #fafbfc;
+  --m-bg-hover: #f1f4ff;                 /* card hover: a faint blue, blue hovers only */
+  --m-text: var(--ink);                  /* #101113 (qoder #141414) */
+  --m-text-2: #5f636b;
+  --m-text-3: #7f838b;
+  --m-text-4: #8e9199;
+  --m-border: #e4e6ea;                   /* qoder border-tertiary #e6e6e6 */
+  --m-border-strong: #d4d7dc;
+  --m-fill-2: #e6e8ec;                   /* active pill / tab fill */
+  --m-r-xs: 4px; --m-r-sm: 6px; --m-r-md: 8px; --m-r-lg: 10px; --m-r-xl: 12px; --m-r-full: 9999px;
+  --m-header-h: 64px;
+  --m-page-x: 64px;
+  --m-max: 1440px;
+  --m-font: "Poppins", -apple-system, "SF Pro Text", system-ui, sans-serif;
+  --m-font-code: ui-monospace, "SF Mono", Menlo, Monaco, monospace;
+  --m-t: .2s ease;
+}
+@media (max-width: 1339px) { :root { --m-header-h: 60px; } }
+@media (max-width: 767px) { :root { --m-page-x: 24px; } }
+html[lang="ru"] { --m-font: -apple-system, "SF Pro Text", "Onest", system-ui, sans-serif; }
+body { font-family: var(--m-font); background: var(--m-bg-layout); color: var(--m-text); font-size: 14px; }
+code, pre, kbd { font-family: var(--m-font-code); }

@@ -1,0 +1,16 @@
+node_modules
+dist
+*.log
+.DS_Store
+test-results
+*.tsbuildinfo
+workbench/shots
+workbench/critic-inbox
+workbench/tmp
+workbench/progress.html
+refs/raw
+.vercel
+.env*
+.herenow/
+src/data/catalog.json
+public/dl/*.zip
