@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "engines": { "node": ">=22.12" },
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
     "catalog": "node scripts/build-catalog.mjs",
     "dev": "node scripts/build-catalog.mjs && vite --port 5180 --strictPort",
@@ -34,6 +36,7 @@
     "@vitejs/plugin-react": "^6.1.1",
     "fflate": "^0.8.2",
     "oxlint": "^1.83.0",
+    "sharp": "^0.35.4",
     "typescript": "~6.0.0",
     "vite": "^8.3.0",
     "yaml": "^2.8.0"

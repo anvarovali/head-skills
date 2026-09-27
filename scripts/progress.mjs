@@ -37,36 +37,11 @@ const GROUPS = [
   { prefix: 'X', page: 'home', label: 'Cross-cutting' },
 ];
 const PIECES = {
-  // wave 07: the kott / lircle / GM bar (refs/k3). Older H/M ids stay readable in verdicts.jsonl.
-  K00: { motion: 'preloader', ref: 'k3/kott.loader.strip.png', title: 'Preloader (kott)' },
-  K01: { section: 'hero', capture: 'hero@00', ref: 'k3/kott.desktop.hero@00.png', title: 'Hero at rest (kott)' },
-  K02: { motion: 'hero', ref: 'k3/kott.desktop.hero.strip.png', title: 'Hero scroll (kott)' },
-  K03: { section: 'nav', ref: 'k3/kott.desktop.top.png', title: 'Nav (kott)' },
-  S01: { section: 'statement', ref: 'k3/kott.desktop.work.png', title: 'Statement (kott work head)' },
-  L01: { section: 'offer', ref: 'k3/lircle.desktop.services.png', title: 'Offer list (lircle)' },
-  L02: { section: 'offer', capture: 'offer.hover', ref: 'k3/lircle.desktop.services.hover.png', title: 'Offer hover (lircle)' },
-  S02: { section: 'marquee', ref: 'k3/lircle.desktop.collab.png', title: 'Marquee (lircle collaborators)', note: 'owner-locked 2026-09-22: stays the moving logo marquee; no further rounds' },
-  S03: { section: 'stats', ref: 'k3/gm.desktop.stats.png', title: 'Stats (GM band)' },
-  G01: { section: 'team', ref: 'k3/gm.desktop.clients.png', title: 'Team fan (GM)' },
-  G02: { motion: 'team', ref: 'k3/gm.desktop.clients.strip.png', title: 'Team fan scroll (GM)' },
-  S04: { section: 'testimonials', ref: 'k3/lircle.desktop.about.png', title: 'Testimonials (lircle about)' },
-  L03: { section: 'footer', ref: 'k3/lircle.desktop.footer.png', title: 'Footer (lircle)' },
-  X01: { section: 'full', ref: 'k3/kott.desktop.full.png', title: 'Full page (smoothing)' },
-  H01: { section: 'nav', ref: 'top', title: 'Nav', legacy: true },
-  H02: { section: 'hero', ref: 'section_hero', title: 'Hero', legacy: true },
-  H03: { section: 'statement', ref: 'section_statement', title: 'Statement', legacy: true },
-  H04: { section: 'specs', ref: 'section_why', title: 'Specs', legacy: true },
-  H05: { section: 'testimonials', ref: 'section_tst', title: 'Testimonials', legacy: true },
-  H06: { section: 'marquee', ref: 'section_tst', title: 'Marquee', legacy: true },
-  H07: { section: 'capabilities', ref: 'section_cpb', title: 'Capabilities', legacy: true },
-  H08: { section: 'video-band', ref: 'section_performance', title: 'Video band', legacy: true },
-  H09: { section: 'stats', ref: 'section_stat', title: 'Stats', legacy: true },
-  H10: { section: 'clients', ref: null, title: 'Clients cylinder', legacy: true },
-  H11: { section: 'footer', ref: 'footer', title: 'Footer', legacy: true },
-  M01: { motion: 'preloader', title: 'Preloader', legacy: true },
-  M02: { motion: 'hero', title: 'Hero reveal', legacy: true },
-  M03: { motion: 'statement', title: 'Statement reveal', legacy: true },
-  M04: { motion: 'clients', title: 'Clients cylinder', legacy: true },
+  // skills.head.uz: the Qoder marketplace bar (refs/qoder) and the Apple-keynote bar for the intro.
+  LIST: { ref: 'qoder/list.desktop.viewport.png', title: 'Marketplace home (Qoder)' },
+  SKILLS: { ref: 'qoder/skills.desktop.viewport.png', title: 'Skills view (Qoder)' },
+  DETAIL: { ref: 'qoder/detail.desktop.viewport.png', title: 'Skill detail + install card (Qoder)' },
+  INTRO: { motion: 'intro', title: 'First-visit intro (Apple keynote bar)' },
 };
 
 // ---------------------------------------------------------------- cli
