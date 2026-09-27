@@ -16,6 +16,7 @@ export interface Item {
   featured: boolean
   updated?: string
   skillCount?: number
+  skillIds: string[]         // what the install command installs: [id] for a skill, the bundle's skills
 }
 
 export type Source = 'head' | 'praktikum' | 'community'
@@ -29,11 +30,11 @@ export const BADGE_LABEL: Record<string, string> = { 'praktikum-2026': 'Praktiku
 
 const skills: Item[] = catalog.skills.map((s) => ({
   kind: 'skill', id: s.id, title: s.title, summary: s.summary, category: s.category, icon: s.icon,
-  badges: s.badges ?? [], author: s.author.github ?? s.author.name, featured: !!s.featured, updated: s.updated,
+  badges: s.badges ?? [], author: s.author.github ?? s.author.name, featured: !!s.featured, updated: s.updated, skillIds: [s.id],
 }))
 const bundles: Item[] = catalog.bundles.map((b) => ({
   kind: 'bundle', id: b.id, title: b.title, summary: b.summary, badges: b.badges ?? [], featured: true,
-  author: catalog.repo.owner, skillCount: b.skills.length,
+  author: catalog.repo.owner, skillCount: b.skills.length, skillIds: b.skills,
 }))
 
 /* DEV-ONLY fixture: `?demo=1` repeats the real cards so the grid can be judged at scale. Never active in a build. */
