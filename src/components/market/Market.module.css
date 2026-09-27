@@ -31,6 +31,7 @@
 }
 @media (max-width: 767px) {
   .tabs { gap: 24px; padding: 28px 0 16px; }
+  .tab { font-size: 15px; line-height: 22px; }
   .toolbar { flex-direction: column; align-items: stretch; gap: 12px; }
   .toolbar > :last-child { align-self: flex-start; }
 }

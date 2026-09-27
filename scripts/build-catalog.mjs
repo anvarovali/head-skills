@@ -1,6 +1,6 @@
 // Builds src/data/catalog.json, public/dl/<id>.zip and .claude-plugin/marketplace.json from skills/ and bundles/.
 // Run before dev/build. The skills/ folders are the source of truth (they are what `npx skills add` installs).
-import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { execFileSync } from 'node:child_process'
 import { zipSync, strToU8 } from 'fflate'
@@ -32,6 +32,7 @@ const skillsDir = join(ROOT, 'skills')
 const categories = JSON.parse(readFileSync(join(skillsDir, 'categories.json'), 'utf8'))
 const skills = []
 mkdirSync(join(ROOT, 'public/dl'), { recursive: true })
+mkdirSync(join(ROOT, 'public/icons'), { recursive: true })
 
 for (const id of readdirSync(skillsDir).sort()) {
   const dir = join(skillsDir, id)
@@ -41,6 +42,12 @@ for (const id of readdirSync(skillsDir).sort()) {
   const { fm, body } = parseSkillMd(readFileSync(mdPath, 'utf8'))
   if (fm.name !== id) throw new Error(`${id}: frontmatter name "${fm.name}" must equal the folder name`)
   const head = existsSync(join(dir, 'head.json')) ? JSON.parse(readFileSync(join(dir, 'head.json'), 'utf8')) : {}
+  // a skill folder's icon.svg becomes its card/detail icon at /icons/<id>.svg unless head.json names one
+  let icon = head.icon
+  if (!icon && existsSync(join(dir, 'icon.svg'))) {
+    copyFileSync(join(dir, 'icon.svg'), join(ROOT, 'public/icons', `${id}.svg`))
+    icon = `/icons/${id}.svg`
+  }
   const paths = walk(dir)
   const files = paths.map((p) => {
     const rel = relative(dir, p); const size = statSync(p).size
@@ -54,7 +61,7 @@ for (const id of readdirSync(skillsDir).sort()) {
     id, name: fm.name, description: String(fm.description ?? ''),
     title: head.title ?? { en: fm.name }, summary: head.summary ?? { en: String(fm.description ?? '') },
     category: head.category ?? 'productivity', author: head.author ?? { name: 'HEAD' },
-    icon: head.icon, featured: !!head.featured, badges: head.badges ?? [], youtube: head.youtube ?? {},
+    icon, featured: !!head.featured, badges: head.badges ?? [], youtube: head.youtube ?? {},
     updated: gitDate(dir) ?? statSync(mdPath).mtime.toISOString(), version: fm.version ?? head.version,
     frontmatter: fm, readme: body, files: files.filter((f) => f.path !== 'head.json'),
     zip: `/dl/${id}.zip`, repoPath: `skills/${id}`,

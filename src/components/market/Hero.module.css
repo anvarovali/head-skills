@@ -1,13 +1,13 @@
 /* qoder hero: bg-layout, max 1440, padding 72 top / 42 bottom; title 32/42 w500, sub 16 tertiary, search 606 x 44 */
 .hero { background: var(--m-bg-layout); }
 .inner {
-  max-width: var(--m-max); margin: 0 auto; padding: 72px var(--m-page-x) 42px;
+  max-width: var(--m-max); margin: 0 auto; padding: 117px var(--m-page-x) 43px;
   display: flex; flex-direction: column; align-items: center; text-align: center;
 }
 .titleWrap { position: relative; max-width: 760px; }
-@media (min-width: 768px) { .titleWrap { width: max-content; max-width: min(760px, 100% - 360px); } }
+@media (min-width: 768px) { .titleWrap { width: max-content; max-width: min(760px, 100% - 440px); } }
 .title { position: relative; font-size: 32px; line-height: 42px; font-weight: 500; letter-spacing: -.01em; text-wrap: balance; }
-.sub { margin-top: 12px; max-width: 640px; font-size: 16px; line-height: 24px; color: var(--m-text-3); text-wrap: balance; }
+.sub { margin-top: 10px; max-width: 640px; font-size: 16px; line-height: 24px; color: var(--m-text-3); text-wrap: balance; }
 
 .tiles { position: absolute; inset: 0; pointer-events: none; }
 .tile {
@@ -16,19 +16,21 @@
   animation: bob 6s ease-in-out infinite; animation-delay: var(--d, 0s);
 }
 @keyframes bob { 50% { translate: 0 -4px; } }
-/* anchored to the title's edges (qoder at 1440: -174 / -68 / -25 from the left edge, +6 / +50 / +140 from the right) */
-.t1 { right: calc(100% + 156px); transform: translateY(4px) rotate(-10deg); --d: -1s; }
-.t2 { right: calc(100% + 46px); width: 44px; height: 44px; margin-top: -22px; border-radius: 11px; transform: translateY(-2px) rotate(-6deg); --d: -3s; }
-.t3 { right: calc(100% - 8px); width: 34px; height: 34px; margin-top: -17px; transform: translateY(-58px) rotate(14deg); background: var(--m-primary); color: #fff; box-shadow: 0 6px 18px rgba(0, 41, 255, .28); --d: -2s; }
-.t4 { left: calc(100% - 22px); width: 30px; height: 30px; margin-top: -15px; border-radius: 8px; transform: translateY(-46px) rotate(8deg); --d: -4s; }
+/* anchored to the title's edges and kept >= 80px clear of the words: two low tiles out to the side, one high tile
+   over each end of the line (qoder's composition, spread wider for our longer headlines) */
+.t1 { right: calc(100% + 172px); transform: translateY(14px) rotate(-10deg); --d: -1s; }
+.t2 { right: calc(100% + 80px); width: 44px; height: 44px; margin-top: -22px; border-radius: 11px; transform: translateY(-4px) rotate(-6deg); --d: -3s; }
+.t3 { right: calc(100% + 6px); width: 36px; height: 36px; margin-top: -18px; transform: translateY(-76px) rotate(14deg); --d: -2s; }
+.t4 { left: calc(100% + 6px); width: 30px; height: 30px; margin-top: -15px; border-radius: 8px; transform: translateY(-70px) rotate(8deg); --d: -4s; }
 .t4 svg { width: 15px; height: 15px; }
-.t5 { left: calc(100% + 28px); width: 44px; height: 44px; margin-top: -22px; border-radius: 11px; transform: translateY(0) rotate(12deg); --d: -5s; }
-.t6 { left: calc(100% + 118px); width: 42px; height: 42px; margin-top: -21px; border-radius: 11px; transform: translateY(-24px) rotate(18deg); --d: -.5s; }
-.slash { height: 20px; width: auto; }
+.t5 { left: calc(100% + 80px); width: 44px; height: 44px; margin-top: -22px; border-radius: 11px; transform: translateY(2px) rotate(12deg); --d: -5s; }
+.t6 { left: calc(100% + 172px); width: 42px; height: 42px; margin-top: -21px; border-radius: 11px; transform: translateY(-40px) rotate(18deg); --d: -.5s; }
+@media (max-width: 1199px) and (min-width: 768px) { .t1, .t6 { display: none; } }
+.slash { height: 20px; width: auto; color: var(--m-primary); }
 @media (prefers-reduced-motion: reduce) { .tile { animation: none; } }
 
 @media (max-width: 767px) {
-  .inner { padding: 88px 20px 40px; }
+  .inner { padding: 96px var(--m-page-x) 40px; }
   .title { font-size: 32px; line-height: 40px; }
   .sub { font-size: 15px; line-height: 22px; }
   .tiles { inset: -64px 0 auto; height: 60px; }
