@@ -140,13 +140,13 @@ h2.tab:hover { color: var(--m-text); }
 .monoLine { display: block; }
 .mono a { color: inherit; text-decoration: underline; text-decoration-color: var(--m-border-strong); text-underline-offset: 2px; transition: color var(--m-t); }
 .mono a:hover { color: var(--m-primary); text-decoration-color: currentColor; }
-/* fade into the box ground under the cut, with the expand pill centred on it */
+/* under the cut: the last full line fades, then a solid 40px band of box ground (nothing shows through) holds the pill */
 .monoWrap:not([data-open]):has(.monoPill)::after {
-  content: ""; position: absolute; left: 1px; right: 1px; bottom: 1px; height: 38px; pointer-events: none;
+  content: ""; position: absolute; left: 1px; right: 1px; bottom: 1px; height: calc(40px + 19px); pointer-events: none;
   border-radius: 0 0 calc(var(--m-r-md) - 1px) calc(var(--m-r-md) - 1px);
-  background: linear-gradient(to bottom, rgb(255 255 255 / 0), var(--m-bg-base) 55%);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0) 0, rgb(255 255 255 / .6) 19px, var(--m-bg-base) 19px);
 }
-.monoWrap[data-open] .mono { padding-bottom: 44px; }
+.monoWrap[data-open] .mono { padding-bottom: 48px; }
 .monoPill {
   position: absolute; left: 50%; bottom: 8px; z-index: 1; transform: translateX(-50%); width: max-content;
   display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: var(--m-r-full);

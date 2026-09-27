@@ -1,17 +1,19 @@
 /* README typography, measured on Qoder's skill detail (1440 viewport): h1 28/1.3 semibold, h2 24, h3 18, body 16/1.75
    in the secondary grey, lists with 8px rhythm, code blocks on a white bordered card. */
-.md { color: var(--m-text-2); font-size: 16px; line-height: 1.75; overflow-wrap: anywhere; }
+.md { color: var(--m-text-2); font-size: 15px; line-height: 1.65; overflow-wrap: break-word; }
 .md > :first-child { margin-top: 0; }
 .md :where(h1, h2, h3, h4, h5, h6) { color: var(--m-text); font-weight: 600; letter-spacing: -.01em; scroll-margin-top: 88px; text-wrap: balance; }
-.md h1 { font-size: 30px; line-height: 1.3; margin: 48px 0 16px; letter-spacing: -.02em; }
-.md h2 { font-size: 24px; line-height: 1.35; margin: 44px 0 14px; letter-spacing: -.015em; }
-.md h3 { font-size: 19px; line-height: 1.45; margin: 32px 0 10px; }
-.md h4 { font-size: 16px; line-height: 1.5; margin: 24px 0 8px; }
+.md h1 { font-size: 26px; line-height: 1.3; margin: 44px 0 14px; letter-spacing: -.02em; }
+.md h2 { font-size: 21px; line-height: 1.4; margin: 40px 0 12px; letter-spacing: -.015em; }
+.md h3 { font-size: 17px; line-height: 1.5; margin: 28px 0 8px; }
+.md h4 { font-size: 15px; line-height: 1.5; margin: 22px 0 6px; }
 .md h5, .md h6 { font-size: 14px; margin: 20px 0 6px; }
-.md p { margin: 0 0 16px; }
+.md p { margin: 0 0 14px; }
 .md strong { color: var(--m-text); font-weight: 600; }
-.md a { color: var(--m-primary); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--m-primary) 35%, transparent); text-underline-offset: 3px; transition: text-decoration-color var(--m-t); }
-.md a:hover { text-decoration-color: var(--m-primary); }
+.md a { color: var(--m-text); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--m-text) 30%, transparent); text-decoration-thickness: 1px; text-underline-offset: 3px; transition: color var(--m-t), text-decoration-color var(--m-t); }
+.md a:hover { color: var(--m-primary); text-decoration-color: currentColor; }
+/* a bare URL shown shortened: quieter, never forces a long wrap */
+.md a[data-url] { font-size: .93em; color: var(--m-text-2); overflow-wrap: anywhere; }
 .md ul, .md ol { margin: 0 0 18px; padding-left: 22px; }
 .md ul { list-style: disc; }
 .md ol { list-style: decimal; }
@@ -34,9 +36,8 @@
 .md tbody tr:nth-child(even) td { background: var(--m-bg-elevated); }
 
 @media (max-width: 767px) {
-  .md { font-size: 15px; }
-  .md h1 { font-size: 24px; margin-top: 36px; }
-  .md h2 { font-size: 21px; margin-top: 34px; }
+  .md h1 { font-size: 23px; margin-top: 36px; }
+  .md h2 { font-size: 20px; margin-top: 34px; }
   .md h3 { font-size: 17px; }
   .md pre { padding: 14px 16px; }
 }
