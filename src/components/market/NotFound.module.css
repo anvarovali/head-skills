@@ -1,0 +1,12 @@
+.wrap {
+  min-height: calc(100dvh - var(--m-header-h) - 120px); display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; padding: 96px 20px;
+}
+.code { font-size: 14px; font-weight: 500; color: var(--m-primary); }
+.title { margin-top: 8px; font-size: 32px; line-height: 42px; font-weight: 500; letter-spacing: -.01em; }
+.sub { margin-top: 12px; max-width: 440px; font-size: 16px; line-height: 24px; color: var(--m-text-3); text-wrap: balance; }
+.btn {
+  margin-top: 28px; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 20px; border-radius: var(--m-r-md);
+  background: var(--m-primary); color: #fff; font-size: 14px; font-weight: 500; transition: background-color var(--m-t);
+}
+.btn:hover { background: var(--m-primary-deep); }

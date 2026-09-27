@@ -1,0 +1,47 @@
+/* qoder header: 64px (60 < 1340), bg-layout, logo left, nav, right: globe + button */
+.header { position: sticky; top: 0; z-index: 50; background: var(--m-bg-layout); }
+.bar { display: flex; align-items: center; height: var(--m-header-h); padding: 0 var(--m-header-x); gap: 48px; }
+.brand { display: inline-flex; align-items: center; gap: 8px; flex: none; color: var(--m-text); }
+.mark { height: 18px; width: auto; }
+.slash { color: var(--m-primary); }
+.word { font-size: 19px; line-height: 1; font-weight: 500; letter-spacing: -.01em; transform: translateY(1px); }
+.nav { display: flex; align-items: center; gap: 36px; }
+.link {
+  display: inline-flex; align-items: center; gap: 3px; font-size: 15px; line-height: 24px; color: var(--m-text-2);
+  transition: color var(--m-t);
+}
+.link:hover { color: var(--m-primary); }
+.link[aria-current='page'] { color: var(--m-text); }
+.right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.cta {
+  display: inline-flex; align-items: center; height: 36px; padding: 0 18px; border-radius: var(--m-r-full);
+  background: var(--m-primary); color: #fff; font-size: 14px; font-weight: 500; transition: background-color var(--m-t);
+}
+.cta:hover { background: var(--m-primary-deep); }
+.burger { display: none; width: 40px; height: 40px; place-items: center; margin-right: -8px; color: var(--m-text); border-radius: var(--m-r-md); }
+.burger:hover { color: var(--m-primary); }
+.sheet { display: none; }
+
+@media (max-width: 899px) {
+  .header { border-bottom: 1px solid var(--m-border); }
+  .nav, .cta, .right > :first-child { display: none; }
+  .burger { display: grid; }
+  .sheet:not([hidden]) {
+    display: flex; flex-direction: column; gap: 24px; position: absolute; left: 0; right: 0; top: 100%;
+    height: calc(100dvh - var(--m-header-h)); overflow-y: auto; padding: 16px var(--m-header-x) 32px;
+    background: var(--m-bg-layout); border-top: 1px solid var(--m-border);
+  }
+  .sheetNav { display: flex; flex-direction: column; }
+  .sheetLink {
+    display: flex; align-items: center; gap: 4px; padding: 14px 0; font-size: 20px; line-height: 28px; font-weight: 500;
+    color: var(--m-text); border-bottom: 1px solid var(--m-border);
+  }
+  .sheetLink:hover { color: var(--m-primary); }
+  .sheetLink[aria-current='page'] { color: var(--m-primary); }
+  .sheetLang { display: flex; flex-direction: column; gap: 10px; }
+  .sheetLabel { font-size: 13px; font-weight: 500; color: var(--m-text-3); }
+  .sheetCta {
+    display: flex; align-items: center; justify-content: center; height: 48px; border-radius: var(--m-r-full);
+    background: var(--m-primary); color: #fff; font-size: 16px; font-weight: 500;
+  }
+}
