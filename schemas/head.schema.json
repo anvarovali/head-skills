@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skills.head.uz/schemas/head.schema.json",
+  "title": "head.json: site metadata for one skill on skills.head.uz",
+  "description": "Lives next to SKILL.md in skills/<id>/. Agents never read this file; only the website does. Enforced by scripts/validate-skills.mjs (which is the source of truth; keep the two in sync).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "summary", "category", "author"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "title": {
+      "description": "Display name per locale. `en` is required; add `uz` and `ru` if you can.",
+      "$ref": "#/$defs/l10n",
+      "properties": { "en": { "maxLength": 60 }, "uz": { "maxLength": 60 }, "ru": { "maxLength": 60 } }
+    },
+    "summary": {
+      "description": "One-sentence card text per locale, for people browsing the site (not for agents).",
+      "$ref": "#/$defs/l10n",
+      "properties": { "en": { "maxLength": 200 }, "uz": { "maxLength": 200 }, "ru": { "maxLength": 200 } }
+    },
+    "category": {
+      "description": "One of the ids in skills/categories.json.",
+      "type": "string",
+      "enum": ["workflow", "design", "frontend", "backend", "content", "productivity"]
+    },
+    "author": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "github": { "type": "string", "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$" }
+      }
+    },
+    "icon": {
+      "description": "Absolute path of an image under /public on the site. Omit to use the category icon.",
+      "type": "string",
+      "pattern": "^/(?!.*\\.\\.)[A-Za-z0-9/_.-]+\\.(svg|png|webp|jpg|jpeg|avif)$"
+    },
+    "featured": { "description": "Set by maintainers only.", "type": "boolean" },
+    "badges": {
+      "description": "Set by maintainers only. Leave empty in your pull request.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "enum": ["official", "praktikum-2026"] }
+    },
+    "youtube": {
+      "description": "YouTube video id (the 11 characters after watch?v=) of an explainer, per locale.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "en": { "$ref": "#/$defs/youtubeId" },
+        "uz": { "$ref": "#/$defs/youtubeId" },
+        "ru": { "$ref": "#/$defs/youtubeId" }
+      }
+    },
+    "version": { "type": "string", "maxLength": 32 }
+  },
+  "$defs": {
+    "l10n": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["en"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1 },
+        "uz": { "type": "string", "minLength": 1 },
+        "ru": { "type": "string", "minLength": 1 }
+      }
+    },
+    "youtubeId": { "type": "string", "pattern": "^[A-Za-z0-9_-]{11}$" }
+  }
+}

@@ -1,0 +1,53 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # build-catalog reads each skill's last commit date
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Validate skills
+        run: npm run validate:skills
+      - name: Build catalog
+        run: npm run catalog
+      - name: marketplace.json is committed and up to date
+        run: |
+          git diff --exit-code -- .claude-plugin/marketplace.json || {
+            echo "::error file=.claude-plugin/marketplace.json::Out of date. Run 'npm run catalog' and commit .claude-plugin/marketplace.json."
+            exit 1
+          }
+      - name: Typecheck and build
+        run: npm run build
+
+  installable:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: npx skills can list every skill
+        run: |
+          out=$(npx -y skills@latest add ./ -l 2>&1 | tee /dev/stderr)
+          for d in skills/*/; do
+            id=$(basename "$d")
+            grep -q -- "$id" <<<"$out" || { echo "::error::npx skills did not list $id"; exit 1; }
+          done
