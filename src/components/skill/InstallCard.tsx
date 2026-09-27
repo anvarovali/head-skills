@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useId, useState } from 'react'
 import { agentPrompt, installCommand, pluginCommands, zipUrl } from '@/lib/install'
 import { useLocale } from '@/i18n/useLocale'
 import { useDT } from './strings'
@@ -16,8 +16,49 @@ interface Props {
   bundle?: boolean
 }
 
+/** One line of a mono box. `indent` is in ch: the line is set in from the left, and a wrap continues at that
+    column; `hang` puts the first `hang` ch (a "1. " / "- " marker) back out to the left, a hanging indent. */
+interface Line { parts: { text: string; href?: string; download?: boolean }[]; indent?: number; hang?: number }
+
+const plain = (lines: Line[]) => lines.map((l) => ' '.repeat(l.indent ?? 0) + l.parts.map((p) => p.text).join('')).join('\n')
+
+/** Parse a plain-text block into lines with hanging indents for list markers and leading-space indents. */
+function toLines(text: string): Line[] {
+  return text.split('\n').map((raw) => {
+    const lead = raw.match(/^ */)![0].length
+    const body = raw.slice(lead)
+    const marker = body.match(/^(\d+\.\s|-\s)/)?.[0].length ?? 0
+    return { parts: [{ text: body }], indent: lead + marker, hang: marker }
+  })
+}
+
+/** Fixed-height mono box whose height is a whole number of lines, so nothing is cut mid-line; a toggle opens it. */
+function MonoBox({ lines, label, rows }: { lines: Line[]; label: string; rows: number }) {
+  const t = useDT()
+  const id = useId()
+  const [open, setOpen] = useState(false)
+  return (
+    <div className={s.monoWrap}>
+      <div id={id} className={s.mono} data-open={open || undefined} style={{ ['--rows' as string]: rows }}
+        tabIndex={0} role="region" aria-label={label}>
+        {lines.map((l, i) => (
+          <span key={i} className={s.monoLine} style={{ paddingLeft: `${l.indent ?? 0}ch`, textIndent: `-${l.hang ?? 0}ch` }}>
+            {l.parts.map((p, j) => p.href
+              ? <a key={j} href={p.href} {...(p.download ? { download: true } : { target: '_blank', rel: 'noopener noreferrer' })}>{p.text}</a>
+              : <span key={j}>{p.text}</span>)}
+            {l.parts.every((p) => !p.text) ? ' ' : null}
+          </span>
+        ))}
+      </div>
+      <button type="button" className={s.monoToggle} aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
+        {open ? t('install.less') : t('install.more')}
+      </button>
+    </div>
+  )
+}
+
 /** The owner's core requirement: every skill has two hand-offs, For Agent and For Human. Both blocks share
-    one shape, as on Qoder: a label row with icon buttons, then one fixed-height mono box with a bottom fade. */
+    one shape, as on Qoder: a label row with icon buttons, then one mono box of whole lines with a bottom fade. */
 export function InstallCard({ ids, pluginId, zips, bundle }: Props) {
   const t = useDT()
   const locale = useLocale()
@@ -25,29 +66,20 @@ export function InstallCard({ ids, pluginId, zips, bundle }: Props) {
   const cmd = installCommand(ids)
   const plugin = pluginCommands(pluginId)
   const single = zips.length === 1 ? zips[0] : undefined
-  const step3 = single ? t('install.step3') : t('install.step3Many')
 
-  // one source for both the rendered box (with live links) and the copied plain text
-  const lines: { text: string; href?: string; download?: boolean }[][] = [
-    [{ text: `1. ${t('install.step1')} ` }, { text: 'https://nodejs.org', href: 'https://nodejs.org/' }],
-    [{ text: `2. ${t('install.step2')}` }],
-    [{ text: `   ${cmd}` }],
-    [{ text: `3. ${step3}` }],
-    ...zips.map((z) => [{ text: '   ' }, { text: zipUrl(z.id), href: z.href, download: true }]),
-    [{ text: `4. ${t('install.step4')}` }],
-    [{ text: '' }],
-    [{ text: `${t('install.plugin')}:` }],
-    ...plugin.split('\n').map((l) => [{ text: l }]),
+  const human: Line[] = [
+    { parts: [{ text: `1. ${t('install.step1')} ` }, { text: 'https://nodejs.org', href: 'https://nodejs.org/' }], indent: 3, hang: 3 },
+    { parts: [{ text: `2. ${t('install.step2')}` }], indent: 3, hang: 3 },
+    { parts: [{ text: cmd }], indent: 3 },
+    { parts: [{ text: `3. ${single ? t('install.step3') : t('install.step3Many')}` }], indent: 3, hang: 3 },
+    ...zips.map((z): Line => ({ parts: [{ text: zipUrl(z.id), href: z.href, download: true }], indent: 3 })),
+    { parts: [{ text: `4. ${t('install.step4')}` }], indent: 3, hang: 3 },
+    { parts: [{ text: '' }] },
+    { parts: [{ text: `${t('install.plugin')}:` }] },
+    ...plugin.split('\n').map((l): Line => ({ parts: [{ text: l }] })),
   ]
-  const humanText = lines.map((l) => l.map((p) => p.text).join('')).join('\n')
-  const humanNodes: ReactNode[] = lines.map((l, i) => (
-    <span key={i}>
-      {l.map((p, j) => p.href
-        ? <a key={j} href={p.href} {...(p.download ? { download: true } : { target: '_blank', rel: 'noopener noreferrer' })}>{p.text}</a>
-        : p.text)}
-      {'\n'}
-    </span>
-  ))
+  // copied text: the hanging markers are part of the text already, so only continuation indents are spaces
+  const humanText = plain(human.map((l) => ({ ...l, indent: (l.indent ?? 0) - (l.hang ?? 0) })))
 
   return (
     <section className={s.card} aria-labelledby="install-title">
@@ -59,7 +91,7 @@ export function InstallCard({ ids, pluginId, zips, bundle }: Props) {
           <span className={s.blockLabel}>{t('install.agent')}</span>
           <span className={s.blockTools}><CopyIconButton text={prompt} label={t('copy.agent')} /></span>
         </div>
-        <pre className={s.prompt} tabIndex={0} aria-label={t('install.agent')}>{prompt}</pre>
+        <MonoBox lines={toLines(prompt)} label={t('install.agent')} rows={6} />
       </div>
 
       <div className={s.block}>
@@ -72,7 +104,7 @@ export function InstallCard({ ids, pluginId, zips, bundle }: Props) {
             <CopyIconButton text={humanText} label={t('copy.steps')} />
           </span>
         </div>
-        <pre className={s.prompt} tabIndex={0} aria-label={t('install.human')}>{humanNodes}</pre>
+        <MonoBox lines={human} label={t('install.human')} rows={4 + Math.ceil(cmd.length / 34)} />
       </div>
     </section>
   )

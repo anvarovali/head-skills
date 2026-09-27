@@ -32,14 +32,15 @@ function Clamp({ text }: { text: string }) {
     return () => ro.disconnect()
   }, [open, text])
   return (
-    <>
-      <div ref={ref} className={open ? undefined : s.clamp}>{text}</div>
-      {(over || open) && (
-        <button type="button" className={s.more} aria-expanded={open} onClick={() => setOpen(!open)}>
-          {open ? t('fm.less') : t('fm.more')}
-        </button>
+    <div className={s.clampWrap}>
+      <div ref={ref} className={open ? undefined : s.clamp}>
+        {text}
+        {open && <> <button type="button" className={s.more} aria-expanded onClick={() => setOpen(false)}>{t('fm.less')}</button></>}
+      </div>
+      {!open && over && (
+        <button type="button" className={`${s.more} ${s.moreFloat}`} aria-expanded={false} onClick={() => setOpen(true)}>{t('fm.more')}</button>
       )}
-    </>
+    </div>
   )
 }
 
