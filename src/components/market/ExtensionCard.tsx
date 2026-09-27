@@ -1,7 +1,6 @@
 import { Link } from 'react-router'
-import { categoryTitle } from '@/data/catalog'
 import { pick, useHref, useLocale, useT } from '@/i18n/useLocale'
-import { CategoryGlyph } from './icons'
+import { CategoryGlyph, ClockIcon, StackIcon } from './icons'
 import { BADGE_LABEL, itemHref, type Item } from './items'
 import s from './ExtensionCard.module.css'
 
@@ -13,6 +12,19 @@ export function ItemIcon({ item, className }: { item: Item; className?: string }
   )
 }
 
+/* Short dates by hand: Chromium ships no Uzbek month names (Intl gives "M09 27"), and one table keeps all three alike. */
+const MONTHS: Record<string, string[]> = {
+  uz: ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek'],
+  ru: ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+}
+function shortDate(iso: string, locale: string) {
+  const d = new Date(iso)
+  const m = (MONTHS[locale] ?? MONTHS.en)[d.getMonth()]
+  const short = locale === 'uz' ? `${d.getDate()}-${m}` : `${d.getDate()} ${m}`
+  return { short, long: `${short} ${d.getFullYear()}` }
+}
+
 /** A marketplace card. The whole card is the link; hover only tints the ground. `data-card-id` is the intro's hook. */
 export function ExtensionCard({ item }: { item: Item }) {
   const locale = useLocale()
@@ -20,9 +32,7 @@ export function ExtensionCard({ item }: { item: Item }) {
   const href = useHref()
   const title = pick(item.title, locale) ?? item.id
   const badge = item.badges.map((b) => BADGE_LABEL[b]).find(Boolean)
-  const meta = item.kind === 'bundle'
-    ? t('card.skillsN', { n: item.skillCount ?? 0 })
-    : item.category ? pick(categoryTitle(item.category), locale) : undefined
+  const date = item.updated ? shortDate(item.updated, locale) : undefined
   return (
     <Link to={href(itemHref(item))} className={s.card} data-card-id={item.id}>
       <div className={s.head}>
@@ -33,7 +43,16 @@ export function ExtensionCard({ item }: { item: Item }) {
       <p className={s.desc}>{pick(item.summary, locale)}</p>
       <div className={s.foot}>
         <span className={s.by}>{item.author ? t('card.by', { name: `@${item.author}` }) : null}</span>
-        {meta ? <span className={s.meta}>{meta}</span> : null}
+        {item.kind === 'bundle' ? (
+          <span className={s.meta} title={t('card.skillsN', { n: item.skillCount ?? 0 })}>
+            <StackIcon size={13} /><span>{item.skillCount ?? 0}</span>
+            <span className="sr-only">{t('card.skillsN', { n: item.skillCount ?? 0 })}</span>
+          </span>
+        ) : date ? (
+          <span className={s.meta} title={t('card.updated', { date: date.long })}>
+            <ClockIcon size={13} /><time dateTime={item.updated}>{date.short}</time>
+          </span>
+        ) : null}
       </div>
     </Link>
   )

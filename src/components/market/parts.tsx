@@ -1,7 +1,7 @@
-import { useId, type ReactNode } from 'react'
+import { useId, useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import { useHref, useT } from '@/i18n/useLocale'
-import { ArrowRight, ChevronLeft, ChevronRight, SearchIcon } from './icons'
+import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, SearchIcon } from './icons'
 import { ExtensionCard } from './ExtensionCard'
 import type { Item } from './items'
 import s from './parts.module.css'
@@ -57,10 +57,13 @@ export function Pills<T extends string>({ value, options, onChange, label }: {
 
 export function Facet({ title, children }: { title: string; children: ReactNode }) {
   const id = useId()
+  const [open, setOpen] = useState(true)
   return (
     <div className={s.facet} role="group" aria-labelledby={id}>
-      <p id={id} className={s.facetTitle}>{title}</p>
-      <div className={s.facetList}>{children}</div>
+      <button type="button" id={id} className={s.facetTitle} aria-expanded={open} aria-controls={`${id}-list`} onClick={() => setOpen((o) => !o)}>
+        <span>{title}</span><ChevronDown size={16} className={s.facetChevron} />
+      </button>
+      <div id={`${id}-list`} className={s.facetList} hidden={!open}>{children}</div>
     </div>
   )
 }
