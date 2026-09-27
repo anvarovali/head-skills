@@ -40,7 +40,14 @@
 
 .facet { min-width: 0; }
 .facet + .facet { margin-top: 24px; padding-top: 24px; border-top: 1px dashed var(--m-border-strong); }
-.facetTitle { margin-bottom: 8px; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--m-text-3); }
+.facetTitle {
+  display: flex; width: 100%; align-items: center; justify-content: space-between; margin-bottom: 8px; padding: 4px 0;
+  font-size: 14px; line-height: 20px; font-weight: 500; color: var(--m-text-3); text-align: left; transition: color var(--m-t);
+}
+.facetTitle:hover { color: var(--m-primary); }
+.facetChevron { transition: transform var(--m-t); }
+.facetTitle[aria-expanded='false'] .facetChevron { transform: rotate(-90deg); }
+.facetTitle[aria-expanded='false'] { margin-bottom: 0; }
 .facetList { display: flex; flex-direction: column; gap: 2px; }
 .check {
   position: relative; display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 8px; margin: 0 -8px;
@@ -96,3 +103,4 @@
   .ctaTitle { font-size: 26px; line-height: 34px; }
   .ctaSub { font-size: 15px; }
 }
+.facetList[hidden] { display: none; }

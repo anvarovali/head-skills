@@ -11,34 +11,38 @@
 
 .tiles { position: absolute; inset: 0; pointer-events: none; }
 .tile {
-  position: absolute; top: 50%; display: grid; place-items: center; width: 36px; height: 36px; margin-top: -18px;
-  border-radius: 9px; background: #fff; color: var(--m-text); box-shadow: var(--m-shadow-tile);
-  animation: bob 6s ease-in-out infinite; animation-delay: var(--d, 0s);
+  position: absolute; top: 50%; display: grid; place-items: center;
+  width: var(--sz); height: var(--sz); margin: calc(var(--sz) / -2) 0 0 calc(var(--sz) / -2);
+  border-radius: calc(var(--sz) * .26); background: #fff; color: var(--m-text);
+  box-shadow: 0 1px 2px rgba(16, 17, 19, .06), 0 10px 24px -6px rgba(16, 17, 19, .14);
+  transform: translate(var(--x), var(--y)) rotate(var(--r));
+  animation: bob 7s ease-in-out infinite; animation-delay: var(--d, 0s);
 }
+.tile img { width: 62%; height: 62%; }
+/* further back: smaller, softer shadow, a touch of blur */
+.tile[data-tone='far'] { filter: blur(.5px); opacity: .88; box-shadow: 0 1px 2px rgba(16, 17, 19, .05), 0 4px 10px rgba(16, 17, 19, .06); }
+.tile[data-tone='blue'] { background: var(--m-primary); color: #fff; box-shadow: 0 10px 22px -6px rgba(0, 41, 255, .45); }
 @keyframes bob { 50% { translate: 0 -4px; } }
-/* anchored to the title's edges and kept >= 80px clear of the words: two low tiles out to the side, one high tile
-   over each end of the line (qoder's composition, spread wider for our longer headlines) */
-.t1 { right: calc(100% + 172px); transform: translateY(14px) rotate(-10deg); --d: -1s; }
-.t2 { right: calc(100% + 80px); width: 44px; height: 44px; margin-top: -22px; border-radius: 11px; transform: translateY(-4px) rotate(-6deg); --d: -3s; }
-.t3 { right: calc(100% + 6px); width: 36px; height: 36px; margin-top: -18px; transform: translateY(-76px) rotate(14deg); --d: -2s; }
-.t4 { left: calc(100% + 6px); width: 30px; height: 30px; margin-top: -15px; border-radius: 8px; transform: translateY(-70px) rotate(8deg); --d: -4s; }
-.t4 svg { width: 15px; height: 15px; }
-.t5 { left: calc(100% + 80px); width: 44px; height: 44px; margin-top: -22px; border-radius: 11px; transform: translateY(2px) rotate(12deg); --d: -5s; }
-.t6 { left: calc(100% + 172px); width: 42px; height: 42px; margin-top: -21px; border-radius: 11px; transform: translateY(-40px) rotate(18deg); --d: -.5s; }
-@media (max-width: 1199px) and (min-width: 768px) { .t1, .t6 { display: none; } }
-.slash { height: 20px; width: auto; color: var(--m-primary); }
+/* x is from the headline's nearer edge (left tiles: the left edge; right tiles: the right edge), y from its middle */
+.l1 { left: 0; --sz: 60px; --x: -74px; --y: 10px; --r: -9deg; --d: -1s; }
+.l2 { left: 0; --sz: 40px; --x: -150px; --y: -52px; --r: 11deg; --d: -3s; }
+.l3 { left: 0; --sz: 44px; --x: 36px; --y: -84px; --r: 9deg; --d: -2s; }
+.r1 { left: 100%; --sz: 60px; --x: 74px; --y: 4px; --r: 10deg; --d: -4s; }
+.r2 { left: 100%; --sz: 40px; --x: 150px; --y: -46px; --r: -9deg; --d: -5s; }
+.r3 { left: 100%; --sz: 44px; --x: -40px; --y: -86px; --r: 14deg; --d: -.5s; }
+.slash { height: 22px; width: auto; color: #fff; }
 @media (prefers-reduced-motion: reduce) { .tile { animation: none; } }
 
 @media (max-width: 767px) {
-  .inner { padding: 96px var(--m-page-x) 40px; }
+  .inner { padding: 104px var(--m-page-x) 40px; }
   .title { font-size: 32px; line-height: 40px; }
-  .sub { font-size: 15px; line-height: 22px; }
-  .tiles { inset: -64px 0 auto; height: 60px; }
+  .sub { font-size: 15px; line-height: 22px; max-width: none; text-wrap: pretty; }
+  .tiles { inset: -70px 0 auto; height: 60px; }
   .tile { top: 30px; }
-  .t1 { left: -6px; right: auto; transform: translateY(8px) rotate(-10deg) scale(.8); }
-  .t2 { left: 56px; right: auto; transform: translateY(14px) rotate(-6deg) scale(.8); }
-  .t3 { left: 88px; right: auto; transform: translateY(-20px) rotate(14deg) scale(.85); }
-  .t4 { left: auto; right: 104px; transform: translateY(-14px) rotate(8deg) scale(.85); }
-  .t5 { left: auto; right: 56px; transform: translateY(20px) rotate(12deg) scale(.8); }
-  .t6 { left: auto; right: -4px; transform: translateY(-2px) rotate(18deg) scale(.8); }
+  .l1 { left: 16%; --sz: 48px; --x: 0px; --y: 10px; }
+  .l2 { left: 2%; --sz: 34px; --x: 0px; --y: -8px; }
+  .l3 { left: 32%; --sz: 36px; --x: 0px; --y: -24px; }
+  .r1 { left: 84%; --sz: 48px; --x: 0px; --y: 6px; }
+  .r2 { left: 98%; --sz: 34px; --x: 0px; --y: -12px; }
+  .r3 { left: 68%; --sz: 36px; --x: 0px; --y: -26px; }
 }

@@ -1,19 +1,25 @@
+import type { ReactNode } from 'react'
+import { catalog } from '@/data/catalog'
 import { Slash } from '@/components/ui/HeadMark'
 import { useT } from '@/i18n/useLocale'
 import { CategoryGlyph } from './icons'
 import { SearchBox } from './SearchBox'
 import s from './Hero.module.css'
 
-/* The six tilted tiles around the title: qoder's composition (offsets measured at 1440), our category glyphs, and one
-   solid blue tile carrying the HEAD slash where qoder puts its one colourful icon. */
-const TILES = [
-  { k: 'frontend', cls: s.t1 },
-  { k: 'sparkle', cls: s.t2 },
-  { k: 'slash', cls: s.t3 },
-  { k: 'terminal', cls: s.t4 },
-  { k: 'design', cls: s.t5 },
-  { k: 'workflow', cls: s.t6 },
-] as const
+/* The orbit around the headline: two real skill marks up close (big, crisp), two glyph tiles further back (small,
+   softened), and two solid blue marks riding over the ends of the line. Left and right carry the same weight. */
+const icons = catalog.skills.filter((k) => k.icon).map((k) => k.icon!)
+const skillTile = (i: number, fallback: string): ReactNode =>
+  icons[i] ? <img src={icons[i]} alt="" /> : <CategoryGlyph id={fallback} size={26} />
+
+const TILES: { cls: string; tone?: 'blue' | 'far'; body: () => ReactNode }[] = [
+  { cls: s.l1, body: () => skillTile(0, 'design') },
+  { cls: s.l2, tone: 'far', body: () => <CategoryGlyph id="sparkle" size={18} /> },
+  { cls: s.l3, tone: 'blue', body: () => <Slash className={s.slash} /> },
+  { cls: s.r1, body: () => skillTile(1, 'workflow') },
+  { cls: s.r2, tone: 'far', body: () => <CategoryGlyph id="terminal" size={18} /> },
+  { cls: s.r3, tone: 'blue', body: () => <CategoryGlyph id="frontend" size={20} strokeWidth={2.2} /> },
+]
 
 export function Hero({ q, onSearch }: { q: string; onSearch: (q: string) => void }) {
   const t = useT()
@@ -22,10 +28,8 @@ export function Hero({ q, onSearch }: { q: string; onSearch: (q: string) => void
       <div className={s.inner}>
         <div className={s.titleWrap}>
           <div className={s.tiles} aria-hidden="true">
-            {TILES.map((tile) => (
-              <span key={tile.k} className={`${s.tile} ${tile.cls}`}>
-                {tile.k === 'slash' ? <Slash className={s.slash} /> : <CategoryGlyph id={tile.k} size={18} />}
-              </span>
+            {TILES.map((tile, i) => (
+              <span key={i} className={`${s.tile} ${tile.cls}`} data-tone={tile.tone}>{tile.body()}</span>
             ))}
           </div>
           <h1 className={s.title}>{t('hero.title')}</h1>
