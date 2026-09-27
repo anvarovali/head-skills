@@ -46,7 +46,7 @@
 }
 .facetTitle:hover { color: var(--m-primary); }
 .facetChevron { transition: transform var(--m-t); }
-.facetTitle[aria-expanded='false'] .facetChevron { transform: rotate(-90deg); }
+.facetTitle[aria-expanded='true'] .facetChevron { transform: rotate(180deg); }
 .facetTitle[aria-expanded='false'] { margin-bottom: 0; }
 .facetList { display: flex; flex-direction: column; gap: 2px; }
 .check {

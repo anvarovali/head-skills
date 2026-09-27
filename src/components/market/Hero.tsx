@@ -6,19 +6,19 @@ import { CategoryGlyph } from './icons'
 import { SearchBox } from './SearchBox'
 import s from './Hero.module.css'
 
-/* The orbit around the headline: two real skill marks up close (big, crisp), two glyph tiles further back (small,
-   softened), and two solid blue marks riding over the ends of the line. Left and right carry the same weight. */
+/* Small, scattered, mostly neutral (qoder's tiles are 36-52px at 1440): two real skill marks, three white glyph tiles
+   and one blue accent, each at its own size, angle and height, all at least ~60px off the headline. */
 const icons = catalog.skills.filter((k) => k.icon).map((k) => k.icon!)
 const skillTile = (i: number, fallback: string): ReactNode =>
-  icons[i] ? <img src={icons[i]} alt="" /> : <CategoryGlyph id={fallback} size={26} />
+  icons[i] ? <img src={icons[i]} alt="" /> : <CategoryGlyph id={fallback} size={22} />
 
 const TILES: { cls: string; tone?: 'blue' | 'far'; body: () => ReactNode }[] = [
-  { cls: s.l1, body: () => skillTile(0, 'design') },
-  { cls: s.l2, tone: 'far', body: () => <CategoryGlyph id="sparkle" size={18} /> },
-  { cls: s.l3, tone: 'blue', body: () => <Slash className={s.slash} /> },
-  { cls: s.r1, body: () => skillTile(1, 'workflow') },
-  { cls: s.r2, tone: 'far', body: () => <CategoryGlyph id="terminal" size={18} /> },
-  { cls: s.r3, tone: 'blue', body: () => <CategoryGlyph id="frontend" size={20} strokeWidth={2.2} /> },
+  { cls: s.a, body: () => skillTile(0, 'design') },
+  { cls: s.b, tone: 'far', body: () => <CategoryGlyph id="sparkle" size={17} /> },
+  { cls: s.c, tone: 'blue', body: () => <Slash className={s.slash} /> },
+  { cls: s.d, body: () => skillTile(1, 'workflow') },
+  { cls: s.e, tone: 'far', body: () => <CategoryGlyph id="terminal" size={16} /> },
+  { cls: s.f, body: () => <CategoryGlyph id="frontend" size={15} /> },
 ]
 
 export function Hero({ q, onSearch }: { q: string; onSearch: (q: string) => void }) {

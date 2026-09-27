@@ -7,42 +7,45 @@
 .titleWrap { position: relative; max-width: 760px; }
 @media (min-width: 768px) { .titleWrap { width: max-content; max-width: min(760px, 100% - 440px); } }
 .title { position: relative; font-size: 32px; line-height: 42px; font-weight: 500; letter-spacing: -.01em; text-wrap: balance; }
-.sub { margin-top: 10px; max-width: 640px; font-size: 16px; line-height: 24px; color: var(--m-text-3); text-wrap: balance; }
+.sub { margin-top: 10px; max-width: 640px; font-size: 16px; line-height: 24px; color: var(--m-text-2); text-wrap: balance; }
 
 .tiles { position: absolute; inset: 0; pointer-events: none; }
 .tile {
   position: absolute; top: 50%; display: grid; place-items: center;
   width: var(--sz); height: var(--sz); margin: calc(var(--sz) / -2) 0 0 calc(var(--sz) / -2);
-  border-radius: calc(var(--sz) * .26); background: #fff; color: var(--m-text);
-  box-shadow: 0 1px 2px rgba(16, 17, 19, .06), 0 10px 24px -6px rgba(16, 17, 19, .14);
+  border-radius: calc(var(--sz) * .24); background: #fff; color: var(--m-text);
+  box-shadow: 0 1px 2px rgba(16, 17, 19, .05), 0 6px 14px -4px rgba(16, 17, 19, .10);
   transform: translate(var(--x), var(--y)) rotate(var(--r));
   animation: bob 7s ease-in-out infinite; animation-delay: var(--d, 0s);
 }
 .tile img { width: 62%; height: 62%; }
-/* further back: smaller, softer shadow, a touch of blur */
-.tile[data-tone='far'] { filter: blur(.5px); opacity: .88; box-shadow: 0 1px 2px rgba(16, 17, 19, .05), 0 4px 10px rgba(16, 17, 19, .06); }
-.tile[data-tone='blue'] { background: var(--m-primary); color: #fff; box-shadow: 0 10px 22px -6px rgba(0, 41, 255, .45); }
-@keyframes bob { 50% { translate: 0 -4px; } }
-/* x is from the headline's nearer edge (left tiles: the left edge; right tiles: the right edge), y from its middle */
-.l1 { left: 0; --sz: 60px; --x: -74px; --y: 10px; --r: -9deg; --d: -1s; }
-.l2 { left: 0; --sz: 40px; --x: -150px; --y: -52px; --r: 11deg; --d: -3s; }
-.l3 { left: 0; --sz: 44px; --x: 36px; --y: -84px; --r: 9deg; --d: -2s; }
-.r1 { left: 100%; --sz: 60px; --x: 74px; --y: 4px; --r: 10deg; --d: -4s; }
-.r2 { left: 100%; --sz: 40px; --x: 150px; --y: -46px; --r: -9deg; --d: -5s; }
-.r3 { left: 100%; --sz: 44px; --x: -40px; --y: -86px; --r: 14deg; --d: -.5s; }
-.slash { height: 22px; width: auto; color: #fff; }
+.tile[data-tone='far'] { filter: blur(.4px); opacity: .9; box-shadow: 0 1px 2px rgba(16, 17, 19, .04), 0 4px 10px -4px rgba(16, 17, 19, .08); }
+.tile[data-tone='blue'] { background: var(--m-primary); color: #fff; }
+@keyframes bob { 50% { translate: 0 -3px; } }
+/* x from the headline's nearer edge (a-c: left edge, d-f: right edge), y from its middle; deliberately not mirrored */
+.a { left: 0; --sz: 52px; --x: -102px; --y: 14px; --r: -8deg; --d: -1s; }
+.b { left: 0; --sz: 38px; --x: -176px; --y: -44px; --r: 12deg; --d: -3s; }
+.c { left: 0; --sz: 40px; --x: 18px; --y: -96px; --r: 10deg; --d: -2s; }
+.d { left: 100%; --sz: 46px; --x: 88px; --y: -40px; --r: 9deg; --d: -4s; }
+.e { left: 100%; --sz: 36px; --x: 160px; --y: 26px; --r: -7deg; --d: -5s; }
+.f { left: 100%; --sz: 32px; --x: -72px; --y: -90px; --r: 16deg; --d: -.5s; }
+.slash { height: 20px; width: auto; color: #fff; }
 @media (prefers-reduced-motion: reduce) { .tile { animation: none; } }
+@media (max-width: 1199px) and (min-width: 768px) { .b, .e { display: none; } }
 
 @media (max-width: 767px) {
-  .inner { padding: 104px var(--m-page-x) 40px; }
+  .inner { padding: 100px var(--m-page-x) 40px; }
   .title { font-size: 32px; line-height: 40px; }
   .sub { font-size: 15px; line-height: 22px; max-width: none; text-wrap: pretty; }
-  .tiles { inset: -70px 0 auto; height: 60px; }
-  .tile { top: 30px; }
-  .l1 { left: 16%; --sz: 48px; --x: 0px; --y: 10px; }
-  .l2 { left: 2%; --sz: 34px; --x: 0px; --y: -8px; }
-  .l3 { left: 32%; --sz: 36px; --x: 0px; --y: -24px; }
-  .r1 { left: 84%; --sz: 48px; --x: 0px; --y: 6px; }
-  .r2 { left: 98%; --sz: 34px; --x: 0px; --y: -12px; }
-  .r3 { left: 68%; --sz: 36px; --x: 0px; --y: -26px; }
+  .tiles { inset: -64px 0 auto; height: 56px; }
+  .tile { top: 28px; box-shadow: 0 1px 2px rgba(16, 17, 19, .05), 0 4px 10px -4px rgba(16, 17, 19, .09); }
+  .a { left: 16%; --sz: 34px; --x: 0px; --y: 12px; }
+  .b { left: 4%; --sz: 26px; --x: 0px; --y: -10px; }
+  .c { left: 36%; --sz: 28px; --x: 0px; --y: -18px; }
+  .d { left: 80%; --sz: 32px; --x: 0px; --y: -4px; }
+  .e { left: 95%; --sz: 24px; --x: 0px; --y: 16px; }
+  .f { left: 62%; --sz: 24px; --x: 0px; --y: -22px; }
+  .slash { height: 14px; }
+  .tile svg { width: 13px; height: 13px; }
+  .tile[data-tone='blue'] svg { width: auto; height: 14px; }
 }
