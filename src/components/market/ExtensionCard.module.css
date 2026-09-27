@@ -11,10 +11,11 @@
 .link:focus-visible { outline: none; }
 .copy {
   position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: 4px; margin: -4px -6px; padding: 4px 6px;
-  border-radius: var(--m-r-sm); font-size: 12px; line-height: 16px; font-weight: 400; color: inherit; white-space: nowrap;
+  border-radius: var(--m-r-sm); font-size: 12px; line-height: 16px; font-weight: 400; color: var(--m-text-2); white-space: nowrap;
   transition: color var(--m-t);
 }
 .copy:hover, .copy:focus-visible { color: var(--m-primary); }
+.copy:hover > span:not(.sr-only) { text-decoration: underline; text-underline-offset: 2px; }
 .copy:focus-visible { outline: 2px solid var(--m-primary); outline-offset: 0; }
 .copy[data-copied] { color: var(--m-primary); }
 .head { display: flex; align-items: center; gap: 12px; min-width: 0; min-height: 30px; }

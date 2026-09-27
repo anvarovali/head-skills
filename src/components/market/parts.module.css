@@ -11,7 +11,7 @@
 .sectionTitle { font-size: 16px; line-height: 24px; font-weight: 500; }
 @media (max-width: 767px) { .sectionTitle { font-size: 18px; line-height: 26px; } }
 .count {
-  font-size: 13px; line-height: 20px; padding: 2px 8px; border-radius: var(--m-r-full); background: var(--m-bg-container);
+  font-size: 13px; line-height: 16px; padding: 2px 8px; border-radius: var(--m-r-full); background: var(--m-bg-container);
   color: var(--m-text-3); font-variant-numeric: tabular-nums;
 }
 .spacer { flex: 1; order: 1; }
@@ -106,7 +106,7 @@
 .facetList[hidden] { display: none; }
 
 .sideCta {
-  margin-top: 28px; padding: 16px; border-radius: var(--m-r-xl); background: var(--m-bg-layout);
+  margin-top: 24px; padding: 14px 16px 16px; border-radius: var(--m-r-xl); background: var(--m-bg-layout);
   display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
 }
 .sideCtaTitle { font-size: 14px; line-height: 20px; font-weight: 500; }

@@ -20,7 +20,7 @@
 .block { padding-top: 4px; }
 
 .split { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 52px; padding-top: 4px; }
-.side { position: sticky; top: calc(var(--m-header-h) + 80px); align-self: start; padding-top: 2px; }
+.side { align-self: start; padding-top: 2px; }
 .main { min-width: 0; }
 .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: -4px 0 20px; }
 .listHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }

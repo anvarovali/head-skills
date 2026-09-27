@@ -24,15 +24,15 @@
 @keyframes bob { 50% { translate: 0 -3px; } }
 @media (prefers-reduced-motion: reduce) { .tile { animation: none; } }
 
-/* Desktop. x is measured from the headline's nearer end to the tile's centre; every tile keeps >= 70px of clear air
-   between its own edge and the words, the same on both sides (inner tiles 70 + half their size). Heights stagger. */
+/* Desktop. x is measured from the headline's nearer end to the tile's centre. Every tile's nearest (rotated) corner keeps
+   >= 90px of air to the words on both sides; the right side sits ~20px off the left's heights so it isn't a mirror. */
 @media (min-width: 768px) {
-  .braces { left: 0;    --sz: 34px; --x: -156px; --y: 26px;  --r: -8deg; --d: -1s; }
-  .skillA { left: 0;    --sz: 52px; --x: -96px;  --y: -8px;  --r: 6deg;  --d: -3s; }
-  .head   { left: 0;    --sz: 40px; --x: -112px; --y: -72px; --r: 8deg;  --d: -2s; }
-  .skillB { left: 100%; --sz: 46px; --x: 93px;   --y: 14px;  --r: 8deg;  --d: -4s; }
-  .prompt { left: 100%; --sz: 40px; --x: 170px;  --y: -2px;  --r: 10deg; --d: -.5s; }
-  .stack  { left: 100%; --sz: 34px; --x: 118px;  --y: -52px; --r: -9deg; --d: -2.5s; }
+  .braces { left: 0;    --sz: 34px; --x: -206px; --y: 28px;  --r: -8deg; --d: -1s; }
+  .skillA { left: 0;    --sz: 52px; --x: -122px; --y: -6px;  --r: 6deg;  --d: -3s; }
+  .head   { left: 0;    --sz: 40px; --x: -150px; --y: -74px; --r: 8deg;  --d: -2s; }
+  .skillB { left: 100%; --sz: 46px; --x: 118px;  --y: 14px;  --r: 8deg;  --d: -4s; }
+  .prompt { left: 100%; --sz: 40px; --x: 204px;  --y: -4px;  --r: 10deg; --d: -.5s; }
+  .stack  { left: 100%; --sz: 34px; --x: 150px;  --y: -56px; --r: -9deg; --d: -2.5s; }
 }
 
 @media (max-width: 767px) {
