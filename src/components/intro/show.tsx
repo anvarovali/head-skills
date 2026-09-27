@@ -175,6 +175,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     const light = one('[data-light]'), ground = one('[data-ground]'), blue = one('[data-blue]'), controls = one('[data-controls]')
     const sweep = one('[data-sweep]'), sweepIn = one('[data-sweep-in]')
     const glyphs = ['H', 'E', 'slash', 'A', 'D'].map((g) => one(`[data-base] [data-glyph="${g}"]`))
+    const sheen = one('[data-sheen]')
     const cmdBox = one('[data-cmd]'), cmdCap = one('[data-cmd-cap]'), cmdWordsEl = q('[data-cmd-word]'), caret = one('[data-caret]')
     const backs = q('[data-fback]'), fronts = q('[data-ffront]'), wall = one('[data-wall]')
     const cards = q('[data-wcard]') as HTMLElement[], softs = q('[data-soft]')
@@ -182,6 +183,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     const otherBtns = q('[data-option]').filter((b) => b !== chosenBtn)
 
     // measure before any tween renders a from-state
+    if (cmdBox) { const fs = parseFloat(getComputedStyle(cmdBox).fontSize); cmdBox.style.fontSize = `${(fs * vw * 0.65) / cmdBox.offsetWidth}px` }
     const lineW = line?.offsetWidth ?? vw * 0.9
     const skillsW = skillsWord?.offsetWidth ?? 0
     const unit = (one('[data-base] svg')?.getBoundingClientRect().height ?? 45.8) / 45.7984 // px per SVG unit
@@ -221,24 +223,26 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     /* 1 — the greeting lands on the riser's downbeat and holds two beats */
     const hi = one('[data-hi]'), words = q('[data-rest] > span')
     tl.fromTo(hi!, { opacity: 0, y: '0.14em', scale: 0.965 }, { opacity: 1, y: 0, scale: 1, ...spring(1, 0.55) }, DB1 - 0.06)
-    tl.fromTo(words, { opacity: 0, y: 22 }, { opacity: 1, y: 0, ...spring(1, 0.5), stagger: EIGHTH / 2 }, DB1 + BEAT)
-    tl.to(greet!, { opacity: 0, scale: 1.1, duration: 0.36, ease: 'power2.in' }, DB2 - 0.36)
+    tl.fromTo(words, { opacity: 0, y: 22 }, { opacity: 1, y: 0, ...spring(1, 0.5), stagger: EIGHTH / 2 }, DB1 + EIGHTH)
+    const SNAP = DB2 - BEAT // HEAD.uz arrives one beat before the riser's second downbeat
+    tl.to(greet!, { opacity: 0, scale: 1.1, duration: 0.3, ease: 'power2.in' }, SNAP - 0.3)
 
     /* 2 — HEAD.uz snaps in on the next downbeat, spread wide, and the riser pulls it together */
     const spread = [-26, -13, 0, 0, 13] // H, E, slash, A, D; the slash is the A's left leg, so those two travel together
     tl.set(skillsWord!, { opacity: 0 }, O)
-    tl.fromTo(line!, { scale: riserA, x: (-riserA * skillsW) / 2 }, { scale: riserB, x: (-riserB * skillsW) / 2, duration: T.drop - DB2, ease: 'sine.in' }, DB2 - 0.04)
+    tl.fromTo(line!, { scale: riserA, x: (-riserA * skillsW) / 2 }, { scale: riserB, x: (-riserB * skillsW) / 2, duration: T.drop - SNAP, ease: 'sine.in' }, SNAP - 0.04)
     glyphs.forEach((g, i) => {
       if (!g) return
-      const at = DB2 - 0.04 + i * 0.03
+      const at = SNAP - 0.04 + i * 0.03
       if (i === 2) tl.fromTo(g, { opacity: 0, x: 9, y: -26 }, { opacity: 1, x: 0, y: 0, ...spring(0.85, 0.34) }, at)
       else tl.fromTo(g, { opacity: 0, x: spread[i] * 1.6, yPercent: 18 }, { opacity: 1, x: spread[i], yPercent: 0, ...spring(0.85, 0.34) }, at)
     })
-    tl.fromTo(uz!, { opacity: 0, x: 26 * unit + 60 }, { opacity: 1, x: 26 * unit, ...spring(0.85, 0.34) }, DB2 + 0.11)
-    const pull = T.drop - (DB2 + 0.45)
-    glyphs.forEach((g, i) => { if (g && i !== 2) tl.to(g, { x: 0, duration: pull, ease: 'power3.in' }, DB2 + 0.45) })
-    tl.to(uz!, { x: 0, duration: pull, ease: 'power3.in' }, DB2 + 0.45)
-    tl.fromTo(light!, { opacity: 0, scale: 0.6 }, { opacity: 0.55, scale: 0.9, duration: T.drop - DB2, ease: 'sine.in' }, DB2)
+    tl.fromTo(uz!, { opacity: 0, x: 26 * unit + 60 }, { opacity: 1, x: 26 * unit, ...spring(0.85, 0.34) }, SNAP + 0.11)
+    // the SAME mark tightens continuously through the riser and is already whole before "skills." joins it
+    const pullFrom = SNAP + 0.4, pull = T.drop - 0.25 - pullFrom
+    glyphs.forEach((g, i) => { if (g && i !== 2) tl.to(g, { x: 0, duration: pull, ease: 'sine.inOut' }, pullFrom) })
+    tl.to(uz!, { x: 0, duration: pull, ease: 'sine.inOut' }, pullFrom)
+    tl.fromTo(light!, { opacity: 0, scale: 0.6 }, { opacity: 0.55, scale: 0.9, duration: T.drop - SNAP, ease: 'sine.in' }, SNAP)
 
     /* 3 — THE DROP: the line punches from ~35 % to ~80 % of the frame with a physical overshoot, "skills." lands, the
           room light flashes and a light sweep crosses the letters. One colour for the word; only the slash is blue. */
@@ -252,16 +256,16 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     tl.set(sweep!, { opacity: 1 }, T.drop)
     tl.fromTo(sweep!, { x: -sw * 1.4 }, { x: lineW + sw * 0.4, duration: 0.95, ease: 'power2.inOut' }, T.drop + 0.08)
     tl.fromTo(sweepIn!, { x: sw * 1.4 }, { x: -(lineW + sw * 0.4), duration: 0.95, ease: 'power2.inOut' }, T.drop + 0.08)
-    tl.fromTo(tag!, { opacity: 0, y: 18 }, { opacity: 1, y: 0, ...spring(1, 0.55) }, KICKS[2])
+    tl.fromTo(tag!, { opacity: 0, y: 14 }, { opacity: 1, y: 0, ...spring(1, 0.45) }, KICKS[1])
 
     /* 4 — bar 2: the title lifts to the top; one HEAD folder per real item flies in from depth, one per kick */
     const n = lib.fan.length
     const fw = Math.min(190, Math.max(vw < 768 ? 84 : 140, vw * 0.12))
     rootRef.current?.style.setProperty('--fw', `${fw}px`)
-    const sc = Math.min(1.16, (vw * 0.86) / (n * CW + (n - 1) * 48)) // the fan's card scale
+    const sc = Math.min(1, (vw * 0.86) / (n * CW + (n - 1) * 48)) // never above 1: a card is only ever scaled DOWN from its rendered size
     const step = CW * sc + 48
-    const folderAt = (i: number) => ({ x: (i - (n - 1) / 2) * step, y: vh * 0.29 })
-    tl.to(tag!, { opacity: 0, duration: 0.22, ease: 'power1.in' }, KICKS[2] + 0.84)
+    const folderAt = (i: number) => ({ x: (i - (n - 1) / 2) * step, y: vh * 0.2 })
+    tl.to(tag!, { opacity: 0, duration: 0.2, ease: 'power1.in', overwrite: 'auto' }, T.bar2 - 0.56) // gone before the title shrinks
     tl.to(brand!, { y: -vh * 0.395, scale: 230 / (lineW * fitLine), ...spring(1, 0.62) }, T.bar2 - 0.34)
     tl.to(light!, { opacity: 0.2, y: vh * 0.18, duration: 1.2, ease: 'power2.inOut' }, T.bar2 - 0.3)
     for (let i = 0; i < n; i++) {
@@ -275,14 +279,17 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
           centred fan; a few soft card backs far behind give depth, nothing overlaps */
     const fanAt = (j: number) => {
       const c = j - (n - 1) / 2
-      return { x: c * step, y: -vh * 0.07 + Math.abs(c) * 16, r: c * 3.5 }
+      return { x: c * step, y: -vh * 0.12 + Math.abs(c) * 16, r: c * 3.5 }
     }
     lib.fan.forEach((_, j) => {
       const card = cards[j], f = folderAt(j), slot = fanAt(j), at = KICKS[8 + j]
       if (!card) return
       tl.set(card, { x: f.x, y: f.y + fw * 0.1, scale: 0.42, rotation: 0, opacity: 1 }, at - 0.3)
       tl.to(card, { y: f.y - fw * 0.34, duration: 0.26, ease: 'power2.out' }, at - 0.3)
-      tl.to(card, { x: slot.x, y: slot.y, scale: sc, rotation: slot.r, ...spring(0.82, 0.5) }, at - 0.04)
+      // the arc: X settles critically, Y overshoots a touch (the kick threw it), the tilt swings in behind
+      tl.to(card, { x: slot.x, scale: sc, ...spring(1, 0.5) }, at - 0.04)
+      tl.to(card, { y: slot.y, ...spring(0.62, 0.46) }, at - 0.04)
+      tl.fromTo(card, { rotation: -slot.r * 1.6 }, { rotation: slot.r, ...spring(0.7, 0.5) }, at - 0.04)
     })
     const softAt = [[-1.55, -0.62], [1.5, -0.7], [-1.35, 0.55], [1.6, 0.5]]
     softs.forEach((el, i) => {
@@ -296,8 +303,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
 
     /* 6 — bar 4: the command is the hero. The cards step back into the dark, the line types itself word by word on the 8ths */
     // (opacity on the preserve-3d wall would flatten its depth, so the cards dim one by one instead)
-    tl.to(wall!, { scale: 0.74, y: vh * 0.04, ...spring(1, 0.7) }, T.bar4 - 0.06)
-    tl.to(cards, { opacity: 0.1, duration: 0.45, ease: 'power2.out' }, T.bar4 - 0.06)
+    tl.to(cards, { z: -1400, opacity: 0, duration: 0.5, ease: 'power2.in' }, T.bar4 - 0.3) // cleared completely
     tl.to(softs, { opacity: 0, duration: 0.45, ease: 'power2.out', overwrite: 'auto' }, T.bar4 - 0.06)
     tl.to(brand!, { opacity: 0.5, duration: 0.4 }, T.bar4)
     tl.fromTo(cmdCap!, { opacity: 0, y: 14 }, { opacity: 1, y: 0, ...spring(1, 0.5) }, T.bar4 - 0.12)
@@ -305,20 +311,23 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     cmdWordsEl.forEach((w, i) => tl.fromTo(w, { opacity: 0, y: '0.25em' }, { opacity: 1, y: 0, ...spring(0.85, 0.36) }, T.bar4 + (i + 1) * EIGHTH - 0.03))
     // the caret appears once the line is complete, then blinks on the 8ths
     for (let k = 0; k < 5; k++) tl.set(caret!, { opacity: k % 2 ? 0 : 1 }, KICKS[14] + 0.1 + k * EIGHTH)
-    tl.fromTo(cmdBox!, { scale: 1 }, { scale: 1.04, duration: T.bar5 - T.bar4, ease: 'sine.inOut' }, T.bar4)
+    tl.fromTo(cmdBox!, { scale: 0.985 }, { scale: 1, duration: T.bar5 - T.bar4, ease: 'sine.out' }, T.bar4) // never past 1: crisp
 
     /* 7 — bar 5, finale: a short HEAD-blue iris, then the page, already clean, while only the real cards are in flight;
           they settle straight into their live seats and hand over on the last kick */
     tl.to([cmdBox, cmdCap, brand], { opacity: 0, y: '-=16', duration: 0.34, ease: 'power2.in' }, T.bar5 - 0.1)
-    tl.to(wall!, { scale: 1, y: 0, ...spring(1, 0.5) }, T.bar5)
-    tl.to(cards, { opacity: 1, duration: 0.25, ease: 'power1.out' }, T.bar5)
-    tl.fromTo(blue!, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.42, ease: 'power2.out' }, T.bar5)
-    tl.to(light!, { opacity: 0, duration: 0.4 }, T.bar5)
-    tl.to([ground, blue], { opacity: 0, duration: 0.42, ease: 'power1.inOut' }, T.bar5 + 0.4)
-    tl.to(controls!, { opacity: 0, duration: 0.3 }, T.bar5 + 0.4)
+    // the downbeat: the blue opens, the camera pushes in, the three cards come up out of depth, a band of light crosses them
+    tl.fromTo(blue!, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.36, ease: 'power2.out' }, T.bar5 - 0.06)
+    tl.to(light!, { opacity: 0, duration: 0.3 }, T.bar5)
+    tl.fromTo(wall!, { scale: 0.9 }, { scale: 1, immediateRender: false, ...spring(1, 0.6) }, T.bar5)
+    // immediateRender: false: a fromTo would otherwise park the cards at z -1400 from the start, through the whole deal
+    cards.forEach((c, j) => tl.fromTo(c, { z: -1400, opacity: 0 }, { z: 0, opacity: 1, immediateRender: false, ...spring(0.86, 0.5) }, T.bar5 + j * 0.05))
+    tl.fromTo(sheen!, { xPercent: -120, opacity: 1 }, { xPercent: 120, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, T.bar5 + 0.12)
+    tl.to([ground, blue], { opacity: 0, duration: 0.42, ease: 'power1.inOut' }, KICKS[17] - 0.02)
+    tl.to(controls!, { opacity: 0, duration: 0.3 }, KICKS[17])
     tl.add(() => {
       const sub = gsap.timeline()
-      const land = T.lastKick - (T.bar5 + 0.2)
+      const land = T.lastKick - (KICKS[17] - 0.04)
       // targets first; the card travelling furthest down leaves first, so each clears the row before the next moves
       const flights = lib.fan.map((it, j) => {
         const real = document.querySelector<HTMLElement>(`[data-grid] [data-card-id="${CSS.escape(it.id)}"]`)
@@ -338,14 +347,14 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
         const x = r.left + r.width / 2 - vw / 2, y = r.top + r.height / 2 - vh / 2
         sub.set(f.c, { zIndex: 10 - order.indexOf(f) }, 0)
         // independent X and Y springs: Y answers faster, so a card drops out of the row before it slides across
-        const at = 0.04 + order.indexOf(f) * 0.1
-        sub.to(f.c, { y, scaleX: r.width / CW, scaleY: r.height / CH, rotation: 0, ...spring(1, 0.4) }, at)
-        sub.to(f.c, { x, ...spring(1, 0.6) }, at + 0.1)
+        const at = order.indexOf(f) * 0.08
+        sub.to(f.c, { y, scaleX: r.width / CW, scaleY: r.height / CH, rotation: 0, ...spring(1, 0.36) }, at)
+        sub.to(f.c, { x, ...spring(1, 0.5) }, at + 0.08)
         sub.add(() => { real.style.transition = 'opacity .2s ease-out'; real.style.opacity = '1' }, land - 0.12)
         sub.to(f.c, { opacity: 0, duration: 0.16, ease: 'power1.in' }, land - 0.04)
       })
-      tl.add(sub, T.bar5 + 0.2)
-    }, T.bar5 + 0.2)
+      tl.add(sub, KICKS[17] - 0.04)
+    }, KICKS[17] - 0.04)
     tl.add(() => finishRef.current(false), T.stop + 0.1)
 
     /* clock: the music is the master. Start with the audio; correct drift if the tab stalls. */
@@ -427,6 +436,8 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
             </div>
           ))}
         </div>
+
+        <div className={s.sheen} data-sheen aria-hidden="true" />
 
         {lib.fan.map((it) => (
           <div key={it.id} className={s.fFront} data-ffront aria-hidden="true">
