@@ -116,3 +116,15 @@ export function CtaBand() {
     </section>
   )
 }
+
+export function SideCta() {
+  const t = useT()
+  const href = useHref()
+  return (
+    <div className={s.sideCta}>
+      <p className={s.sideCtaTitle}>{t('side.ctaTitle')}</p>
+      <p className={s.sideCtaText}>{t('side.ctaText')}</p>
+      <Link to={href('submit')} className={s.sideCtaLink}>{t('nav.submit')}<ArrowRight size={13} /></Link>
+    </div>
+  )
+}

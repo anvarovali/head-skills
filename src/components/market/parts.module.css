@@ -104,3 +104,15 @@
   .ctaSub { font-size: 15px; }
 }
 .facetList[hidden] { display: none; }
+
+.sideCta {
+  margin-top: 28px; padding: 16px; border-radius: var(--m-r-xl); background: var(--m-bg-layout);
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+}
+.sideCtaTitle { font-size: 14px; line-height: 20px; font-weight: 500; }
+.sideCtaText { font-size: 13px; line-height: 18px; color: var(--m-text-3); }
+.sideCtaLink {
+  margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 500; color: var(--m-primary);
+  transition: color var(--m-t);
+}
+.sideCtaLink:hover { color: var(--m-primary-deep); }
