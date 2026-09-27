@@ -10,15 +10,16 @@
 .link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
 .link:focus-visible { outline: none; }
 .copy {
-  position: relative; z-index: 1; flex: none; display: grid; place-items: center; width: 24px; height: 24px; margin-right: -4px;
-  border-radius: var(--m-r-sm); color: var(--m-text-4); transition: color var(--m-t), background-color var(--m-t);
+  position: relative; z-index: 1; flex: none; display: grid; place-items: center; width: 28px; height: 28px;
+  border-radius: var(--m-r-md); border: 1px solid rgba(16, 17, 19, .08); background: var(--m-bg-base); color: var(--m-text-2);
+  transition: color var(--m-t), background-color var(--m-t), border-color var(--m-t);
 }
-.copy:hover { color: var(--m-primary); background: rgba(0, 41, 255, .07); }
+.copy:hover { color: var(--m-primary); background: var(--m-bg-hover); border-color: rgba(0, 41, 255, .25); }
 .copy[data-copied] { color: var(--m-primary); }
 .head { display: flex; align-items: center; gap: 12px; min-width: 0; height: 30px; }
 .icon {
   flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--m-r-md);
-  border: 1px solid var(--m-border); background: var(--m-bg-base); color: var(--m-text); overflow: hidden;
+  border: 1px solid rgba(16, 17, 19, .06); background: #f3f5fa; color: var(--m-text); overflow: hidden;
 }
 .icon img { width: 22px; height: 22px; object-fit: contain; }
 .name {
@@ -33,7 +34,7 @@
   font-size: 13px; line-height: 18px; color: var(--m-text-3); min-height: 36px;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 16px; color: var(--m-text-4); min-width: 0; }
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 16px; color: var(--m-text-3); min-width: 0; }
 .by { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .meta { flex: none; display: inline-flex; align-items: center; gap: 4px; font-variant-numeric: tabular-nums; }
 .meta svg { flex: none; }

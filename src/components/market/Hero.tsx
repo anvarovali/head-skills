@@ -1,24 +1,23 @@
 import type { ReactNode } from 'react'
 import { catalog } from '@/data/catalog'
-import { Slash } from '@/components/ui/HeadMark'
+import { HeadMark } from '@/components/ui/HeadMark'
 import { useT } from '@/i18n/useLocale'
 import { CategoryGlyph } from './icons'
 import { SearchBox } from './SearchBox'
 import s from './Hero.module.css'
 
-/* Small, scattered, mostly neutral (qoder's tiles are 36-52px at 1440): two real skill marks, three white glyph tiles
-   and one blue accent, each at its own size, angle and height, all at least ~60px off the headline. */
+/* Five white tiles around the headline: the two real skill marks, the HEAD wordmark, a ">_" prompt and a "{ }".
+   Weighty glyphs, one neutral shadow, staggered heights, an equal gap to the words on both sides. */
 const icons = catalog.skills.filter((k) => k.icon).map((k) => k.icon!)
 const skillTile = (i: number, fallback: string): ReactNode =>
-  icons[i] ? <img src={icons[i]} alt="" /> : <CategoryGlyph id={fallback} size={22} />
+  icons[i] ? <img src={icons[i]} alt="" /> : <CategoryGlyph id={fallback} />
 
-const TILES: { cls: string; tone?: 'blue' | 'far'; body: () => ReactNode }[] = [
-  { cls: s.a, body: () => skillTile(0, 'design') },
-  { cls: s.b, tone: 'far', body: () => <CategoryGlyph id="sparkle" size={17} /> },
-  { cls: s.c, tone: 'blue', body: () => <Slash className={s.slash} /> },
-  { cls: s.d, body: () => skillTile(1, 'workflow') },
-  { cls: s.e, tone: 'far', body: () => <CategoryGlyph id="terminal" size={16} /> },
-  { cls: s.f, body: () => <CategoryGlyph id="frontend" size={15} /> },
+const TILES: { cls: string; tone?: 'blue'; body: () => ReactNode }[] = [
+  { cls: s.braces, body: () => <CategoryGlyph id="braces" /> },
+  { cls: s.skillA, body: () => skillTile(0, 'design') },
+  { cls: s.head, tone: 'blue', body: () => <HeadMark className={s.mark} slashClassName={s.markSlash} /> },
+  { cls: s.skillB, body: () => skillTile(1, 'workflow') },
+  { cls: s.prompt, body: () => <CategoryGlyph id="prompt" /> },
 ]
 
 export function Hero({ q, onSearch }: { q: string; onSearch: (q: string) => void }) {

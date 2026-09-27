@@ -33,6 +33,8 @@ const GLYPHS: Record<string, (p: P) => ReactElement> = {
   content: (p) => <svg {...base({ strokeWidth: 1.9, ...p })}><path d="M5 6V4.5h14V6M12 4.5v15M9 19.5h6" /></svg>,
   productivity: (p) => <svg {...base({ strokeWidth: 1.9, ...p })}><path d="M13 2.5 4.5 13.5H12l-1 8 8.5-11H12l1-8Z" /></svg>,
   bundle: (p) => <svg {...base({ strokeWidth: 1.9, ...p })}><path d="m12 3 8.5 4.5L12 12 3.5 7.5 12 3Z" /><path d="m3.5 12 8.5 4.5 8.5-4.5" /><path d="m3.5 16.5 8.5 4.5 8.5-4.5" /></svg>,
+  braces: (p) => <svg {...base({ strokeWidth: 2.4, ...p })}><path d="M9 4.5H8a2 2 0 0 0-2 2v3a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 6 14.5v3a2 2 0 0 0 2 2h1" /><path d="M15 4.5h1a2 2 0 0 1 2 2v3a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0-2.5 2.5v3a2 2 0 0 1-2 2h-1" /></svg>,
+  prompt: (p) => <svg {...base({ strokeWidth: 2.4, ...p })}><path d="m4.5 7 5.5 5-5.5 5" /><path d="M12.5 18h7" /></svg>,
   sparkle: (p) => <svg {...base({ strokeWidth: 1.9, ...p })}><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7Z" /><path d="M19 16.5c.2 1.5.8 2.1 2.3 2.3-1.5.2-2.1.8-2.3 2.3-.2-1.5-.8-2.1-2.3-2.3 1.5-.2 2.1-.8 2.3-2.3Z" /></svg>,
   terminal: (p) => <svg {...base({ strokeWidth: 1.9, ...p })}><rect x="3" y="4.5" width="18" height="15" rx="2.5" /><path d="m7.5 9.5 3 2.5-3 2.5M12.5 15h4" /></svg>,
 }

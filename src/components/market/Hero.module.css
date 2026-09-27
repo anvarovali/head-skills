@@ -12,29 +12,27 @@
 .tiles { position: absolute; inset: 0; pointer-events: none; }
 .tile {
   position: absolute; top: 50%; display: grid; place-items: center;
-  width: var(--sz); height: var(--sz); margin: calc(var(--sz) / -2) 0 0 calc(var(--sz) / -2);
-  border-radius: calc(var(--sz) * .24); background: #fff; color: var(--m-text);
+  width: var(--w, var(--sz)); height: var(--sz); margin: calc(var(--sz) / -2) 0 0 calc(var(--w, var(--sz)) / -2);
+  border-radius: calc(var(--sz) * .26); background: #fff; color: var(--m-text);
   box-shadow: 0 1px 2px rgba(16, 17, 19, .05), 0 6px 14px -4px rgba(16, 17, 19, .10);
   transform: translate(var(--x), var(--y)) rotate(var(--r));
   animation: bob 7s ease-in-out infinite; animation-delay: var(--d, 0s);
 }
-.tile img { width: 62%; height: 62%; }
+.tile img { width: 64%; height: 64%; }
+.tile svg { width: 50%; height: 50%; }
+.tile .mark { width: 72%; height: auto; }
+.markSlash { color: var(--m-primary); }
 @keyframes bob { 50% { translate: 0 -3px; } }
-.slash { height: 20px; width: auto; color: var(--m-primary); }
 @media (prefers-reduced-motion: reduce) { .tile { animation: none; } }
 
-/* Desktop: qoder's own composition, measured on refs/qoder/list.desktop.viewport.png and converted to CSS px. Every tile
-   is anchored to the headline's nearer end (x) and its middle (y), so the inner tiles hug the actual ends of a longer
-   uz/ru line and the outer ones keep the ref's spacing. All white, one neutral shadow; the slash glyph is the blue. */
+/* Desktop. x is measured from the headline's nearer end to the tile's centre; every tile keeps >= 70px of clear air
+   between its own edge and the words, the same on both sides (inner tiles 70 + half their size). Heights stagger. */
 @media (min-width: 768px) {
-  .f { left: 0;    --sz: 37px; --x: -174px; --y: 1px;   --r: -8deg; --d: -1s; }   /* </> outer left      (470,285) 52 */
-  .a { left: 0;    --sz: 45px; --x: -67px;  --y: 3px;   --r: 6deg;  --d: -3s; }   /* skill mark          (618,287) 62 */
-  .c { left: 0;    --sz: 35px; --x: -24px;  --y: -53px; --r: 10deg;  --d: -2s; }  /* HEAD slash, high    (678,210) 48 */
-  .b { left: 100%; --sz: 32px; --x: 6px;    --y: -38px; --r: 8deg;  --d: -4s; }   /* sparkle, high       (1298,230) 44 */
-  .d { left: 100%; --sz: 45px; --x: 51px;   --y: 10px;  --r: 8deg;  --d: -5s; }   /* skill mark          (1360,297) 62 */
-  .e { left: 100%; --sz: 43px; --x: 141px;  --y: -23px; --r: 12deg; --d: -.5s; }  /* terminal outer right (1485,252) 60 */
-  .tile svg { width: 48%; height: 48%; }
-  .tile .slash { width: auto; height: 50%; }
+  .braces { left: 0;    --sz: 38px; --x: -196px; --y: 24px;  --r: -8deg; --d: -1s; }
+  .skillA { left: 0;    --sz: 46px; --x: -93px;  --y: -6px;  --r: 6deg;  --d: -3s; }
+  .head   { left: 0;    --sz: 36px; --w: 58px; --x: -150px; --y: -70px; --r: -6deg; --d: -2s; }
+  .skillB { left: 100%; --sz: 46px; --x: 93px;   --y: 8px;   --r: 8deg;  --d: -4s; }
+  .prompt { left: 100%; --sz: 40px; --x: 184px;  --y: -40px; --r: 12deg; --d: -.5s; }
 }
 
 @media (max-width: 767px) {
@@ -43,15 +41,11 @@
   .sub { font-size: 15px; line-height: 22px; max-width: none; text-wrap: pretty; }
   .tiles { inset: -64px 0 auto; height: 56px; }
   .tile { top: 28px; box-shadow: 0 1px 2px rgba(16, 17, 19, .05), 0 4px 10px -4px rgba(16, 17, 19, .09); }
-  .a { left: 16%; --sz: 34px; --x: 0px; --y: 12px; }
-  .b { left: 4%; --sz: 26px; --x: 0px; --y: -10px; }
-  .c { left: 36%; --sz: 28px; --x: 0px; --y: -18px; }
-  .d { left: 80%; --sz: 32px; --x: 0px; --y: -4px; }
-  .e { left: 95%; --sz: 24px; --x: 0px; --y: 16px; }
-  .f { left: 62%; --sz: 24px; --x: 0px; --y: -22px; }
-  .slash { height: 14px; color: #fff; }
+  .braces { left: 5%;  --sz: 28px; --x: 0px; --y: -6px; --r: -8deg; }
+  .skillA { left: 22%; --sz: 36px; --x: 0px; --y: 14px; --r: 6deg; }
+  .head   { left: 50%; --sz: 30px; --w: 50px; --x: 0px; --y: -16px; --r: -5deg; }
+  .skillB { left: 76%; --sz: 36px; --x: 0px; --y: 10px; --r: 8deg; }
+  .prompt { left: 94%; --sz: 28px; --x: 0px; --y: -10px; --r: 12deg; }
   .tile[data-tone='blue'] { background: var(--m-primary); color: #fff; }
-  .tile[data-tone='far'] { filter: blur(.4px); opacity: .9; }
-  .tile svg { width: 13px; height: 13px; }
-  .tile[data-tone='blue'] svg { width: auto; height: 14px; }
+  .tile[data-tone='blue'] .markSlash { color: #fff; }
 }
