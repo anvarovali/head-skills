@@ -88,7 +88,7 @@ export function ShareActions({ title }: { title: string }) {
       <button type="button" className={s.action} onClick={onShare} data-done={share.copied || undefined} aria-label={shareLabel} data-tip={shareLabel}>
         {share.copied ? <CheckIcon /> : <ShareIcon />}
       </button>
-      <button type="button" className={s.action} onClick={() => link.copy(url())} data-done={link.copied || undefined} aria-label={linkLabel} data-tip={linkLabel}>
+      <button type="button" className={`${s.action} ${s.actionLink}`} onClick={() => link.copy(url())} data-done={link.copied || undefined} aria-label={linkLabel} data-tip={linkLabel}>
         {link.copied ? <CheckIcon /> : <LinkIcon />}
       </button>
     </>

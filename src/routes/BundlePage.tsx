@@ -6,7 +6,8 @@ import { pick, useLocale } from '@/i18n/useLocale'
 import { useDT } from '@/components/skill/strings'
 import { Badges, Crumbs, Glyph, NotFoundBlock, ShareActions, YouTubeLite, youtubeId } from '@/components/skill/parts'
 import { InstallCard } from '@/components/skill/InstallCard'
-import { SkillMiniCard } from '@/components/skill/SkillMiniCard'
+import { ExtensionCard } from '@/components/market/ExtensionCard'
+import { getItems } from '@/components/market/items'
 import { Markdown } from '@/components/skill/Markdown'
 import { GridIcon } from '@/components/skill/icons'
 import s from '@/components/skill/Detail.module.css'
@@ -33,14 +34,17 @@ export function BundlePage() {
 
   return (
     <article className={s.page}>
-      <Crumbs current={bundle.id} actions={<ShareActions title={title} />} />
+      <Crumbs current={bundle.id} />
       <header>
         <div className={s.head}>
           <Glyph title={title} bundle />
           <div className={s.headText}>
             <div className={s.titleRow}>
-              <h1 className={s.title}>{title}</h1>
-              <Badges ids={bundle.badges ?? []} extra={<span className={`${s.badge} ${s.badgeGrey}`}>{t('bundle.kind')}</span>} />
+              <div className={s.titleMain}>
+                <h1 className={s.title}>{title}</h1>
+                <Badges ids={bundle.badges ?? []} extra={<span className={`${s.badge} ${s.badgeGrey}`}>{t('bundle.kind')}</span>} />
+              </div>
+              <div className={s.actions}><ShareActions title={title} /></div>
             </div>
             <div className={s.meta}><span>{t('meta.skills', { n: skills.length })}</span><span className={s.metaAuthor}>{t('meta.by', { name: 'HEAD' })}</span></div>
           </div>
@@ -58,7 +62,7 @@ export function BundlePage() {
           {yt && <YouTubeLite id={yt} title={title} />}
           {body && <div className={s.bundleBody}><Markdown source={body} /></div>}
           <div className={s.cards}>
-            {skills.map((k) => <SkillMiniCard key={k.id} skill={k} />)}
+            {getItems().skills.filter((it) => ids.includes(it.id)).sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id)).map((it) => <ExtensionCard key={it.id} item={it} />)}
           </div>
         </div>
         <aside className={s.side}>

@@ -46,14 +46,17 @@ export function SkillPage() {
 
   return (
     <article className={s.page}>
-      <Crumbs current={skill.id} actions={<><ShareActions title={title} /><DownloadAction href={skill.zip} /></>} />
+      <Crumbs current={skill.id} />
       <header>
         <div className={s.head}>
           <Glyph title={title} icon={skill.icon} />
           <div className={s.headText}>
             <div className={s.titleRow}>
-              <h1 className={s.title}>{title}</h1>
-              <Badges ids={skill.badges ?? []} />
+              <div className={s.titleMain}>
+                <h1 className={s.title}>{title}</h1>
+                <Badges ids={skill.badges ?? []} />
+              </div>
+              <div className={s.actions}><ShareActions title={title} /><DownloadAction href={skill.zip} /></div>
             </div>
             <div className={s.meta}>
               <span>{t('meta.updated', { date: formatDate(skill.updated, locale) })}</span>
