@@ -13,18 +13,11 @@ export function repoFolderUrl(id: string): string {
 }
 
 /** A prompt the user pastes into ANY coding agent. Written in English on purpose: every agent reads it reliably.
-    A short line in the user's language on top tells a human what it is. */
-export function agentPrompt(ids: string[], locale: Locale): string {
+    `locale` is kept in the signature for callers (and a future localized preamble); the text itself is English. */
+export function agentPrompt(ids: string[], _locale: Locale): string {
   const { url, branch, owner, name } = catalog.repo
   const list = ids.map((id) => `- ${id}: ${url}/tree/${branch}/skills/${id}`).join('\n')
-  const lead: Record<Locale, string> = {
-    uz: '(HEAD skills: quyidagi ko‘rsatmani agentingiz bajaradi.)',
-    ru: '(HEAD skills: эту инструкцию выполнит ваш агент.)',
-    en: '(HEAD skills: your agent will carry out the instructions below.)',
-  }
-  return `${lead[locale]}
-
-Install ${ids.length > 1 ? 'these agent skills' : 'this agent skill'} from HEAD skills (${catalog.site}):
+  return `Install ${ids.length > 1 ? 'these agent skills' : 'this agent skill'} from HEAD skills (${catalog.site}):
 ${list}
 
 1. Run: npx skills add ${owner}/${name} ${ids.map((id) => `-s ${id}`).join(' ')} -g -y

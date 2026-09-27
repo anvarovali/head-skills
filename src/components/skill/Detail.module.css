@@ -43,7 +43,13 @@
 .meta { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 4px; font-size: 15px; line-height: 24px; color: var(--m-text-4); }
 .meta a { color: var(--m-text-3); transition: color var(--m-t); }
 .meta a:hover { color: var(--m-primary); }
-.actions { display: flex; align-items: center; gap: 4px; flex: none; height: 38px; }
+.actions { display: flex; align-items: center; flex: none; height: 38px; }
+@media (min-width: 768px) {
+  .actions .action { width: 32px; height: 30px; border: 1px solid var(--m-border); border-radius: 0; background: var(--m-bg-base); margin-left: -1px; }
+  .actions .action:first-child { border-radius: var(--m-r-md) 0 0 var(--m-r-md); margin-left: 0; }
+  .actions .action:last-child { border-radius: 0 var(--m-r-md) var(--m-r-md) 0; }
+  .actions .action:hover, .actions .action:focus-visible { background: var(--m-bg-hover); z-index: 1; }
+}
 .action {
   position: relative; width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--m-r-sm);
   color: var(--m-text-3); transition: color var(--m-t), background var(--m-t);
@@ -56,7 +62,7 @@
   opacity: 0; transform: translateY(-2px); pointer-events: none; transition: opacity .15s ease, transform .15s ease; z-index: 5;
 }
 .action[data-tip]:hover::after, .action[data-tip]:focus-visible::after { opacity: 1; transform: none; }
-.desc { margin: 24px 0 0; font-size: 16px; line-height: 1.75; color: var(--m-text-2); max-width: 80ch; text-wrap: pretty; }
+.desc { margin: 24px 0 0; font-size: 16px; line-height: 1.75; color: var(--m-text-2); text-wrap: pretty; }
 
 /* tabs + two-column body */
 .grid {
@@ -109,10 +115,10 @@ h2.tab:hover { color: var(--m-text); }
 /* install card */
 .card { background: var(--m-bg-base); border: 1px solid var(--m-border); border-radius: var(--m-r-lg); padding: 16px; }
 .cardTitle { font-size: 17px; line-height: 26px; font-weight: 500; color: var(--m-text); margin: 0; }
-.cardSub { font-size: 14px; line-height: 22px; color: var(--m-text-4); margin: 2px 0 0; }
-.block { margin-top: 20px; }
-.block + .block { margin-top: 20px; }
-.blockHead { margin-bottom: 8px; }
+.cardSub { font-size: 13px; line-height: 20px; color: var(--m-text-4); margin: 2px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.block { margin-top: 16px; }
+.block + .block { margin-top: 16px; }
+.blockHead { margin-bottom: 6px; }
 .blockHead { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; }
 .blockLabel { font-size: 15px; line-height: 22px; font-weight: 500; color: var(--m-text); }
 .blockTools { display: flex; gap: 2px; }
@@ -125,22 +131,32 @@ h2.tab:hover { color: var(--m-text); }
 .monoWrap { position: relative; }
 .mono {
   --lh: 19px;
-  margin: 0; padding: 10px 12px 0; height: calc(var(--rows) * var(--lh) + 12px); overflow: hidden;
+  position: relative; margin: 0; padding: 10px 12px; overflow: hidden;
   border: 1px solid var(--m-border); border-radius: var(--m-r-md); background: var(--m-bg-base);
   font-family: var(--m-font-code); font-size: 12px; line-height: var(--lh); color: var(--m-text-2);
   white-space: pre-wrap; overflow-wrap: anywhere;
-  /* only the last whole line fades: the box always ends on a line boundary */
-  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - var(--lh)), rgb(0 0 0 / .2) 100%);
-  mask-image: linear-gradient(to bottom, #000 calc(100% - var(--lh)), rgb(0 0 0 / .2) 100%);
-  transition: border-color var(--m-t);
 }
-.mono[data-open] { height: auto; padding-bottom: 10px; -webkit-mask-image: none; mask-image: none; }
 .mono:focus-visible { outline: 2px solid var(--m-primary); outline-offset: 1px; }
 .monoLine { display: block; }
 .mono a { color: inherit; text-decoration: underline; text-decoration-color: var(--m-border-strong); text-underline-offset: 2px; transition: color var(--m-t); }
 .mono a:hover { color: var(--m-primary); text-decoration-color: currentColor; }
-.monoToggle { margin-top: 6px; font-size: 13px; line-height: 20px; font-weight: 500; color: var(--m-text-3); transition: color var(--m-t); }
-.monoToggle:hover { color: var(--m-primary); }
+/* fade into the box ground under the cut, with the expand pill centred on it */
+.monoWrap:not([data-open]):has(.monoPill)::after {
+  content: ""; position: absolute; left: 1px; right: 1px; bottom: 1px; height: 38px; pointer-events: none;
+  border-radius: 0 0 calc(var(--m-r-md) - 1px) calc(var(--m-r-md) - 1px);
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0), var(--m-bg-base) 55%);
+}
+.monoWrap[data-open] .mono { padding-bottom: 44px; }
+.monoPill {
+  position: absolute; left: 50%; bottom: 8px; z-index: 1; transform: translateX(-50%); width: max-content;
+  display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 10px; border-radius: var(--m-r-full);
+  border: 1px solid var(--m-border); background: var(--m-bg-base); color: var(--m-text-2);
+  font-size: 12px; font-weight: 500; line-height: 1; white-space: nowrap;
+  box-shadow: 0 1px 2px rgb(16 17 19 / .06); transition: color var(--m-t), border-color var(--m-t);
+}
+.monoPill:hover { color: var(--m-primary); border-color: color-mix(in srgb, var(--m-primary) 40%, var(--m-border)); }
+.monoPill svg { flex: none; transition: transform var(--m-t); }
+.monoWrap[data-open] .monoPill svg { transform: rotate(180deg); }
 .cmd {
   display: flex; align-items: flex-start; gap: 4px; margin-top: 8px; padding: 6px 4px 6px 10px; border-radius: var(--m-r-md);
   border: 1px solid var(--m-border); background: var(--m-bg-elevated);

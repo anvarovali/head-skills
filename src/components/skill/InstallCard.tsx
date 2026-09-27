@@ -1,9 +1,9 @@
-import { useId, useState } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import { agentPrompt, installCommand, pluginCommands, zipUrl } from '@/lib/install'
 import { useLocale } from '@/i18n/useLocale'
 import { useDT } from './strings'
 import { CopyIconButton } from './parts'
-import { DownloadIcon } from './icons'
+import { ChevronDownIcon, DownloadIcon } from './icons'
 import s from './Detail.module.css'
 
 interface Props {
@@ -32,27 +32,56 @@ function toLines(text: string): Line[] {
   })
 }
 
-/** Fixed-height mono box whose height is a whole number of lines, so nothing is cut mid-line; a toggle opens it. */
-function MonoBox({ lines, label, rows }: { lines: Line[]; label: string; rows: number }) {
+/** Offer a line break after each "/" so long URLs wrap at path segments, not mid-word. Copy text is unaffected. */
+function breakable(text: string) {
+  if (!text.includes('/')) return text
+  return text.split('/').flatMap((seg, i, a) => (i < a.length - 1 ? [seg, '/', <wbr key={i} />] : [seg]))
+}
+
+const PILL_ZONE = 30 // px under the last fully visible line: the fade and the expand pill live here
+
+/** Mono box cut on a line boundary: either after `rows` visual lines, or right after logical line `endAt`
+    (measured, so wrapped lines count). Below the cut a fade into the box ground carries an expand pill. */
+function MonoBox({ lines, label, rows = 5, endAt }: { lines: Line[]; label: string; rows?: number; endAt?: number }) {
   const t = useDT()
   const id = useId()
+  const box = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
+  const [cut, setCut] = useState<number | undefined>(undefined)
+  useLayoutEffect(() => {
+    const el = box.current
+    if (!el) return
+    const measure = () => {
+      const lh = parseFloat(getComputedStyle(el).lineHeight) || 19
+      const top = parseFloat(getComputedStyle(el).paddingTop) || 0
+      const end = endAt != null ? (el.children[endAt] as HTMLElement | undefined) : undefined
+      const bottom = end ? end.offsetTop + end.offsetHeight : top + rows * lh
+      setCut(Math.round(bottom + PILL_ZONE + 2)) // + the 1px top and bottom borders
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [rows, endAt, lines])
+  const fits = cut != null && box.current != null && box.current.scrollHeight <= cut
   return (
-    <div className={s.monoWrap}>
-      <div id={id} className={s.mono} data-open={open || undefined} style={{ ['--rows' as string]: rows }}
+    <div className={s.monoWrap} data-open={open || undefined}>
+      <div ref={box} id={id} className={s.mono} style={open || fits ? undefined : { height: cut ?? `calc(${rows} * 19px + 10px + ${PILL_ZONE}px)` }}
         tabIndex={0} role="region" aria-label={label}>
         {lines.map((l, i) => (
           <span key={i} className={s.monoLine} style={{ paddingLeft: `${l.indent ?? 0}ch`, textIndent: `-${l.hang ?? 0}ch` }}>
             {l.parts.map((p, j) => p.href
               ? <a key={j} href={p.href} {...(p.download ? { download: true } : { target: '_blank', rel: 'noopener noreferrer' })}>{p.text}</a>
-              : <span key={j}>{p.text}</span>)}
+              : <span key={j}>{breakable(p.text)}</span>)}
             {l.parts.every((p) => !p.text) ? ' ' : null}
           </span>
         ))}
       </div>
-      <button type="button" className={s.monoToggle} aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
-        {open ? t('install.less') : t('install.more')}
-      </button>
+      {!fits && (
+        <button type="button" className={s.monoPill} aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
+          {open ? t('install.less') : t('install.more')}<ChevronDownIcon size={12} />
+        </button>
+      )}
     </div>
   )
 }
@@ -91,7 +120,7 @@ export function InstallCard({ ids, pluginId, zips, bundle }: Props) {
           <span className={s.blockLabel}>{t('install.agent')}</span>
           <span className={s.blockTools}><CopyIconButton text={prompt} label={t('copy.agent')} /></span>
         </div>
-        <MonoBox lines={toLines(prompt)} label={t('install.agent')} rows={6} />
+        <MonoBox lines={toLines(prompt)} label={t('install.agent')} rows={5} />
       </div>
 
       <div className={s.block}>
@@ -104,7 +133,7 @@ export function InstallCard({ ids, pluginId, zips, bundle }: Props) {
             <CopyIconButton text={humanText} label={t('copy.steps')} />
           </span>
         </div>
-        <MonoBox lines={human} label={t('install.human')} rows={4 + Math.ceil(cmd.length / 34)} />
+        <MonoBox lines={human} label={t('install.human')} endAt={2} />
       </div>
     </section>
   )
