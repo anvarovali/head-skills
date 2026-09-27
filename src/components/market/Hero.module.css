@@ -20,8 +20,7 @@
 }
 .tile img { width: 64%; height: 64%; }
 .tile svg { width: 50%; height: 50%; }
-.tile .mark { width: 72%; height: auto; }
-.markSlash { color: var(--m-primary); }
+.tile .slash { width: auto; height: 56%; color: var(--m-primary); }
 @keyframes bob { 50% { translate: 0 -3px; } }
 @media (prefers-reduced-motion: reduce) { .tile { animation: none; } }
 
@@ -30,9 +29,10 @@
 @media (min-width: 768px) {
   .braces { left: 0;    --sz: 38px; --x: -196px; --y: 24px;  --r: -8deg; --d: -1s; }
   .skillA { left: 0;    --sz: 46px; --x: -93px;  --y: -6px;  --r: 6deg;  --d: -3s; }
-  .head   { left: 0;    --sz: 36px; --w: 58px; --x: -150px; --y: -70px; --r: -6deg; --d: -2s; }
+  .head   { left: 0;    --sz: 38px; --x: -150px; --y: -70px; --r: 8deg;  --d: -2s; }
   .skillB { left: 100%; --sz: 46px; --x: 93px;   --y: 8px;   --r: 8deg;  --d: -4s; }
-  .prompt { left: 100%; --sz: 40px; --x: 184px;  --y: -40px; --r: 12deg; --d: -.5s; }
+  .prompt { left: 100%; --sz: 40px; --x: 190px;  --y: -30px; --r: 12deg; --d: -.5s; }
+  .stack  { left: 100%; --sz: 34px; --x: 110px;  --y: -90px; --r: -9deg; --d: -2.5s; }
 }
 
 @media (max-width: 767px) {
@@ -43,9 +43,8 @@
   .tile { top: 28px; box-shadow: 0 1px 2px rgba(16, 17, 19, .05), 0 4px 10px -4px rgba(16, 17, 19, .09); }
   .braces { left: 5%;  --sz: 28px; --x: 0px; --y: -6px; --r: -8deg; }
   .skillA { left: 22%; --sz: 36px; --x: 0px; --y: 14px; --r: 6deg; }
-  .head   { left: 50%; --sz: 30px; --w: 50px; --x: 0px; --y: -16px; --r: -5deg; }
+  .head   { left: 40%; --sz: 30px; --x: 0px; --y: -16px; --r: 8deg; }
+  .stack  { left: 60%; --sz: 26px; --x: 0px; --y: -22px; --r: -9deg; }
   .skillB { left: 76%; --sz: 36px; --x: 0px; --y: 10px; --r: 8deg; }
   .prompt { left: 94%; --sz: 28px; --x: 0px; --y: -10px; --r: 12deg; }
-  .tile[data-tone='blue'] { background: var(--m-primary); color: #fff; }
-  .tile[data-tone='blue'] .markSlash { color: #fff; }
 }

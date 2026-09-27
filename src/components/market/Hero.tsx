@@ -1,23 +1,24 @@
 import type { ReactNode } from 'react'
 import { catalog } from '@/data/catalog'
-import { HeadMark } from '@/components/ui/HeadMark'
+import { Slash } from '@/components/ui/HeadMark'
 import { useT } from '@/i18n/useLocale'
 import { CategoryGlyph } from './icons'
 import { SearchBox } from './SearchBox'
 import s from './Hero.module.css'
 
-/* Five white tiles around the headline: the two real skill marks, the HEAD wordmark, a ">_" prompt and a "{ }".
+/* Six white tiles around the headline: the two real skill marks, the HEAD slash in blue, ">_", "{ }" and a stack.
    Weighty glyphs, one neutral shadow, staggered heights, an equal gap to the words on both sides. */
 const icons = catalog.skills.filter((k) => k.icon).map((k) => k.icon!)
 const skillTile = (i: number, fallback: string): ReactNode =>
   icons[i] ? <img src={icons[i]} alt="" /> : <CategoryGlyph id={fallback} />
 
-const TILES: { cls: string; tone?: 'blue'; body: () => ReactNode }[] = [
+const TILES: { cls: string; body: () => ReactNode }[] = [
   { cls: s.braces, body: () => <CategoryGlyph id="braces" /> },
   { cls: s.skillA, body: () => skillTile(0, 'design') },
-  { cls: s.head, tone: 'blue', body: () => <HeadMark className={s.mark} slashClassName={s.markSlash} /> },
+  { cls: s.head, body: () => <Slash className={s.slash} /> },
   { cls: s.skillB, body: () => skillTile(1, 'workflow') },
   { cls: s.prompt, body: () => <CategoryGlyph id="prompt" /> },
+  { cls: s.stack, body: () => <CategoryGlyph id="bundle" strokeWidth={2.3} /> },
 ]
 
 export function Hero({ q, onSearch }: { q: string; onSearch: (q: string) => void }) {
@@ -28,7 +29,7 @@ export function Hero({ q, onSearch }: { q: string; onSearch: (q: string) => void
         <div className={s.titleWrap}>
           <div className={s.tiles} aria-hidden="true">
             {TILES.map((tile, i) => (
-              <span key={i} className={`${s.tile} ${tile.cls}`} data-tone={tile.tone}>{tile.body()}</span>
+              <span key={i} className={`${s.tile} ${tile.cls}`}>{tile.body()}</span>
             ))}
           </div>
           <h1 className={s.title}>{t('hero.title')}</h1>

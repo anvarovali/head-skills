@@ -37,8 +37,8 @@ async function copyText(text: string) {
   return ok
 }
 
-/** 24px ghost button in the card's top-right: copies the one-line install command. Never follows the card link. */
-function CopyInstall({ ids }: { ids: string[] }) {
+/** A tinted pill in the badge slot, like qoder's Recommend tag: copies the one-line install command. Never follows the card link. */
+function CopyInstall({ ids, compact = false }: { ids: string[]; compact?: boolean }) {
   const t = useT()
   const [copied, setCopied] = useState(false)
   useEffect(() => {
@@ -53,7 +53,8 @@ function CopyInstall({ ids }: { ids: string[] }) {
   const label = copied ? t('card.copied') : t('card.copy')
   return (
     <button type="button" className={s.copy} onClick={onClick} aria-label={label} title={label} data-copied={copied || undefined}>
-      {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
+      {copied ? <CheckIcon size={11} strokeWidth={2.2} /> : <CopyIcon size={11} strokeWidth={2} />}
+      {compact && !copied ? null : <span aria-hidden="true">{copied ? t('card.copied') : t('card.install')}</span>}
       <span className="sr-only" aria-live="polite">{copied ? t('card.copied') : ''}</span>
     </button>
   )
@@ -74,7 +75,8 @@ export function ExtensionCard({ item }: { item: Item }) {
         <ItemIcon item={item} />
         <h3 className={s.name} title={title}><Link to={href(itemHref(item))} className={s.link}>{title}</Link></h3>
         {badge ? <span className={s.badge}>{badge}</span> : null}
-        <CopyInstall ids={item.skillIds.map((x) => x.split('~')[0])} />
+        {/* next to a badge the pill drops its word so the title keeps its room */}
+        <CopyInstall ids={item.skillIds.map((x) => x.split('~')[0])} compact={!!badge} />
       </div>
       <p className={s.desc}>{pick(item.summary, locale)}</p>
       <div className={s.foot}>

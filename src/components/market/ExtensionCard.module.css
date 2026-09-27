@@ -10,12 +10,13 @@
 .link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
 .link:focus-visible { outline: none; }
 .copy {
-  position: relative; z-index: 1; flex: none; display: grid; place-items: center; width: 28px; height: 28px;
-  border-radius: var(--m-r-md); border: 1px solid rgba(16, 17, 19, .08); background: var(--m-bg-base); color: var(--m-text-2);
-  transition: color var(--m-t), background-color var(--m-t), border-color var(--m-t);
+  position: relative; z-index: 1; flex: none; display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: var(--m-r-xs); background: var(--m-tag-bg); color: var(--m-tag-text);
+  font-size: 11px; line-height: 16px; font-weight: 500; white-space: nowrap;
+  transition: color var(--m-t), background-color var(--m-t);
 }
-.copy:hover { color: var(--m-primary); background: var(--m-bg-hover); border-color: rgba(0, 41, 255, .25); }
-.copy[data-copied] { color: var(--m-primary); }
+.copy:hover { background: #e2e8ff; color: var(--m-primary); }
+.copy[data-copied] { color: var(--m-primary); background: #e2e8ff; }
 .head { display: flex; align-items: center; gap: 12px; min-width: 0; height: 30px; }
 .icon {
   flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--m-r-md);
