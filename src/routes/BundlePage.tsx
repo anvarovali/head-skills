@@ -33,7 +33,7 @@ export function BundlePage() {
 
   return (
     <article className={s.page}>
-      <Crumbs current={bundle.id} />
+      <Crumbs current={bundle.id} actions={<ShareActions title={title} />} />
       <header>
         <div className={s.head}>
           <Glyph title={title} bundle />
@@ -42,12 +42,10 @@ export function BundlePage() {
               <h1 className={s.title}>{title}</h1>
               <Badges ids={bundle.badges ?? []} extra={<span className={`${s.badge} ${s.badgeGrey}`}>{t('bundle.kind')}</span>} />
             </div>
-            <div className={s.meta}><span>{t('meta.skills', { n: skills.length })}</span><span>{t('meta.by', { name: 'HEAD' })}</span></div>
+            <div className={s.meta}><span>{t('meta.skills', { n: skills.length })}</span><span className={s.metaAuthor}>{t('meta.by', { name: 'HEAD' })}</span></div>
           </div>
-          <div className={s.actions}><ShareActions title={title} /></div>
         </div>
         <p className={s.desc}>{pick(bundle.summary, locale)}</p>
-        <div className={s.mobileActions}><ShareActions title={title} /></div>
       </header>
 
       <div className={s.grid}>

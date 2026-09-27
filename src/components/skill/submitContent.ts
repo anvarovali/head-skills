@@ -1,17 +1,18 @@
 import type { Locale } from '@/i18n/locales'
 
 /* The /submit guide, one markdown document per locale (rendered by the escaping Markdown component).
-   Uzbek uses ʻ (U+02BB) / ‘ apostrophes. Keep the three in step when editing. */
+   Mirrors CONTRIBUTING.md and scripts/validate-skills.mjs: when a rule changes there, change it here.
+   Uzbek uses ʻ (U+02BB) after o/g and ʼ (U+02BC) elsewhere, no em dashes. Keep the three in step. */
 
 const TREE = `skills/
-└── my-skill/          # folder name = the skill name (lowercase, hyphens)
+└── my-skill/          # folder name = skill name (kebab-case)
     ├── SKILL.md       # required: frontmatter + instructions for the agent
-    ├── head.json      # required: how the site shows it (titles, summary, category, author)
-    └── references/    # optional: extra files the skill reads (scripts, examples, docs)`
+    ├── head.json      # how the site shows it (titles, summary, category, author)
+    └── reference.md   # optional: extra files the skill links to`
 
 const SKILL_MD = `---
 name: my-skill
-description: What this skill does and exactly when the agent should use it. Write it in English — agents read it to decide whether to trigger.
+description: Writes and edits Telegram channel posts with a hook in the first line and one call to action. Use when the user asks to write, rewrite or shorten a Telegram post.
 ---
 
 # My skill
@@ -19,182 +20,218 @@ description: What this skill does and exactly when the agent should use it. Writ
 Step-by-step instructions for the agent…`
 
 const HEAD_JSON = `{
-  "title":   { "en": "My skill", "uz": "Mening skillʼim", "ru": "Мой скилл" },
+  "$schema": "../../schemas/head.schema.json",
+  "title":   { "en": "My skill", "uz": "Mening skillim", "ru": "Мой скилл" },
   "summary": {
     "en": "One line for the card.",
     "uz": "Kartochka uchun bitta qator.",
     "ru": "Одна строка для карточки."
   },
-  "category": "productivity",
-  "author": { "name": "Your Name", "github": "your-github" }
+  "category": "content",
+  "author": { "name": "Your Name", "github": "your-github-username" },
+  "youtube": {}
 }`
 
-const GIT = `git clone https://github.com/<you>/head-skills
-cd head-skills
-git checkout -b add-my-skill
-# add skills/my-skill/SKILL.md and skills/my-skill/head.json
-git add skills/my-skill
-git commit -m "Add my-skill"
-git push -u origin add-my-skill`
+const COPY = `cp -r templates/skill skills/my-skill`
+const CHECK = `npm install
+npm run validate:skills`
+const TRY = `npx skills add ./ -s my-skill -a claude-code -g`
 
 const fence = (lang: string, body: string) => '```' + lang + '\n' + body + '\n```'
 
 const uz = `## Skill nima?
 
-Skill - bu agent uchun yozilgan qoʻllanma: bitta papka, ichida **SKILL.md** fayli. Agent (Claude Code, Codex, Cursor va boshqalar) vazifa skill tavsifiga mos kelganda uni oʻqiydi va koʻrsatmalarga amal qiladi. Yaxshi skill bitta aniq ishni puxta bajaradi: masalan, dizaynni tekshirish, hisobot tayyorlash yoki kodni maʼlum qoidalar boʻyicha yozish.
+Skill bu **SKILL.md** fayli bor papka. Agent (Claude Code, Codex, Cursor va boshqalar) avval faqat \`description\`ni oʻqiydi va vazifaga mos kelsa, qolgan faylni yuklaydi. Shu sabab eng muhim qator \`description\`: unda skill **nima qiladi** va **qachon ishlatiladi**, ikkalasi ham boʻlsin.
 
 ## Papka shabloni
-
-Har bir skill \`skills/\` ichida alohida papkada turadi:
 
 ${fence('text', TREE)}
 
 ### SKILL.md
 
-Faylning boshida YAML frontmatter boʻlishi shart. \`name\` papka nomiga teng boʻlishi kerak. \`description\`ni ingliz tilida yozing - agent aynan shu matnga qarab skillʼni qachon ishlatishni hal qiladi.
+Fayl YAML frontmatter bilan boshlanadi. \`name\` papka nomi bilan aynan bir xil. \`description\`ni inglizcha, uchinchi shaxsda yozing va “Use when...” jumlasini qoʻshing: foydalanuvchi aslida yozadigan soʻzlarni sanab oʻting.
 
 ${fence('markdown', SKILL_MD)}
 
 ### head.json
 
-Bu fayl faqat sayt uchun: skillʼning nomi va qisqa tavsifi uch tilda, kategoriya va muallif. Kategoriyalar: \`workflow\`, \`design\`, \`frontend\`, \`backend\`, \`content\`, \`productivity\`.
+Sayt uchun: nom va qisqa tavsif (\`en\` majburiy, \`uz\` va \`ru\`ni ham yozing), \`category\` va \`author\`. Kategoriyalar: \`workflow\`, \`design\`, \`frontend\`, \`backend\`, \`content\`, \`productivity\`.
 
 ${fence('json', HEAD_JSON)}
 
-## Pull request ochish
+## Qadamlar
 
-1. [github.com/anvarovali/head-skills](https://github.com/anvarovali/head-skills) repozitoriysini fork qiling.
-2. Yangi branch oching va papkangizni qoʻshing:
+1. [github.com/anvarovali/head-skills](https://github.com/anvarovali/head-skills) repozitoriysini **fork** qiling va klonlang.
+2. Shablonni nusxalang. Papka nomi skill nomi boʻladi:
 
-${fence('bash', GIT)}
+${fence('bash', COPY)}
 
-3. GitHubʼda **Compare & pull request** tugmasini bosing. Tavsifda skill nima qilishini va uni qanday sinab koʻrganingizni yozing.
+3. \`SKILL.md\` va \`head.json\`ni toʻldiring.
+4. Tekshiring:
+
+${fence('bash', CHECK)}
+
+5. Skillni oʻz agentingizda sinab koʻring va u ishga tushishini tekshiring:
+
+${fence('bash', TRY)}
+
+6. Skill qoʻshgan yoki nomini oʻzgartirgan boʻlsangiz, \`npm run catalog\`ni ishga tushiring va yangilangan \`.claude-plugin/marketplace.json\`ni ham commit qiling.
+7. Pull request oching va shablondagi roʻyxatni belgilang.
 
 ## Avtomatik tekshiruvlar
 
-PR ochilishi bilan quyidagilar avtomatik tekshiriladi:
+Har bir pull requestda CI \`npm run validate:skills\`ni ishga tushiradi. Birorta xato boʻlsa, merge bloklanadi:
 
-- **Frontmatter** - \`SKILL.md\`da \`name\` va \`description\` bor, \`name\` papka nomiga teng.
-- **head.json** - sxemaga mos: uch tildagi \`title\` va \`summary\`, mavjud kategoriya, muallif.
-- **Hajm chegarasi** - papka belgilangan hajmdan oshmaydi; katta media fayllar qoʻshmang.
-- **Maxfiy maʼlumotlar yoʻq** - API kalitlar, tokenlar, parollar topilsa PR toʻxtatiladi.
-- **Xavfli andozalar yoʻq** - masalan, \`curl … | sh\` kabi internetdan yuklab darhol ishga tushirish.
+- **name** papka nomiga teng: kichik lotin harflari, raqamlar va \`-\`, 64 belgigacha, “claude” va “anthropic” soʻzlarisiz.
+- **description** 20 dan 1024 gacha belgi, XML teglarsiz (\`<tag>\`). “Use when...” boʻlmasa, ogohlantirish chiqadi.
+- **Hajm**: papka 2 MB gacha, har bir fayl 1 MB gacha. Faqat matnli fayllar va rasmlar (png, jpg, gif, webp, avif, ico, svg), symlinklarsiz.
+- **Maxfiy maʼlumotlar yoʻq**: API kalitlar, tokenlar, private keylar, \`.env\` fayllar. Tasodifan qoʻshilgan boʻlsa, kalitni darhol bekor qiling (revoke).
+- **Xavfli buyruqlar yoʻq**: \`curl ... | bash\`, base64 bilan yashirilgan kod, internetdan yuklangan kodni \`eval\` qilish.
+- **Yashirin matn yoʻq**: koʻrinmas Unicode belgilar va “ignore previous instructions” kabi prompt-injection iboralari.
+- **head.json** sxemaga mos: mavjud \`category\`, tillar faqat \`uz\`, \`ru\`, \`en\`, YouTube qiymati toʻliq havola emas, 11 belgili video id.
 
-## Koʻrib chiqish
+Skillingiz bunday iborani misol sifatida keltirishi shart boʻlsa, oʻsha qatorga \`head-skills-allow: <rule>\` deb yozing. Xato ogohlantirishga aylanadi va maintainer qatorni qoʻlda koʻradi. Maxfiy maʼlumotlar va koʻrinmas belgilarga ruxsat berilmaydi.
 
-Tekshiruvlardan oʻtgan har bir PRʼni maintainer qoʻlda koʻrib chiqadi: koʻrsatmalar aniqmi, skill haqiqatan foydalimi va xavfsizmi. Kerak boʻlsa, izohlar qoldiriladi - ularni tuzatib, oʻsha branchʼga push qiling.
+## Keyin nima boʻladi
+
+CI validatorni ishga tushiradi va saytni yigʻadi. Soʻng maintainer skillni oʻqiydi, sinab koʻradi va merge qiladi. Shundan keyin u [skills.head.uz](https://skills.head.uz)da paydo boʻladi.
 
 ## Praktikum 2026 nishoni
 
-AI Praktikum talabalarining qabul qilingan skillʼlari **Praktikum 2026** nishonini oladi va marketplaceʼda alohida koʻrsatiladi. PR tavsifida praktikum guruhingizni koʻrsating.
+\`badges\` va \`featured\` maydonlarini maintainerlar qoʻyadi, ularni boʻsh qoldiring. AI Praktikum talabalarining qabul qilingan skillʼlari **Praktikum 2026** nishonini oladi: PR tavsifida praktikum guruhingizni yozing.
 `
 
 const ru = `## Что такое скилл?
 
-Скилл — это инструкция для агента: одна папка с файлом **SKILL.md** внутри. Агент (Claude Code, Codex, Cursor и другие) читает её, когда задача подходит под описание скилла, и следует инструкциям. Хороший скилл хорошо делает одну конкретную вещь: например, проверяет дизайн, готовит отчёт или пишет код по определённым правилам.
+Скилл это папка с файлом **SKILL.md**. Агент (Claude Code, Codex, Cursor и другие) сначала читает только \`description\` и загружает остальное, когда задача подходит. Поэтому самая важная строка — \`description\`: в ней должно быть и **что делает** скилл, и **когда его использовать**.
 
 ## Шаблон папки
-
-Каждый скилл лежит в отдельной папке внутри \`skills/\`:
 
 ${fence('text', TREE)}
 
 ### SKILL.md
 
-В начале файла обязателен YAML-frontmatter. \`name\` должен совпадать с именем папки. \`description\` пишите на английском — именно по нему агент решает, когда использовать скилл.
+Файл начинается с YAML-frontmatter. \`name\` точно совпадает с именем папки. \`description\` пишите на английском, в третьем лице, и добавьте фразу «Use when...» со словами, которые пользователи реально пишут.
 
 ${fence('markdown', SKILL_MD)}
 
 ### head.json
 
-Этот файл нужен только сайту: название и короткое описание на трёх языках, категория и автор. Категории: \`workflow\`, \`design\`, \`frontend\`, \`backend\`, \`content\`, \`productivity\`.
+Для сайта: название и короткое описание (\`en\` обязательно, добавьте \`uz\` и \`ru\`), \`category\` и \`author\`. Категории: \`workflow\`, \`design\`, \`frontend\`, \`backend\`, \`content\`, \`productivity\`.
 
 ${fence('json', HEAD_JSON)}
 
-## Как открыть pull request
+## Шаги
 
-1. Сделайте fork репозитория [github.com/anvarovali/head-skills](https://github.com/anvarovali/head-skills).
-2. Создайте ветку и добавьте свою папку:
+1. Сделайте **fork** репозитория [github.com/anvarovali/head-skills](https://github.com/anvarovali/head-skills) и клонируйте его.
+2. Скопируйте шаблон. Имя папки станет именем скилла:
 
-${fence('bash', GIT)}
+${fence('bash', COPY)}
 
-3. На GitHub нажмите **Compare & pull request**. В описании расскажите, что делает скилл и как вы его проверили.
+3. Заполните \`SKILL.md\` и \`head.json\`.
+4. Проверьте:
+
+${fence('bash', CHECK)}
+
+5. Попробуйте скилл в своём агенте и убедитесь, что он срабатывает:
+
+${fence('bash', TRY)}
+
+6. Если вы добавили или переименовали скилл, запустите \`npm run catalog\` и закоммитьте обновлённый \`.claude-plugin/marketplace.json\`.
+7. Откройте pull request и отметьте чек-лист из шаблона.
 
 ## Автоматические проверки
 
-Сразу после открытия PR автоматически проверяется:
+На каждый pull request CI запускает \`npm run validate:skills\`. Любая ошибка блокирует merge:
 
-- **Frontmatter** — в \`SKILL.md\` есть \`name\` и \`description\`, \`name\` совпадает с именем папки.
-- **head.json** — соответствует схеме: \`title\` и \`summary\` на трёх языках, существующая категория, автор.
-- **Лимит размера** — папка не превышает допустимый размер; не добавляйте тяжёлые медиафайлы.
-- **Никаких секретов** — если найдены API-ключи, токены или пароли, PR останавливается.
-- **Никаких опасных шаблонов** — например, \`curl … | sh\`, то есть скачать из интернета и сразу выполнить.
+- **name** совпадает с именем папки: строчные латинские буквы, цифры и \`-\`, до 64 символов, без слов «claude» и «anthropic».
+- **description** от 20 до 1024 символов, без XML-тегов (\`<tag>\`). Без «Use when...» будет предупреждение.
+- **Размер**: папка до 2 МБ, каждый файл до 1 МБ. Только текстовые файлы и изображения (png, jpg, gif, webp, avif, ico, svg), без симлинков.
+- **Никаких секретов**: API-ключи, токены, приватные ключи, файлы \`.env\`. Если ключ попал в коммит, сразу отзовите его.
+- **Никаких опасных команд**: \`curl ... | bash\`, код, спрятанный в base64, \`eval\` кода, скачанного из интернета.
+- **Никакого скрытого текста**: невидимые символы Unicode и prompt-injection фразы вроде «ignore previous instructions».
+- **head.json** соответствует схеме: существующая \`category\`, языки только \`uz\`, \`ru\`, \`en\`, для YouTube — 11-символьный id видео, а не ссылка.
 
-## Ревью
+Если скиллу действительно нужно процитировать такой шаблон как пример, добавьте на эту строку \`head-skills-allow: <rule>\`. Ошибка станет предупреждением, и мейнтейнер проверит строку вручную. Секреты и невидимые символы разрешить нельзя.
 
-Каждый PR, прошедший проверки, вручную просматривает мейнтейнер: понятны ли инструкции, полезен ли скилл и безопасен ли он. Если нужны правки, он оставит комментарии — исправьте и сделайте push в ту же ветку.
+## Что дальше
+
+CI запускает валидатор и собирает сайт. Затем мейнтейнер читает скилл, пробует его и делает merge. После этого скилл появляется на [skills.head.uz](https://skills.head.uz).
 
 ## Бейдж Praktikum 2026
 
-Принятые скиллы студентов AI Praktikum получают бейдж **Praktikum 2026** и отдельно отмечаются в маркетплейсе. Укажите в описании PR свою группу практикума.
+Поля \`badges\` и \`featured\` ставят мейнтейнеры, оставьте их пустыми. Принятые скиллы студентов AI Praktikum получают бейдж **Praktikum 2026**: укажите свою группу практикума в описании PR.
 `
 
 const en = `## What is a skill?
 
-A skill is a playbook for an agent: one folder with a **SKILL.md** file in it. An agent (Claude Code, Codex, Cursor and others) reads it when a task matches the skill’s description, then follows the instructions. A good skill does one specific job well: reviewing a design, preparing a report, writing code to a set of rules.
+A skill is a folder with a **SKILL.md** file. An agent (Claude Code, Codex, Cursor and others) first reads only the \`description\`, and loads the rest when the task matches. That makes \`description\` the most important line you write: it has to say **what the skill does** and **when to use it**.
 
 ## The folder template
-
-Every skill lives in its own folder under \`skills/\`:
 
 ${fence('text', TREE)}
 
 ### SKILL.md
 
-The file must start with YAML frontmatter. \`name\` must equal the folder name. Write \`description\` in English — it is what the agent reads to decide when to use the skill.
+The file starts with YAML frontmatter. \`name\` is exactly the folder name. Write the \`description\` in English, in the third person, with a “Use when...” sentence listing the words users actually type.
 
 ${fence('markdown', SKILL_MD)}
 
 ### head.json
 
-This file is for the site only: the skill’s title and one-line summary in three languages, its category and its author. Categories: \`workflow\`, \`design\`, \`frontend\`, \`backend\`, \`content\`, \`productivity\`.
+For the site: the title and one-line summary (\`en\` required, please add \`uz\` and \`ru\`), \`category\` and \`author\`. Categories: \`workflow\`, \`design\`, \`frontend\`, \`backend\`, \`content\`, \`productivity\`.
 
 ${fence('json', HEAD_JSON)}
 
-## Open a pull request
+## Steps
 
-1. Fork [github.com/anvarovali/head-skills](https://github.com/anvarovali/head-skills).
-2. Create a branch and add your folder:
+1. **Fork** [github.com/anvarovali/head-skills](https://github.com/anvarovali/head-skills) and clone your fork.
+2. Copy the template. The folder name becomes the skill name:
 
-${fence('bash', GIT)}
+${fence('bash', COPY)}
 
-3. On GitHub, click **Compare & pull request**. In the description, say what the skill does and how you tested it.
+3. Fill in \`SKILL.md\` and \`head.json\`.
+4. Check it:
+
+${fence('bash', CHECK)}
+
+5. Try it in your own agent and check that it actually triggers:
+
+${fence('bash', TRY)}
+
+6. If you added or renamed a skill, run \`npm run catalog\` and commit the updated \`.claude-plugin/marketplace.json\`.
+7. Open a pull request and tick the checklist.
 
 ## Automated checks
 
-As soon as the PR is opened, these run automatically:
+CI runs \`npm run validate:skills\` on every pull request. Any error blocks the merge:
 
-- **Frontmatter** — \`SKILL.md\` has \`name\` and \`description\`, and \`name\` equals the folder name.
-- **head.json** — matches the schema: \`title\` and \`summary\` in three languages, a known category, an author.
-- **Size limit** — the folder stays under the size limit; don’t commit large media.
-- **No secrets** — API keys, tokens or passwords stop the PR.
-- **No unsafe patterns** — for example \`curl … | sh\`, downloading and running code in one go.
+- **name** equals the folder name: lowercase letters, digits and single hyphens, at most 64 characters, without the words “claude” or “anthropic”.
+- **description** is 20 to 1024 characters, with no XML tags (\`<tag>\`). Missing a “Use when...” gives a warning.
+- **Size**: the folder is at most 2 MB, each file at most 1 MB. Only text files and images (png, jpg, gif, webp, avif, ico, svg), no symlinks.
+- **No secrets**: API keys, tokens, private keys or \`.env\` files. If one was ever committed, revoke it right away.
+- **No unsafe instructions**: \`curl ... | bash\`, code hidden in base64, \`eval\` of code downloaded from the internet.
+- **No hidden text**: invisible Unicode characters, or prompt-injection phrases such as “ignore previous instructions”.
+- **head.json** matches the schema: a known \`category\`, languages only \`uz\`, \`ru\`, \`en\`, and YouTube values are the 11-character video id, not the full link.
 
-## Review
+If your skill genuinely has to quote a flagged pattern as an example, put \`head-skills-allow: <rule>\` on that line. The error becomes a warning and a maintainer reviews the line by hand. Secrets and hidden characters can never be allowed.
 
-A maintainer reads every PR that passes the checks: are the instructions clear, is the skill useful, is it safe. If something needs a change you’ll get comments — fix them and push to the same branch.
+## What happens next
+
+CI runs the validator and builds the site. A maintainer then reads the skill, tries it, and merges it. After the merge it appears on [skills.head.uz](https://skills.head.uz).
 
 ## The Praktikum 2026 badge
 
-Accepted skills by AI Praktikum students get the **Praktikum 2026** badge and are highlighted in the marketplace. Mention your praktikum group in the PR description.
+\`badges\` and \`featured\` are set by maintainers, so leave them out. Accepted skills by AI Praktikum students get the **Praktikum 2026** badge: mention your praktikum group in the PR description.
 `
 
 export const submitGuide: Record<Locale, string> = { uz, ru, en }
 
 export const checksList: Record<Locale, string[]> = {
-  uz: ['Frontmatter: name va description', 'head.json sxemasi', 'Hajm chegarasi', 'Maxfiy maʼlumotlar yoʻq', 'Xavfli andozalar yoʻq (curl | sh)'],
-  ru: ['Frontmatter: name и description', 'Схема head.json', 'Лимит размера', 'Никаких секретов', 'Никаких опасных шаблонов (curl | sh)'],
-  en: ['Frontmatter: name and description', 'head.json schema', 'Size limit', 'No secrets', 'No unsafe patterns (curl | sh)'],
+  uz: ['name papka nomiga teng, 64 belgigacha', 'description: 20–1024 belgi', 'Papka 2 MB, fayl 1 MB gacha', 'Maxfiy maʼlumotlar va .env yoʻq', 'Xavfli buyruqlar va yashirin matn yoʻq', 'head.json sxemaga mos'],
+  ru: ['name = имя папки, до 64 символов', 'description: 20–1024 символа', 'Папка до 2 МБ, файл до 1 МБ', 'Никаких секретов и .env', 'Никаких опасных команд и скрытого текста', 'head.json по схеме'],
+  en: ['name = folder name, ≤ 64 characters', 'description: 20–1024 characters', 'Folder ≤ 2 MB, each file ≤ 1 MB', 'No secrets or .env files', 'No unsafe commands or hidden text', 'head.json matches the schema'],
 }
 
-export const folderTemplate = `skills/my-skill/SKILL.md\nskills/my-skill/head.json`
+export const folderTemplate = COPY
+export const checkCommand = 'npm run validate:skills'

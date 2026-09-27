@@ -54,7 +54,7 @@ const uz = {
   'bundle.kind': 'Toʻplam',
   'bundle.included': 'Toʻplamdagi skillʼlar',
   'bundle.open': 'Ochish',
-  'badge.official': 'Rasmiy',
+  'badge.official': 'HEAD',
   'badge.praktikum-2026': 'Praktikum 2026',
   'nf.skill': 'Bunday skill topilmadi',
   'nf.bundle': 'Bunday toʻplam topilmadi',
@@ -69,6 +69,10 @@ const uz = {
   'submit.template': 'Papka shabloni',
   'submit.checks': 'Avtomatik tekshiruvlar',
   'submit.review': 'Har bir PRʼni maintainer koʻrib chiqadi.',
+  'fm.more': 'Batafsil',
+  'fm.less': 'Yigʻish',
+  'submit.local': 'Oʻzingizda tekshiring',
+  'install.plainZip': 'ZIP:',
 }
 
 export type DetailKey = keyof typeof uz
@@ -125,7 +129,7 @@ const ru: Dict = {
   'bundle.kind': 'Набор',
   'bundle.included': 'Скиллы в наборе',
   'bundle.open': 'Открыть',
-  'badge.official': 'Официальный',
+  'badge.official': 'HEAD',
   'badge.praktikum-2026': 'Praktikum 2026',
   'nf.skill': 'Скилл не найден',
   'nf.bundle': 'Набор не найден',
@@ -140,6 +144,10 @@ const ru: Dict = {
   'submit.template': 'Шаблон папки',
   'submit.checks': 'Автоматические проверки',
   'submit.review': 'Каждый PR проверяет мейнтейнер.',
+  'fm.more': 'Показать полностью',
+  'fm.less': 'Свернуть',
+  'submit.local': 'Проверьте у себя',
+  'install.plainZip': 'ZIP:',
 }
 
 const en: Dict = {
@@ -193,7 +201,7 @@ const en: Dict = {
   'bundle.kind': 'Bundle',
   'bundle.included': 'Skills in this bundle',
   'bundle.open': 'Open',
-  'badge.official': 'Official',
+  'badge.official': 'HEAD',
   'badge.praktikum-2026': 'Praktikum 2026',
   'nf.skill': 'Skill not found',
   'nf.bundle': 'Bundle not found',
@@ -208,6 +216,10 @@ const en: Dict = {
   'submit.template': 'Folder template',
   'submit.checks': 'Automated checks',
   'submit.review': 'A maintainer reviews every PR.',
+  'fm.more': 'Show more',
+  'fm.less': 'Show less',
+  'submit.local': 'Check it locally',
+  'install.plainZip': 'ZIP:',
 }
 
 const dicts: Record<Locale, Dict> = { uz, ru, en }
