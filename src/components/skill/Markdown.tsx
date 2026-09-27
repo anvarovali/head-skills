@@ -13,6 +13,14 @@ function safeUrl(href: string): string | null {
   return h
 }
 
+/** 'https://www.github.com/a/b/c/d.md' -> 'github.com/a/b…/d.md': host + path, middle-truncated past 44 chars. */
+export function shortUrl(href: string, max = 44): string {
+  const s = href.replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/$/, '')
+  if (s.length <= max) return s
+  const head = Math.ceil((max - 1) * 0.6), tail = max - 1 - head
+  return `${s.slice(0, head)}…${s.slice(-tail)}`
+}
+
 const slug = (t: string) => t.toLowerCase().replace(/<[^>]+>/g, '').replace(/&[a-z#0-9]+;/g, '').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '')
 
 /* A marked instance whose output is safe to inject: raw HTML (block + inline) is escaped, not passed through;
@@ -24,12 +32,13 @@ md.use({
       return esc(token.text)
     },
     link(this: { parser: { parseInline: (t: Tokens.Link['tokens']) => string } }, token: Tokens.Link) {
-      const text = this.parser.parseInline(token.tokens)
       const url = safeUrl(token.href)
+      const bare = /^https?:\/\//i.test(token.text) && (token.text === token.href || token.text === token.href.replace(/^mailto:/, ''))
+      const text = bare ? esc(shortUrl(token.text)) : this.parser.parseInline(token.tokens)
       if (!url) return text
       const ext = /^https?:/i.test(url)
-      const title = token.title ? ` title="${esc(token.title)}"` : ''
-      return `<a href="${esc(url)}"${title}${ext ? ' target="_blank" rel="noopener noreferrer"' : ''}>${text}</a>`
+      const title = token.title ? token.title : bare ? token.href : ''
+      return `<a href="${esc(url)}"${title ? ` title="${esc(title)}"` : ''}${bare ? ' data-url' : ''}${ext ? ' target="_blank" rel="noopener noreferrer"' : ''}>${text}</a>`
     },
     image(token: Tokens.Image) {
       const url = safeUrl(token.href)

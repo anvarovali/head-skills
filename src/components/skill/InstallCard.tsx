@@ -38,7 +38,7 @@ function breakable(text: string) {
   return text.split('/').flatMap((seg, i, a) => (i < a.length - 1 ? [seg, '/', <wbr key={i} />] : [seg]))
 }
 
-const PILL_ZONE = 30 // px under the last fully visible line: the fade and the expand pill live here
+const BAND = 40 // px of plain box ground under the last full line; the expand pill sits centred in it
 
 /** Mono box cut on a line boundary: either after `rows` visual lines, or right after logical line `endAt`
     (measured, so wrapped lines count). Below the cut a fade into the box ground carries an expand pill. */
@@ -56,7 +56,7 @@ function MonoBox({ lines, label, rows = 5, endAt }: { lines: Line[]; label: stri
       const top = parseFloat(getComputedStyle(el).paddingTop) || 0
       const end = endAt != null ? (el.children[endAt] as HTMLElement | undefined) : undefined
       const bottom = end ? end.offsetTop + end.offsetHeight : top + rows * lh
-      setCut(Math.round(bottom + PILL_ZONE + 2)) // + the 1px top and bottom borders
+      setCut(Math.round(bottom + BAND + 2)) // + the 1px top and bottom borders
     }
     measure()
     const ro = new ResizeObserver(measure)
@@ -66,7 +66,7 @@ function MonoBox({ lines, label, rows = 5, endAt }: { lines: Line[]; label: stri
   const fits = cut != null && box.current != null && box.current.scrollHeight <= cut
   return (
     <div className={s.monoWrap} data-open={open || undefined}>
-      <div ref={box} id={id} className={s.mono} style={open || fits ? undefined : { height: cut ?? `calc(${rows} * 19px + 10px + ${PILL_ZONE}px)` }}
+      <div ref={box} id={id} className={s.mono} style={open || fits ? undefined : { height: cut ?? `calc(${rows} * 19px + 10px + ${BAND}px)` }}
         tabIndex={0} role="region" aria-label={label}>
         {lines.map((l, i) => (
           <span key={i} className={s.monoLine} style={{ paddingLeft: `${l.indent ?? 0}ch`, textIndent: `-${l.hang ?? 0}ch` }}>
