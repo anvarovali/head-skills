@@ -1,16 +1,15 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { createRoot } from 'react-dom/client'
+import { MemoryRouter } from 'react-router'
 import clsx from 'clsx'
 import { gsap, registerGsap, useGSAP } from '@/motion/easings'
 import { catalog, categoryTitle } from '@/data/catalog'
 import { chrome } from '@/content/chrome'
-import { pick } from '@/i18n/useLocale'
+import { LocaleContext, pick } from '@/i18n/useLocale'
 import { LOCALES, LOCALE_NAMES, switchLocale, type Locale } from '@/i18n/locales'
 import { HeadMark, Slash } from '@/components/ui/HeadMark'
-import { ItemIcon } from '@/components/market/ExtensionCard'
-import { ClockIcon, CopyIcon, StackIcon } from '@/components/market/icons'
-import { BADGE_LABEL, getItems, type Item } from '@/components/market/items'
-import cardCss from '@/components/market/ExtensionCard.module.css'
+import { ExtensionCard } from '@/components/market/ExtensionCard'
+import { getItems } from '@/components/market/items'
 import { INTRO_AUDIO, INTRO_OFFSET, SEEN_KEY } from './replay'
 import { KICKS, T, spring, EIGHTH, BEAT } from './timing'
 import s from './intro.module.css'
@@ -192,11 +191,21 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
       cmdStage.style.fontSize = `${cmdFs}px`
       cmdW = cmdIn.offsetWidth
     }
+    // the success line never runs wider than the command
+    if (done && cmdStage) { const dw = done.scrollWidth; if (dw > cmdW * 0.96) done.style.fontSize = `${(cmdFs * cmdW * 0.96) / dw}px` }
+    // the card faces: centre each on its shell by its real height (the market card's height follows its content)
+    const faces = cards.map((c) => c.firstElementChild as HTMLElement | null)
+    const faceH = faces.map((f) => { const h = f?.offsetHeight ?? CH; if (f) f.style.marginTop = `${-h / 2}px`; return h })
+    // the lockup is centred as a block (absolute, -50 %); during the riser HEAD.uz alone is centred on its ink
+    gsap.set(brand!, { xPercent: -50, yPercent: -50 })
+    const lineBox = line!.getBoundingClientRect(), svgBox = one('[data-base] svg')!.getBoundingClientRect(), uzBox = uz!.getBoundingClientRect()
+    const huCentre = (svgBox.left + uzBox.right) / 2 - (lineBox.left + lineBox.width / 2) // px, unscaled
     const lineW = line?.offsetWidth ?? vw * 0.9
     const skillsW = skillsWord?.offsetWidth ?? 0
     const unit = (one('[data-base] svg')?.getBoundingClientRect().height ?? 45.8) / 45.7984 // px per SVG unit
     const fitLine = Math.min(1, (vw * 0.8) / lineW) // the peak: ~80 % of the frame, confident, not crowded
     const riserA = (vw * 0.3) / (lineW - skillsW), riserB = riserA * 1.18 // HEAD.uz alone at ~30 % → 35 % of the width
+    void skillsW
     const K = CARD_ZOOM
     const R = (rendered: number) => rendered / K // a rendered size (1 = a market card) → the transform scale
 
@@ -241,9 +250,15 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
           included), and the riser pulls the SAME mark together; it is whole before "skills." joins it */
     const TRACK = 13 // SVG units between neighbouring units
     tl.set(skillsWord!, { opacity: 0 }, O)
-    tl.fromTo(line!, { scale: riserA, x: (-riserA * skillsW) / 2 }, { scale: riserB, x: (-riserB * skillsW) / 2, duration: T.drop - SNAP, ease: 'sine.in' }, SNAP - 0.04)
-    // H, E, slash, A, D → -3, -2, -1, -1, 0 steps (the slash is the A's leg: they travel together); . u z → +1 +2 +3
-    const steps = [-3, -2, -1, -1, 0]
+    tl.fromTo(line!, { scale: riserA, x: -riserA * huCentre }, { scale: riserB, x: -riserB * huCentre, duration: T.drop - SNAP, ease: 'sine.in' }, SNAP - 0.04)
+    // no dead air: a slow camera push through the riser, and the room light breathes on each beat
+    tl.fromTo(brand!, { scale: 1 }, { scale: 1.06, duration: T.drop - SNAP, ease: 'none' }, SNAP)
+    for (let b = SNAP + BEAT; b < T.drop - 0.1; b += BEAT) {
+      tl.to(light!, { opacity: '+=0.14', duration: 0.06, ease: 'power1.out' }, b)
+      tl.to(light!, { opacity: '-=0.14', duration: 0.4, ease: 'power2.out' }, b + 0.06)
+    }
+    // one step between every unit: H E (/A) D . u z (the slash is the A's leg: they travel together)
+    const steps = [-3.5, -2.5, -1.5, -1.5, -0.5] // centred on the middle of HEAD.uz, so the spread never shifts it
     glyphs.forEach((g, i) => {
       if (!g) return
       const at = SNAP - 0.04 + i * 0.03, x = steps[i] * TRACK
@@ -251,8 +266,8 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
       else tl.fromTo(g, { opacity: 0, x: x * 1.5, yPercent: 18 }, { opacity: 1, x, yPercent: 0, ...spring(0.85, 0.34) }, at)
     })
     tl.fromTo(uz!, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: 'power1.out' }, SNAP + 0.1)
-    uzChars.forEach((c, i) => tl.fromTo(c, { x: (i + 1) * TRACK * unit * 1.5 }, { x: (i + 1) * TRACK * unit, ...spring(0.85, 0.34) }, SNAP + 0.1 + i * 0.03))
-    const pullFrom = SNAP + 0.4, pull = T.drop - 0.25 - pullFrom
+    uzChars.forEach((c, i) => tl.fromTo(c, { x: (i + 0.5) * TRACK * unit * 1.5 }, { x: (i + 0.5) * TRACK * unit, ...spring(0.85, 0.34) }, SNAP + 0.1 + i * 0.03))
+    const pullFrom = SNAP + 0.2, pull = T.drop - 0.25 - pullFrom
     glyphs.forEach((g) => { if (g) tl.to(g, { x: 0, duration: pull, ease: 'sine.inOut' }, pullFrom) })
     tl.to(uzChars, { x: 0, duration: pull, ease: 'sine.inOut' }, pullFrom)
     tl.fromTo(light!, { opacity: 0, scale: 0.6 }, { opacity: 0.55, scale: 0.9, duration: T.drop - SNAP, ease: 'sine.in' }, SNAP)
@@ -261,6 +276,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
           room light flashes and a light sweep crosses the letters. One colour for the word; only the slash is blue. */
     tl.fromTo(skillsWord!, { opacity: 0, x: '-0.3em' }, { opacity: 1, x: 0, ...spring(0.7, 0.4) }, T.drop - 0.03)
     tl.to(line!, { scale: fitLine, x: 0, ...spring(0.68, 0.5) }, T.drop - 0.03)
+    tl.to(brand!, { scale: 1, ...spring(1, 0.5) }, T.drop - 0.03)
     tl.set(light!, { opacity: 0.9, scale: 1.2 }, T.drop)
     tl.to(light!, { opacity: 0.3, scale: 1, duration: 1.8, ease: 'expo.out' }, T.drop + 0.02)
     const sw = lineW * 0.28
@@ -293,6 +309,9 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     const PUSH = 1.9
     tl.to(fronts, { rotationX: -36, transformPerspective: 700, transformOrigin: '50% 100%', ...spring(0.8, 0.42), stagger: 0.035 }, KICKS[7] - 0.04)
     tl.to(rig!, { scale: PUSH, duration: T.bar3 - KICKS[7] + 0.03, ease: 'power2.in' }, KICKS[7])
+    const caps = q('[data-fcap]')
+    tl.to(caps, { opacity: 0, duration: 0.2, ease: 'power1.in' }, KICKS[7]) // never under the skip pill during the push
+    tl.to(caps, { opacity: 1, duration: 0.3, ease: 'power1.out' }, KICKS[10] + 0.3)
 
     /* 5 — bar 3, the hero shot: on the downbeat the cards burst out of that folder at ~2× and fill the frame; on the next
           kick the camera pulls back and they settle into a fan above the folders */
@@ -302,7 +321,13 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
       const card = cards[j], c = j - mid
       if (!card) return
       const side = Math.abs(c) > 0
-      const b = { x: c * vw * 0.4, y: -vh * (side ? 0.07 : 0.02), r: c * 9, s: side ? 1.85 : 2.2, z: side ? -180 : 0 }
+      // hero sizes, capped: the centre card <= 70 % of the width, the side cards wholly inside the frame (24 px margin)
+      const sC = Math.min(2.2, (vw * 0.7) / CW), sS = Math.min(1.5, sC * 0.72), rot = 8 * Math.sign(c)
+      const hS = faceH[j] ?? CH, rad = (Math.abs(rot) * Math.PI) / 180
+      const halfW = (sS * (CW * Math.cos(rad) + hS * Math.sin(rad))) / 2
+      const b = side
+        ? { x: Math.sign(c) * (vw / 2 - 24 - halfW) * Math.min(1, Math.abs(c)), y: -vh * 0.07, r: rot, s: sS, z: -180 }
+        : { x: 0, y: -vh * 0.02, r: 0, s: sC, z: 0 }
       const at = T.bar3 - 0.03 + Math.abs(c) * 0.05
       tl.set(card, { x: mouth.x, y: mouth.y, z: 0, scale: R(0.45), rotation: 0, opacity: 1 }, at - 0.02)
       tl.to(card, { x: b.x, scale: R(b.s), z: b.z, ...spring(0.92, 0.4) }, at)
@@ -361,7 +386,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
         const real = document.querySelector<HTMLElement>(`[data-grid] [data-card-id="${CSS.escape(it.id)}"]`)
         const r = real?.getBoundingClientRect()
         const ok = !!real && !!r && r.width > 0 && r.bottom > 0 && r.top < vh
-        return { c: cards[j], real, r, ok, y: ok ? r!.top : -1 }
+        return { c: cards[j], h: faceH[j] ?? CH, real, r, ok, y: ok ? r!.top : -1 }
       })
       const order = flights.filter((f) => f.ok).sort((a, b) => b.y - a.y)
       flights.forEach((f) => {
@@ -376,7 +401,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
         sub.set(f.c, { zIndex: 10 - order.indexOf(f) }, 0)
         // independent X and Y springs: Y answers first, so a card drops out of the row before it slides across
         const at = order.indexOf(f) * 0.08
-        sub.to(f.c, { y, scaleX: r.width / (CW * K), scaleY: r.height / (CH * K), rotation: 0, ...spring(1, 0.36) }, at)
+        sub.to(f.c, { y, scaleX: r.width / (CW * K), scaleY: r.height / (f.h * K), rotation: 0, ...spring(1, 0.36) }, at)
         sub.to(f.c, { x, ...spring(1, 0.5) }, at + 0.08)
         sub.add(() => { real.style.transition = 'opacity .2s ease-out'; real.style.opacity = '1' }, land - 0.12)
         sub.to(f.c, { opacity: 0, duration: 0.16, ease: 'power1.in' }, land - 0.04)
@@ -406,12 +431,6 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
   }, { scope: rootRef, dependencies: [phase] })
 
   const isRu = locale === 'ru'
-  const by = (name?: string) => (name ? (chrome[locale]['card.by'] ?? chrome.en['card.by']).replace('{name}', `@${name}`) : null)
-  // the same foot as ExtensionCard: a stack count for bundles, clock + short date for skills
-  const meta = (it: Item) => it.kind === 'bundle'
-    ? <><StackIcon size={13} /><span>{it.skillCount ?? 0}</span></>
-    : it.updated ? <><ClockIcon size={13} /><span>{shortDate(it.updated, locale)}</span></> : null
-  const badge = (it: Item) => it.badges.map((b) => BADGE_LABEL[b]).find(Boolean)
   const lineText = (
     <>
       <span className={clsx(s.word, s.txt)}>skills.</span>
@@ -441,7 +460,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
             <div key={it.id} className={s.fBack} data-fback>
               <span className={s.fShadow} />
               <FolderBack />
-              <span className={s.fCap}>{it.kind === 'bundle' ? chrome[locale]['tab.bundles'] : pick(categoryTitle(it.category ?? ''), locale) ?? it.category}</span>
+              <span className={s.fCap} data-fcap>{it.kind === 'bundle' ? chrome[locale]['tab.bundles'] : pick(categoryTitle(it.category ?? ''), locale) ?? it.category}</span>
             </div>
           ))}
           {lib.fan.map((it) => (
@@ -454,15 +473,8 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
         <div className={s.wall} data-wall aria-hidden="true">
           {lib.fan.map((it) => (
             <div key={it.id} className={s.wcard} data-wcard>
-              <div className={clsx(cardCss.card, s.face)}>
-                <div className={cardCss.head}>
-                  <ItemIcon item={it} />
-                  <h3 className={cardCss.name}>{pick(it.title, locale) ?? it.id}</h3>
-                  {badge(it) ? <span className={cardCss.badge}>{badge(it)}</span> : null}
-                  <span className={cardCss.copy}><CopyIcon size={14} /></span>
-                </div>
-                <p className={cardCss.desc}>{pick(it.summary, locale)}</p>
-                <div className={cardCss.foot}><span className={cardCss.by}>{by(it.author)}</span><span className={cardCss.meta}>{meta(it)}</span></div>
+              <div className={s.face}>
+                <MemoryRouter><LocaleContext.Provider value={locale}><ExtensionCard item={it} /></LocaleContext.Provider></MemoryRouter>
               </div>
             </div>
           ))}
@@ -528,18 +540,6 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
       </div>
     </div>
   )
-}
-
-/* mirrors ExtensionCard's hand-made short dates (Chromium has no Uzbek month names) */
-const MONTHS: Record<Locale, string[]> = {
-  uz: ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek'],
-  ru: ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
-  en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-}
-function shortDate(iso: string, locale: Locale) {
-  const d = new Date(iso)
-  const m = MONTHS[locale][d.getMonth()]
-  return locale === 'uz' ? `${d.getDate()}-${m}` : `${d.getDate()} ${m}`
 }
 
 /* ---------- drawn bits ---------- */

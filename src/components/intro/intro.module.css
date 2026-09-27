@@ -63,7 +63,9 @@
 .hi { font-size: clamp(84px, 14.5vw, 236px); font-weight: 500; letter-spacing: -.05em; line-height: .96; }
 .ru .hi { letter-spacing: -.04em; }
 .rest { font-size: clamp(24px, 3vw, 48px); font-weight: 400; letter-spacing: -.02em; line-height: 1.2; color: var(--fg-2); margin-top: .55em; }
-.brand { display: flex; flex-direction: column; align-items: center; will-change: transform; }
+/* absolute + -50 % (set by GSAP): the lockup is laid out wider than the screen and scaled down, and a grid item that
+   overflows its cell is start-aligned, which put it ~57 px right of centre */
+.brand { position: absolute; left: 50%; top: 50%; width: max-content; display: flex; flex-direction: column; align-items: center; will-change: transform; }
 .line { position: relative; width: max-content; font-family: "Archivo", "Archivo Fallback", Arial, sans-serif; font-size: clamp(64px, 17.5vw, 360px); font-weight: 457; letter-spacing: -.045em; line-height: 1; white-space: nowrap; will-change: transform; }
 .word { display: inline-block; }
 .char { display: inline-block; }
@@ -111,7 +113,7 @@
 /* a flying card: a 0×0 shell carries the transform; the face inside is laid out CARD_ZOOM× large (zoom re-lays text and
    icons out at that size) and only ever scaled down, so it is crisp at hero size and at its seat */
 .wcard { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; }
-.face { position: absolute; left: 0; top: 0; width: 313px; height: 152px; margin: -76px 0 0 -156.5px; zoom: 2.5; box-sizing: border-box;
+.face { position: absolute; left: 0; top: 0; width: 313px; margin: -76px 0 0 -156.5px; zoom: 2.5; border-radius: var(--m-r-xl);
   font-family: var(--m-font); text-align: left; box-shadow: 0 30px 60px -14px rgba(0, 0, 0, .6); }
 /* the finale's light: a soft diagonal band crossing the blue and the cards on the downbeat */
 .sheen { position: absolute; inset: -10% -30%; z-index: 4; pointer-events: none; opacity: 0;
