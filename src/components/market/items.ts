@@ -24,7 +24,7 @@ export const sourceOf = (it: Item): Source =>
   it.badges.includes('official') ? 'head' : it.badges.some((b) => b.startsWith('praktikum')) ? 'praktikum' : 'community'
 
 /** Badge ids -> the short label on a card. Unknown badges are not shown. */
-export const BADGE_LABEL: Record<string, string> = { official: 'HEAD', 'praktikum-2026': 'Praktikum 2026' }
+export const BADGE_LABEL: Record<string, string> = { official: 'HEAD', 'praktikum-2026': 'Praktikum' }
 
 const skills: Item[] = catalog.skills.map((s) => ({
   kind: 'skill', id: s.id, title: s.title, summary: s.summary, category: s.category, icon: s.icon,

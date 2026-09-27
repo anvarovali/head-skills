@@ -117,7 +117,10 @@ function SkillsView({ items, cats, srcs, sort, page, byFacets, onCat, onCats, on
   const t = useT()
   const locale = useLocale()
   const filtered = items.filter(byFacets)
-  const featured = !cats.length && !srcs.length ? sortItems(items.filter((it) => it.featured), 'featured', locale).slice(0, 8) : []
+  // a Featured row only earns its place when it is a subset of a longer list; otherwise it just repeats it
+  const featuredAll = items.filter((it) => it.featured)
+  const showFeatured = !cats.length && !srcs.length && items.length > 8 && featuredAll.length < items.length
+  const featured = showFeatured ? sortItems(featuredAll, 'featured', locale).slice(0, 8) : []
   const pages = Math.ceil(filtered.length / PAGE)
   const shown = sortItems(filtered, sort, locale).slice((page - 1) * PAGE, page * PAGE)
   const catCount = (id: string) => items.filter((it) => it.category === id && (!srcs.length || srcs.includes(sourceOf(it)))).length
