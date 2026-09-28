@@ -2,172 +2,603 @@
  "offset": 3.8,
  "music": "public/audio/intro-music.mp3",
  "out": "public/audio/intro.mp3",
- "lufsMix": -14,
+ "lufsMix": -14.1,
  "lufsMusic": -14,
  "durMusic": 19.8,
  "durOut": 19.8,
+ "duck": [
+  {
+   "from": 7.784,
+   "to": 9,
+   "db": -2.5
+  },
+  {
+   "from": 11.641,
+   "to": 12.2,
+   "db": -1.9
+  }
+ ],
  "cues": [
   {
    "name": "click",
-   "clip": "tap",
-   "at": 3.805,
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 3.805,
    "start": 3.8042,
    "from": 0,
    "dur": 0.16,
-   "gainDb": -14.6
+   "gainDb": -14.6,
+   "peakDbfs": -16,
+   "pan": 0
   },
   {
-   "name": "salom",
-   "clip": "slide",
-   "at": 4.05,
+   "name": "salom-in",
+   "file": "soft-sliding-transition-whoosh/Soft Sliding Transition Whoosh.wav",
+   "time": 4.05,
    "start": 3.8,
    "from": 0.34,
    "dur": 0.9,
-   "gainDb": -17.86
+   "gainDb": -17.86,
+   "peakDbfs": -19,
+   "pan": 0
   },
   {
-   "name": "glyph0",
-   "clip": "tap",
-   "at": 5.355,
+   "name": "salom-out",
+   "file": "whoosh-soft-and-subtle/WHOOSH_Soft_And_Subtle.wav",
+   "time": 5.315,
+   "start": 4.8854,
+   "from": 0,
+   "dur": 0.7,
+   "gainDb": -27.5,
+   "peakDbfs": -26,
+   "pan": 0
+  },
+  {
+   "name": "glyph-H",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 5.355,
    "start": 5.3546,
    "from": 0,
    "dur": 0.08,
-   "gainDb": -26.6
+   "gainDb": -26.6,
+   "peakDbfs": -28,
+   "pan": -0.3
   },
   {
-   "name": "glyph1",
-   "clip": "tap",
-   "at": 5.385,
+   "name": "glyph-E",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 5.385,
    "start": 5.3846,
    "from": 0,
    "dur": 0.08,
-   "gainDb": -26.6
+   "gainDb": -26.6,
+   "peakDbfs": -28,
+   "pan": -0.2
   },
   {
-   "name": "glyph2",
-   "clip": "tap",
-   "at": 5.415,
+   "name": "glyph-/",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 5.415,
    "start": 5.4146,
    "from": 0,
    "dur": 0.08,
-   "gainDb": -26.6
+   "gainDb": -26.6,
+   "peakDbfs": -28,
+   "pan": -0.08
   },
   {
-   "name": "glyph3",
-   "clip": "tap",
-   "at": 5.445,
+   "name": "glyph-A",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 5.445,
    "start": 5.4446,
    "from": 0,
    "dur": 0.08,
-   "gainDb": -26.6
+   "gainDb": -26.6,
+   "peakDbfs": -28,
+   "pan": -0.08
   },
   {
-   "name": "glyph4",
-   "clip": "tap",
-   "at": 5.475,
+   "name": "glyph-D",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 5.475,
    "start": 5.4746,
    "from": 0,
    "dur": 0.08,
-   "gainDb": -26.6
+   "gainDb": -26.6,
+   "peakDbfs": -28,
+   "pan": 0.05
   },
   {
-   "name": "glyph.uz",
-   "clip": "tap",
-   "at": 5.495,
+   "name": "glyph-.uz",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 5.495,
    "start": 5.4946,
    "from": 0,
    "dur": 0.08,
-   "gainDb": -27.6
+   "gainDb": -27.6,
+   "peakDbfs": -29,
+   "pan": 0.25
+  },
+  {
+   "name": "tighten-air",
+   "file": "soft-sliding-transition-whoosh/Soft Sliding Transition Whoosh.wav",
+   "time": 5.675,
+   "start": 5.6754,
+   "from": 0.2,
+   "dur": 1.9,
+   "gainDb": -31.86,
+   "peakDbfs": -33,
+   "pan": 0
+  },
+  {
+   "name": "drop-swell",
+   "file": "short-and-low-reversed-whoosh/ReversedWhooshShort TFX2146.wav",
+   "time": 7.814,
+   "start": 6.912,
+   "from": 0,
+   "dur": 0.902,
+   "gainDb": -19.97,
+   "peakDbfs": -17,
+   "pan": 0
   },
   {
    "name": "drop-hit",
-   "clip": "hit",
-   "at": 7.814,
+   "file": "cinematic-hit-noise-impact-shimmer-01/CINEMATIC_HIT_Noise_Impact_Shimmer_01.wav",
+   "time": 7.814,
    "start": 7.81,
    "from": 0.1212,
    "dur": 2.5,
-   "gainDb": -7.2
+   "gainDb": -7.2,
+   "peakDbfs": -11,
+   "pan": 0
   },
   {
    "name": "drop-sub",
-   "clip": "sub",
-   "at": 7.814,
+   "file": "deep-cinematic-sub-impact/Deep Cinematic Sub Impact.wav",
+   "time": 7.814,
    "start": 7.81,
    "from": 0.014,
    "dur": 2.5,
-   "gainDb": -8.16
+   "gainDb": -8.16,
+   "peakDbfs": -9,
+   "pan": 0
+  },
+  {
+   "name": "drop-sweep",
+   "file": "short-magic-shimmer/Short Magic Shimmer/Short Magic Shimmer.wav",
+   "time": 7.894,
+   "start": 7.89,
+   "from": 0.0328,
+   "dur": 1.6,
+   "gainDb": -16.05,
+   "peakDbfs": -20,
+   "pan": [
+    -0.8,
+    0.8
+   ]
+  },
+  {
+   "name": "tagline",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 8.3,
+   "start": 8.2992,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -29.6,
+   "peakDbfs": -31,
+   "pan": 0
+  },
+  {
+   "name": "title-lift",
+   "file": "whoosh-soft-and-subtle/WHOOSH_Soft_And_Subtle.wav",
+   "time": 10.34,
+   "start": 9.91,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -26.5,
+   "peakDbfs": -25,
+   "pan": 0
+  },
+  {
+   "name": "folder-arrive-0",
+   "file": "airy-transition-whoosh/21568 airy transition whoosh-full.wav",
+   "time": 10.44,
+   "start": 10.23,
+   "from": 0,
+   "dur": 0.7,
+   "gainDb": -31.78,
+   "peakDbfs": -29,
+   "pan": -0.435
+  },
+  {
+   "name": "folder-arrive-1",
+   "file": "airy-transition-whoosh/21568 airy transition whoosh-full.wav",
+   "time": 10.38,
+   "start": 10.17,
+   "from": 0,
+   "dur": 0.7,
+   "gainDb": -31.78,
+   "peakDbfs": -29,
+   "pan": 0
+  },
+  {
+   "name": "folder-arrive-2",
+   "file": "airy-transition-whoosh/21568 airy transition whoosh-full.wav",
+   "time": 10.44,
+   "start": 10.23,
+   "from": 0,
+   "dur": 0.7,
+   "gainDb": -31.78,
+   "peakDbfs": -29,
+   "pan": 0.435
+  },
+  {
+   "name": "label-out-0",
+   "file": "bubble-pop/Bubble Pop 02 Disappear.wav",
+   "time": 11.192,
+   "start": 11.188,
+   "from": 0.0325,
+   "dur": 0.2,
+   "gainDb": -32.9,
+   "peakDbfs": -37,
+   "pan": -0.435
+  },
+  {
+   "name": "label-out-1",
+   "file": "bubble-pop/Bubble Pop 04 Disappear.wav",
+   "time": 11.212,
+   "start": 11.208,
+   "from": 0.0528,
+   "dur": 0.2,
+   "gainDb": -38.29,
+   "peakDbfs": -37,
+   "pan": 0
+  },
+  {
+   "name": "label-out-2",
+   "file": "bubble-pop/Bubble Pop 06 Disappear.wav",
+   "time": 11.232,
+   "start": 11.228,
+   "from": 0.0429,
+   "dur": 0.2,
+   "gainDb": -32.7,
+   "peakDbfs": -37,
+   "pan": 0.435
+  },
+  {
+   "name": "label-in-0",
+   "file": "bubble-pop/Bubble Pop 06 Disappear.wav",
+   "time": 12.943,
+   "start": 12.939,
+   "from": 0.0429,
+   "dur": 0.2,
+   "gainDb": -32.7,
+   "peakDbfs": -37,
+   "pan": -0.435
+  },
+  {
+   "name": "label-in-1",
+   "file": "bubble-pop/Bubble Pop 02 Disappear.wav",
+   "time": 12.963,
+   "start": 12.959,
+   "from": 0.0325,
+   "dur": 0.2,
+   "gainDb": -32.9,
+   "peakDbfs": -37,
+   "pan": 0
+  },
+  {
+   "name": "label-in-2",
+   "file": "bubble-pop/Bubble Pop 04 Disappear.wav",
+   "time": 12.983,
+   "start": 12.979,
+   "from": 0.0528,
+   "dur": 0.2,
+   "gainDb": -38.29,
+   "peakDbfs": -37,
+   "pan": 0.435
+  },
+  {
+   "name": "flap-0",
+   "file": "object-office-folder-open-01/OBJECT_OFFICE_Folder_Open_01.wav",
+   "time": 11.152,
+   "start": 11.148,
+   "from": 0.2125,
+   "dur": 0.45,
+   "gainDb": -12.07,
+   "peakDbfs": -21,
+   "pan": -0.435
+  },
+  {
+   "name": "flap-1",
+   "file": "object-office-folder-open-light-01/OBJECT_OFFICE_Folder_Open_Light_01.wav",
+   "time": 11.187,
+   "start": 11.183,
+   "from": 0.2965,
+   "dur": 0.45,
+   "gainDb": -5.7,
+   "peakDbfs": -21,
+   "pan": 0,
+   "semitones": 1.5
+  },
+  {
+   "name": "flap-2",
+   "file": "object-office-folder-open-01/OBJECT_OFFICE_Folder_Open_01.wav",
+   "time": 11.222,
+   "start": 11.218,
+   "from": 0.2321,
+   "dur": 0.45,
+   "gainDb": -12.07,
+   "peakDbfs": -21,
+   "pan": 0.435,
+   "semitones": -1.5
   },
   {
    "name": "push",
-   "clip": "whoosh",
-   "at": 11.46,
-   "start": 11.03,
+   "file": "zoom-airy-swoosh/Zoom Airy Swoosh.wav",
+   "time": 11.611,
+   "start": 10.541,
    "from": 0,
-   "dur": 1.2,
-   "gainDb": -20.5
+   "dur": 1.4,
+   "gainDb": -16.35,
+   "peakDbfs": -20,
+   "pan": 0
+  },
+  {
+   "name": "burst-swell",
+   "file": "short-and-low-reversed-whoosh/ReversedWhooshShort TFX2146.wav",
+   "time": 11.691,
+   "start": 10.791,
+   "from": 0.002,
+   "dur": 0.9,
+   "gainDb": -25.97,
+   "peakDbfs": -23,
+   "pan": 0
   },
   {
    "name": "burst",
-   "clip": "airy",
-   "at": 11.74,
-   "start": 11.53,
+   "file": "airy-transition-whoosh/21568 airy transition whoosh-full.wav",
+   "time": 11.741,
+   "start": 11.531,
    "from": 0,
    "dur": 1.3,
-   "gainDb": -19.78
+   "gainDb": -19.78,
+   "peakDbfs": -17,
+   "pan": 0
+  },
+  {
+   "name": "pop-0",
+   "file": "bubble-pop/Bubble Pop 01 Appear.wav",
+   "time": 11.661,
+   "start": 11.657,
+   "from": 0.0452,
+   "dur": 0.25,
+   "gainDb": -22.92,
+   "peakDbfs": -22,
+   "pan": 0
+  },
+  {
+   "name": "pop--1",
+   "file": "bubble-pop/Bubble Pop 03 Appear.wav",
+   "time": 11.711,
+   "start": 11.707,
+   "from": 0.0311,
+   "dur": 0.25,
+   "gainDb": -15.48,
+   "peakDbfs": -22,
+   "pan": -0.62
+  },
+  {
+   "name": "pop-1",
+   "file": "bubble-pop/Bubble Pop 05 Appear.wav",
+   "time": 11.711,
+   "start": 11.707,
+   "from": 0.0466,
+   "dur": 0.25,
+   "gainDb": -21.04,
+   "peakDbfs": -22,
+   "pan": 0.62
+  },
+  {
+   "name": "pull-back",
+   "file": "soft-sliding-transition-whoosh/Soft Sliding Transition Whoosh.wav",
+   "time": 12.843,
+   "start": 12.253,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -25.86,
+   "peakDbfs": -27,
+   "pan": 0
+  },
+  {
+   "name": "fan-0",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 12.983,
+   "start": 12.9822,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -27.6,
+   "peakDbfs": -29,
+   "pan": 0
+  },
+  {
+   "name": "fan--1",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 13.013,
+   "start": 13.0122,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -27.6,
+   "peakDbfs": -29,
+   "pan": -0.5
+  },
+  {
+   "name": "fan-1",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 13.013,
+   "start": 13.0122,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -27.6,
+   "peakDbfs": -29,
+   "pan": 0.5
+  },
+  {
+   "name": "clear-depth",
+   "file": "short-and-low-reversed-whoosh/ReversedWhooshShort TFX2146.wav",
+   "time": 13.491,
+   "start": 12.691,
+   "from": 0.102,
+   "dur": 0.8,
+   "gainDb": -27.97,
+   "peakDbfs": -25,
+   "pan": 0
   },
   {
    "name": "typing",
-   "clip": "keys",
-   "at": 13.71,
+   "file": "keyboard-vividkey-for-mac-rapid-typing-fast/Keyboard_Vividkey_for_Mac_Rapid_Typing_Fast_OCP-0297-18.wav",
+   "time": 13.71,
    "start": 13.71,
    "from": 2,
    "dur": 0.78,
-   "gainDb": -15.69
+   "gainDb": -15.69,
+   "peakDbfs": -26,
+   "pan": [
+    -0.6,
+    0.6
+   ]
+  },
+  {
+   "name": "enter",
+   "file": "computer-keyboard-enter-key-press/Computer Keyboard14-Enter.wav",
+   "time": 14.566,
+   "start": 14.562,
+   "from": 0.2206,
+   "dur": 0.12,
+   "gainDb": -18.82,
+   "peakDbfs": -20,
+   "pan": 0
   },
   {
    "name": "chime",
-   "clip": "chime",
-   "at": 14.582,
+   "file": "digital-ui-confirm-chime/Digital UI Confirm Chime - OhmLab/OhmLab_Digital-UI-Confirm-Chime.wav",
+   "time": 14.582,
    "start": 14.578,
    "from": 0.0038,
    "dur": 0.2,
-   "gainDb": -14.81
+   "gainDb": -14.81,
+   "peakDbfs": -15,
+   "pan": 0
   },
   {
-   "name": "flight",
-   "clip": "swoosh",
-   "at": 16.3,
-   "start": 15.47,
+   "name": "pulse",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 15.08,
+   "start": 15.0792,
    "from": 0,
-   "dur": 1.6,
-   "gainDb": -20.68
+   "dur": 0.1,
+   "gainDb": -28.6,
+   "peakDbfs": -30,
+   "pan": 0
   },
   {
-   "name": "land0",
-   "clip": "tap",
-   "at": 16.5,
+   "name": "iris",
+   "file": "zoom-airy-swoosh/Zoom Airy Swoosh.wav",
+   "time": 15.757,
+   "start": 14.687,
+   "from": 0,
+   "dur": 1.2,
+   "gainDb": -17.35,
+   "peakDbfs": -21,
+   "pan": 0
+  },
+  {
+   "name": "peak-sweep",
+   "file": "short-magic-shimmer/Short Magic Shimmer/Short Magic Shimmer.wav",
+   "time": 15.677,
+   "start": 15.673,
+   "from": 0.0328,
+   "dur": 1.2,
+   "gainDb": -22.05,
+   "peakDbfs": -26,
+   "pan": [
+    -0.9,
+    0.9
+   ]
+  },
+  {
+   "name": "flight-bundle",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.343,
+   "start": 15.513,
+   "from": 0,
+   "dur": 1.1,
+   "gainDb": -25.68,
+   "peakDbfs": -24,
+   "pan": [
+    0,
+    -0.69
+   ]
+  },
+  {
+   "name": "flight-apple",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.423,
+   "start": 15.593,
+   "from": 0,
+   "dur": 1.1,
+   "gainDb": -25.68,
+   "peakDbfs": -24,
+   "pan": [
+    -0.63,
+    -0.69
+   ]
+  },
+  {
+   "name": "flight-gauntlet",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.503,
+   "start": 15.673,
+   "from": 0,
+   "dur": 1.1,
+   "gainDb": -25.68,
+   "peakDbfs": -24,
+   "pan": [
+    0.63,
+    -0.23
+   ]
+  },
+  {
+   "name": "land-apple",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 16.5,
    "start": 16.4992,
    "from": 0,
    "dur": 0.1,
-   "gainDb": -23.6
+   "gainDb": -23.6,
+   "peakDbfs": -25,
+   "pan": -0.69
   },
   {
-   "name": "land1",
-   "clip": "tap",
-   "at": 16.65,
+   "name": "land-bundle",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 16.65,
    "start": 16.6492,
    "from": 0,
    "dur": 0.1,
-   "gainDb": -23.6
+   "gainDb": -23.6,
+   "peakDbfs": -25,
+   "pan": -0.69
   },
   {
-   "name": "land2",
-   "clip": "tap",
-   "at": 16.81,
+   "name": "land-gauntlet",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 16.81,
    "start": 16.8092,
    "from": 0,
    "dur": 0.1,
-   "gainDb": -23.6
+   "gainDb": -23.6,
+   "peakDbfs": -25,
+   "pan": -0.23
   }
  ]
 }
