@@ -17,7 +17,7 @@
 - Deployed to Vercel project `head-skills` (team `aliwebdevelopers-projects`), live at head-skills.vercel.app. This deploy predates the SFX and intro B work.
 
 ### Unfinished
-- Intro B sound: `intro-b.mp3` new-ending cues. Work in progress is on `piece/intro` in `~/Downloads/head-skills-wt/intro`.
+- Intro B sound: DONE (a6fc905, 69 cues, onsets within 6 ms). Merged into build/v1.
 - Owner hasn't listened to A or B with sound yet, and hasn't picked the default: `INTRO_VARIANT` in `src/components/intro/replay.ts`, currently 'a'.
 - Not redeployed since the SFX / intro B / picker-hint changes.
 
@@ -37,6 +37,6 @@
 - Deploy: `vercel deploy --prod --yes --scope aliwebdevelopers-projects` from the repo root (it's linked).
 
 ### Next session should
-1. Finish and merge intro B's sound, then have the owner listen to A and B with sound and pick INTRO_VARIANT.
+1. Have the owner listen to A and B with sound and pick INTRO_VARIANT.
 2. `npm run build && vercel deploy --prod …`, then check skills.head.uz once DNS is set.
 3. Merge build/v1 → master after the owner approves.
