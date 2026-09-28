@@ -9,7 +9,7 @@ import { LocaleContext, pick } from '@/i18n/useLocale'
 import { LOCALES, LOCALE_NAMES, switchLocale, type Locale } from '@/i18n/locales'
 import { HeadMark, Slash } from '@/components/ui/HeadMark'
 import { ExtensionCard } from '@/components/market/ExtensionCard'
-import { AGENT_NAME, AgentLogo, type Agent } from '@/components/market/agentLogos'
+import { AgentLogo, type Agent } from '@/components/market/agentLogos'
 import { getItems } from '@/components/market/items'
 import { INTRO_OFFSET, SEEN_KEY, introAudio, type IntroVariant } from './replay'
 import { KICKS, T, spring, EIGHTH, BEAT } from './timing'
@@ -56,19 +56,40 @@ function library() {
     crisp at hero size (~2.2×) and at their seat (1.0). */
 const CARD_ZOOM = 2.5
 
-/** Version B: the six hero tiles (their `data-hero-tile` ids in src/components/market/Hero.tsx), in ARRIVAL order - "works
-    with Claude… Cursor… Gemini… Copilot…" and our two skill marks - with the orbit slot each presents at (fractions of
-    half the viewport, around the centred wordmark), its depth for the parallax and its tilt. */
-const skillIcons = catalog.skills.filter((k) => k.icon).map((k) => ({ id: k.id, src: k.icon!, title: k.title }))
-type HeroTile = { id: string; agent?: Agent; src?: string; name: (l: Locale) => string; slot: [number, number]; z: number; rot: number }
+/** Version B: the six hero icons (their `data-hero-tile` ids in src/components/market/Hero.tsx) and the card each one is
+    born from, so every icon clearly comes from a specific card on its own side: the left card (Apple Design) becomes
+    Cursor + the Apple Design mark (left seats), the centre card (the starter pack) becomes Claude + Copilot (the pair
+    either side of the words), the right card (Gauntlet Loop) becomes Gemini + the Gauntlet Loop mark (right seats). */
+const skillIcons = catalog.skills.filter((k) => k.icon).map((k) => ({ id: k.id, src: k.icon! }))
+type HeroTile = { id: string; agent?: Agent; src?: string; card: number }
 const HERO_TILES: HeroTile[] = [
-  { id: 'claude', agent: 'claude', name: () => AGENT_NAME.claude, slot: [-0.72, -0.44], z: 0, rot: -8 },
-  { id: 'cursor', agent: 'cursor', name: () => AGENT_NAME.cursor, slot: [0.74, -0.42], z: -160, rot: 9 },
-  { id: 'gemini', agent: 'gemini', name: () => AGENT_NAME.gemini, slot: [-0.64, 0.46], z: -220, rot: 7 },
-  { id: 'copilot', agent: 'copilot', name: () => AGENT_NAME.copilot, slot: [0.62, 0.5], z: -80, rot: -7 },
-  { id: skillIcons[0]?.id ?? 'skill-0', src: skillIcons[0]?.src, name: (l) => pick(skillIcons[0]?.title, l) ?? '', slot: [-0.26, -0.7], z: -300, rot: -5 },
-  { id: skillIcons[1]?.id ?? 'skill-1', src: skillIcons[1]?.src, name: (l) => pick(skillIcons[1]?.title, l) ?? '', slot: [0.3, 0.7], z: -120, rot: 10 },
+  { id: 'cursor', agent: 'cursor', card: 0 },
+  { id: skillIcons[0]?.id ?? 'skill-0', src: skillIcons[0]?.src, card: 0 },
+  { id: 'claude', agent: 'claude', card: 1 },
+  { id: 'copilot', agent: 'copilot', card: 1 },
+  { id: 'gemini', agent: 'gemini', card: 2 },
+  { id: skillIcons[1]?.id ?? 'skill-1', src: skillIcons[1]?.src, card: 2 },
 ]
+/** Apple's two-parameter spring, solved in closed form from ANY state (position x0, velocity v0) toward T: re-targeting
+    from the live state keeps the velocity (the momentum carries through the morph -> split -> flight). Returns [x, v]. */
+function springState(x0: number, v0: number, T: number, damping: number, response: number, t: number): [number, number] {
+  const w = (2 * Math.PI) / response, c1 = x0 - T
+  if (damping >= 1) {
+    const c2 = v0 + w * c1, e = Math.exp(-w * t)
+    return [T + (c1 + c2 * t) * e, (c2 - w * (c1 + c2 * t)) * e]
+  }
+  const wd = w * Math.sqrt(1 - damping * damping), c2 = (v0 + damping * w * c1) / wd, e = Math.exp(-damping * w * t)
+  const cos = Math.cos(wd * t), sin = Math.sin(wd * t)
+  return [T + e * (c1 * cos + c2 * sin), e * ((c2 * wd - damping * w * c1) * cos - (c1 * wd + damping * w * c2) * sin)]
+}
+/** one channel: at rest until `t1`, springs toward `a` (split), then from its live state at `t2` toward `b` (the seat) */
+function twoStage(x0: number, a: number, b: number, t1: number, t2: number, s1: [number, number], s2: [number, number]) {
+  return (t: number) => {
+    if (t <= t1) return x0
+    const [x1, v1] = springState(x0, 0, a, s1[0], s1[1], Math.min(t, t2) - t1)
+    return t <= t2 ? x1 : springState(x1, v1, b, s2[0], s2[1], t - t2)[0]
+  }
+}
 /** a flying tile is laid out TILE_ZOOM× a 52 px tile and only ever scaled down (crisp at its 1.8× birth and its seat) */
 const TILE_BASE = 52, TILE_ZOOM = 3
 
@@ -79,6 +100,7 @@ function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenA
   const tlRef = useRef<gsap.core.Timeline | null>(null)
   const doneRef = useRef(false)
   const hiddenCards = useRef<HTMLElement[]>([])
+  const bSkip = useRef<(() => unknown) | null>(null)
   const [reduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [phase, setPhase] = useState<'picker' | 'show'>(mode)
   const [locale, setLocale] = useState<Locale>(startLocale)
@@ -115,7 +137,17 @@ function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenA
     doneRef.current = true
     try { window.localStorage.setItem(SEEN_KEY, '1') } catch { /* private mode */ }
     const a = audioRef.current
-    if (fast) {
+    const live = variant === 'b' ? (bSkip.current?.() as { seat: { x: number; y: number; rot: number; scale: number } }[] | null) : null
+    if (fast && live) {
+      tlRef.current?.pause()
+      if (a) gsap.to(a, { volume: 0, duration: 0.45, ease: 'none', onComplete: () => a.pause() })
+      const q = gsap.utils.selector(rootRef)
+      gsap.to(q('[data-ground], [data-blue], [data-light], [data-dawn], [data-wcard], [data-plate2], [data-plate3], [data-brand], [data-cmd-stage], [data-cmd-cap], [data-controls]'), { opacity: 0, duration: 0.3, ease: 'power1.out' })
+      // animate from the presentation value: GSAP starts each spring from where the icon is on screen right now
+      q('[data-btile]').forEach((el, i) => { const p = live[i]; if (p && p.seat.scale) gsap.to(el, { x: p.seat.x, y: p.seat.y, rotation: p.seat.rot, scale: p.seat.scale, overwrite: true, ...spring(1, 0.36) }) })
+      gsap.to([document.querySelector('[data-hero-title]'), document.querySelector('[data-hero-sub]'), document.querySelector('[data-hero-search] > *')].filter(Boolean), { opacity: 1, y: 0, duration: 0.3, ease: 'power1.out' })
+      window.setTimeout(() => { restoreCards(); gsap.to(rootRef.current, { opacity: 0, duration: 0.15, onComplete: onClose }) }, 480)
+    } else if (fast) {
       tlRef.current?.pause()
       if (a) gsap.to(a, { volume: 0, duration: 0.45, ease: 'none', onComplete: () => a.pause() })
       restoreCards()
@@ -198,7 +230,8 @@ function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenA
     const light = one('[data-light]'), ground = one('[data-ground]'), blue = one('[data-blue]'), controls = one('[data-controls]')
     const sweep = one('[data-sweep]'), sweepIn = one('[data-sweep-in]')
     const glyphs = ['H', 'E', 'slash', 'A', 'D'].map((g) => one(`[data-base] [data-glyph="${g}"]`))
-    const sheen = one('[data-sheen]'), rig = one('[data-rig]'), dawn = one('[data-dawn]'), caps = q('[data-tcap]') as HTMLElement[]
+    const sheen = one('[data-sheen]'), rig = one('[data-rig]'), dawns = q('[data-dawn]') as HTMLElement[], fieldPlate = one('[data-field-plate]')
+    const plates2 = q('[data-plate2]') as HTMLElement[], plates3 = q('[data-plate3]') as HTMLElement[]
     const cmdCap = one('[data-cmd-cap]'), cmdStage = one('[data-cmd-stage]'), cmdClip = one('[data-cmd-clip]'), cmdIn = one('[data-cmd-in]')
     const caret = one('[data-caret]'), done = one('[data-done]')
     const backs = q('[data-fback]'), fronts = q('[data-ffront]'), wall = one('[data-wall]')
@@ -310,185 +343,197 @@ function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenA
     tl.fromTo(sweepIn!, { x: sw * 1.4 }, { x: -(lineW + sw * 0.4), duration: 0.95, ease: 'power2.inOut' }, T.drop + 0.08)
     tl.fromTo(tag!, { opacity: 0, y: 14 }, { opacity: 1, y: 0, ...spring(1, 0.45) }, KICKS[1])
 
+    /* 4 — the title and tagline hold a full bar, then lift; three HEAD folders arrive together, centre first */
+    const n = lib.fan.length
+    const mid = (n - 1) / 2
+    const fw = Math.min(230, Math.max(vw < 768 ? 96 : 160, vw * 0.15))
+    rootRef.current?.style.setProperty('--fw', `${fw}px`)
+    const folderAt = (i: number) => ({ x: (i - mid) * fw * 1.45, y: vh * 0.14 })
+    const lift = KICKS[5] - 0.08
+    tl.to(tag!, { opacity: 0, duration: 0.2, ease: 'power1.in', overwrite: 'auto' }, lift - 0.16)
+    tl.to(brand!, { y: -vh * 0.395, scale: 230 / (lineW * fitLine), ...spring(1, 0.62) }, lift)
+    tl.to(light!, { opacity: 0.22, y: vh * 0.14, duration: 1.0, ease: 'power2.inOut' }, lift)
+    for (let i = 0; i < n; i++) {
+      const p = folderAt(i), at = lift + 0.06 + Math.abs(i - mid) * 0.06
+      tl.fromTo([backs[i], fronts[i]], { opacity: 0, x: p.x * 0.55, y: p.y + vh * 0.1, scale: 0.5 },
+        { opacity: 1, x: p.x, y: p.y, scale: 1, ...spring(0.8, 0.5) }, at)
+    }
+
+    /* the camera pushes into the centre folder while the flaps open */
+    const c0 = folderAt(Math.round(mid))
+    gsap.set(rig!, { transformOrigin: `${vw / 2 + c0.x}px ${vh / 2 + c0.y - fw * 0.2}px` })
+    const PUSH = 1.9
+    tl.to(fronts, { rotationX: -36, transformPerspective: 700, transformOrigin: '50% 100%', ...spring(0.8, 0.42), stagger: 0.035 }, KICKS[7] - 0.04)
+    tl.to(rig!, { scale: PUSH, duration: T.bar3 - KICKS[7] + 0.03, ease: 'power2.in' }, KICKS[7])
+    const caps = q('[data-fcap]')
+    tl.to(caps, { opacity: 0, duration: 0.2, ease: 'power1.in' }, KICKS[7]) // never under the skip pill during the push
+    tl.to(caps, { opacity: 1, duration: 0.3, ease: 'power1.out' }, KICKS[10] + 0.3)
+
+    /* 5 — bar 3, the hero shot: on the downbeat the cards burst out of that folder at ~2× and fill the frame; on the next
+          kick the camera pulls back and they settle into a fan above the folders */
+    const mouth = { x: c0.x, y: c0.y - fw * 0.2 - fw * 0.36 * PUSH }
+    const fanStep = CW + 44
+    lib.fan.forEach((_, j) => {
+      const card = cards[j], c = j - mid
+      if (!card) return
+      const side = Math.abs(c) > 0
+      // hero sizes, capped: the centre card <= 70 % of the width, the side cards wholly inside the frame (24 px margin)
+      const sC = Math.min(2.2, (vw * 0.7) / CW), sS = Math.min(1.5, sC * 0.72), rot = 8 * Math.sign(c)
+      const hS = faceH[j] ?? CH, rad = (Math.abs(rot) * Math.PI) / 180
+      const halfW = (sS * (CW * Math.cos(rad) + hS * Math.sin(rad))) / 2
+      const b = side
+        ? { x: Math.sign(c) * (vw / 2 - 24 - halfW) * Math.min(1, Math.abs(c)), y: -vh * 0.07, r: rot, s: sS, z: -180 }
+        : { x: 0, y: -vh * 0.02, r: 0, s: sC, z: 0 }
+      const at = T.bar3 - 0.03 + Math.abs(c) * 0.05
+      tl.set(card, { x: mouth.x, y: mouth.y, z: 0, scale: R(0.45), rotation: 0, opacity: 1 }, at - 0.02)
+      tl.to(card, { x: b.x, scale: R(b.s), z: b.z, ...spring(0.92, 0.4) }, at)
+      tl.to(card, { y: b.y, ...spring(0.66, 0.4) }, at)
+      tl.to(card, { rotation: b.r, ...spring(0.7, 0.42) }, at)
+      // pull back into the fan
+      const f = { x: c * fanStep, y: -vh * 0.13 + Math.abs(c) * 14, r: c * 3 }
+      // the hero holds a full kick, then the camera pulls back and the cards settle into a fan
+      const back = KICKS[10] + Math.abs(c) * 0.03
+      tl.to(card, { x: f.x, scale: R(1), z: 0, ...spring(1, 0.5) }, back)
+      tl.to(card, { y: f.y, ...spring(0.8, 0.46) }, back)
+      tl.to(card, { rotation: f.r, ...spring(0.85, 0.46) }, back)
+    })
+    tl.to(rig!, { scale: 1, ...spring(1, 0.6) }, KICKS[10])
+    // everything clears before the caption: the cards go back into depth, the folders sink
+    tl.to(cards, { z: -1400, opacity: 0, duration: 0.42, ease: 'power2.in' }, KICKS[11] - 0.06)
+    tl.to(fronts, { rotationX: 0, duration: 0.24, ease: 'power2.in' }, KICKS[11] - 0.1)
+    tl.to([...backs, ...fronts], { opacity: 0, y: `+=${vh * 0.2}`, scale: 0.86, duration: 0.42, ease: 'power2.in', stagger: 0.03 }, KICKS[11])
+
+    /* 6 — bar 4: the caption, then the command laid out whole and centred, revealed left→right within two beats; the
+          return hit on the kick turns it into the result, and the next kick pulses it */
+    tl.to(brand!, { opacity: 0.5, duration: 0.4 }, T.bar4)
+    tl.fromTo(cmdCap!, { opacity: 0, y: 14 }, { opacity: 1, y: 0, ...spring(1, 0.5) }, T.bar4 + 0.02)
+    tl.set(cmdStage!, { opacity: 1 }, T.bar4)
+    const hit = KICKS[14], typeD = hit - 0.1 - (T.bar4 + 0.08)
+    tl.fromTo(cmdClip!, { x: -cmdW }, { x: 0, duration: typeD, ease: 'power1.inOut' }, T.bar4 + 0.08)
+    tl.fromTo(cmdIn!, { x: cmdW }, { x: 0, duration: typeD, ease: 'power1.inOut' }, T.bar4 + 0.08)
+    tl.fromTo(caret!, { x: 0, opacity: 1 }, { x: cmdW, duration: typeD, ease: 'power1.inOut' }, T.bar4 + 0.08)
+    tl.to([cmdClip, caret], { y: -cmdFs * 0.45, opacity: 0, duration: 0.2, ease: 'power2.in' }, hit - 0.08)
+    tl.fromTo(done!, { opacity: 0, y: cmdFs * 0.45, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, ...spring(0.72, 0.4) }, hit)
+    tl.set(light!, { opacity: 0.55 }, hit)
+    tl.to(light!, { opacity: 0.18, duration: 0.9, ease: 'expo.out' }, hit + 0.02)
+    tl.fromTo(done!, { scale: 1.035 }, { scale: 1, immediateRender: false, ...spring(0.55, 0.34) }, KICKS[15])
+
+    /* 7 — bar 5, finale: a deep HEAD-blue iris opens, the camera pushes in, the three cards come forward out of depth,
+          large, a band of light crosses them; then only the real cards fly to their live seats and hand over */
+    tl.to([cmdStage, cmdCap, brand], { opacity: 0, y: '-=16', duration: 0.34, ease: 'power2.in' }, T.bar5 - 0.1)
+    tl.fromTo(blue!, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.36, ease: 'power2.out' }, T.bar5 - 0.06)
+    tl.to(light!, { opacity: 0, duration: 0.3 }, T.bar5)
+    tl.fromTo(wall!, { scale: 0.9 }, { scale: 1, immediateRender: false, ...spring(1, 0.6) }, T.bar5)
+    const bigStep = CW * 1.3 + 44
+    // immediateRender: false: a fromTo would otherwise park the cards in depth from the start
+    cards.forEach((card, j) => {
+      const at = T.bar5 + Math.abs(j - mid) * 0.05
+      tl.fromTo(card, { x: (j - mid) * bigStep, y: 0, z: -1400, scale: R(1.3), rotation: 0 }, { z: 0, immediateRender: false, ...spring(0.86, 0.5) }, at)
+      tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: 'power1.out', immediateRender: false }, at) // solid early, not a ghost
+    })
+    tl.fromTo(sheen!, { xPercent: -120, opacity: 1 }, { xPercent: 120, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, T.bar5 + 0.12)
     if (variant === 'b') {
-      /* B - skill-agnostic, built for the hero. After the drop: the six tiles (four agents, our two skill marks) arrive
-         one per kick from depth and present themselves; they orbit the wordmark while the camera drifts; on the final bar
-         a paper light blooms from the centre, the wordmark lifts away and the real headline rises into place, the tiles
-         land on their exact hero seats, the subtitle slides up and the search opens with a live caret. */
-      const TR = (rendered: number) => rendered / TILE_ZOOM // a rendered size (1 = a 52 px tile) -> the transform scale
-      const big = Math.min(2.2, Math.max(1.3, vw / 650)) // presenting size
-      const at = (sx: number, sy: number) => ({ x: (sx * vw) / 2, y: (sy * vh) / 2 })
+      /* B's ending (all of A until here): each card MORPHS into hero icons - iOS app-close in reverse: it shrinks, its
+         corners round up to the icon squircle and its material tightens (card shadow -> tile shadow) while the content
+         cross-fades into the glyphs - then SPLITS into two icons with a spring, and the icons fly on that momentum (the
+         re-target keeps their velocity) along curved paths (independent X/Y springs) to their exact hero seats. The paper
+         lights up from the cards outward; the hero builds around the icons: headline, subtitle, then the search opens. */
       const heroText = () => ([document.querySelector('[data-hero-title]'), document.querySelector('[data-hero-sub]'),
         document.querySelector('[data-hero-search] > *')].filter(Boolean) as HTMLElement[])
       const heroTile = (id: string) => document.querySelector<HTMLElement>(`[data-hero-tile="${CSS.escape(id)}"]`)
-      gsap.set(caps, { xPercent: -50 }) // captions centre under their tile
-
-      // the wordmark makes room: the tagline leaves, the line settles at ~52 % of the width, centred
-      tl.to(tag!, { opacity: 0, duration: 0.25, ease: 'power1.in', overwrite: 'auto' }, KICKS[3] + 0.1)
-      tl.to(line!, { scale: fitLine * 0.65, ...spring(1, 0.7) }, KICKS[4] - 0.24)
-      tl.to(light!, { opacity: 0.42, duration: 1.2, ease: 'sine.inOut' }, KICKS[4])
-
-      // 1 - one tile per kick, from depth, landing ON the kick with a tilt, then a pulse: it presents itself (and its name)
-      HERO_TILES.forEach((t, i) => {
-        const el = tiles[i], cap = caps[i], kick = KICKS[4 + i], p = at(...t.slot)
-        if (!el) return
-        tl.set(el, { x: p.x * 0.35, y: p.y * 0.35, z: -1600, scale: TR(big), rotation: t.rot * 3.5, opacity: 0 }, kick - 0.36)
-        tl.to(el, { opacity: 1, duration: 0.14, ease: 'power1.out' }, kick - 0.35)
-        tl.to(el, { x: p.x, y: p.y, z: t.z, ...spring(0.9, 0.42) }, kick - 0.35)
-        tl.to(el, { rotation: t.rot, ...spring(0.62, 0.5) }, kick - 0.35)
-        tl.to(el, { scale: TR(big * 1.08), duration: 0.1, ease: 'power2.out' }, kick)
-        tl.to(el, { scale: TR(big), ...spring(0.55, 0.4) }, kick + 0.1)
-        if (cap) {
-          const cy = p.y + (big * TILE_BASE) / 2 + 26
-          tl.fromTo(cap, { opacity: 0, x: p.x, y: cy + 8 }, { opacity: 1, y: cy, ...spring(1, 0.4) }, kick + 0.02)
-          tl.to(cap, { opacity: 0, duration: 0.3, ease: 'power1.in' }, kick + 0.78)
-        }
-      })
-
-      // 2 - the orbit: each tile travels a little way round the wordmark, the camera drifts and pushes in; depth gives parallax
-      const orbitFrom = KICKS[9] + 0.35, orbitTo = T.bar5 - 0.1, D = (9 * Math.PI) / 180
-      HERO_TILES.forEach((t, i) => {
-        const [sx, sy] = t.slot
-        const p = at(sx * Math.cos(D) - sy * Math.sin(D), sx * Math.sin(D) + sy * Math.cos(D))
-        if (tiles[i]) tl.to(tiles[i], { x: p.x, y: p.y, duration: orbitTo - orbitFrom, ease: 'sine.inOut' }, orbitFrom)
-      })
-      tl.to(wall!, { x: -vw * 0.03, scale: 1.05, duration: orbitTo - orbitFrom, ease: 'sine.inOut' }, orbitFrom)
-      tl.to(brand!, { x: vw * 0.008, duration: orbitTo - orbitFrom, ease: 'sine.inOut' }, orbitFrom)
-      // a light pass across the wordmark on bar 4
-      tl.fromTo(sweep!, { x: -lineW * 0.28 * 1.4, opacity: 1 }, { x: lineW * 1.12, duration: 0.95, ease: 'power2.inOut', immediateRender: false }, T.bar4)
-      tl.fromTo(sweepIn!, { x: lineW * 0.28 * 1.4 }, { x: -lineW * 1.12, duration: 0.95, ease: 'power2.inOut', immediateRender: false }, T.bar4)
-
-      // 3 - the final bar: the hero is hidden underneath; a paper light blooms from the centre (dark -> paper, no wash)
       tl.add(() => {
         gsap.set(heroText(), { opacity: 0 }) // via GSAP: the context's revert on unmount returns the text to its own state
         for (const t of HERO_TILES) { const el = heroTile(t.id); if (el) { el.style.opacity = '0'; el.style.animationPlayState = 'paused'; hiddenCards.current.push(el) } }
       }, T.bar5 - 0.3)
-      tl.to(brand!, { y: -vh * 0.07, opacity: 0, duration: 0.5, ease: 'power2.in' }, T.bar5) // the wordmark lifts away …
-      tl.to(light!, { opacity: 0, duration: 0.4, ease: 'power1.in' }, T.bar5)
-      tl.fromTo(dawn!, { scale: 0.02, opacity: 1 }, { scale: 1, duration: 0.95, ease: 'power2.inOut', immediateRender: false }, T.bar5 - 0.05)
-      tl.set(ground!, { opacity: 0 }, T.bar5 + 0.95)
-      tl.to(dawn!, { opacity: 0, duration: 0.35, ease: 'power1.inOut' }, T.bar5 + 0.95) // the page underneath is the same paper
-      tl.to(controls!, { opacity: 0, duration: 0.3 }, T.bar5 + 0.6)
-      tl.to(wall!, { x: 0, scale: 1, ...spring(1, 0.6) }, KICKS[17] - 0.2)
 
-      // 4 - each tile flies to its exact seat (live centre, size and --r; the real tile's bob is paused), then hands over
-      tl.add(() => {
-        const sub = gsap.timeline()
-        const land = T.lastKick - (KICKS[17] - 0.04)
-        HERO_TILES.forEach((t, i) => {
-          const el = tiles[i], real = heroTile(t.id), r = real?.getBoundingClientRect()
-          if (!el) return
-          if (!real || !r || r.width === 0) { sub.to(el, { opacity: 0, duration: 0.3 }, 0.05); return }
-          const x = r.left + r.width / 2 - vw / 2, y = r.top + r.height / 2 - vh / 2
-          const rot = parseFloat(getComputedStyle(real).getPropertyValue('--r')) || 0
-          const k = i * 0.045
-          sub.to(el, { z: 0, x, ...spring(1, 0.5) }, k)
-          sub.to(el, { y, ...spring(0.92, 0.44) }, k)
-          sub.to(el, { scale: real.offsetHeight / (TILE_BASE * TILE_ZOOM), rotation: rot, ...spring(1, 0.48) }, k)
-          sub.add(() => { real.style.transition = 'opacity .18s ease-out'; real.style.opacity = '1' }, land - 0.1)
-          sub.to(el, { opacity: 0, duration: 0.14, ease: 'power1.in' }, land - 0.02)
-        })
-        tl.add(sub, KICKS[17] - 0.04)
-      }, KICKS[17] - 0.04)
+      const M0 = KICKS[17] // the morph starts on the kick
+      const SPLIT = M0 + 0.3, FLY = KICKS[18] - 0.12, STAGGER = 0.07
+      const S0 = Math.min(118, Math.max(72, vw * 0.082)) // the squircle a card becomes (rendered px)
+      const P3 = TILE_BASE * TILE_ZOOM, P2W = 200, P2H = 128
+      const cardAt = (j: number) => ({ x: (j - mid) * bigStep, y: 0 })
 
-      // 5 - … the real headline rises into its place, the subtitle slides up, the search opens on the last kick
-      tl.add(() => {
-        const [title, sub, search] = heroText()
-        if (title) gsap.fromTo(title, { opacity: 0, y: 30 }, { opacity: 1, y: 0, clearProps: 'transform', ...spring(0.9, 0.5) })
-        if (sub) gsap.fromTo(sub, { opacity: 0, y: 18 }, { opacity: 1, y: 0, delay: 0.14, clearProps: 'transform', ...spring(1, 0.45) })
-        if (search) gsap.fromTo(search, { opacity: 0, scaleX: 0.06 }, { opacity: 1, scaleX: 1, delay: T.lastKick - KICKS[18], clearProps: 'transform', ...spring(0.92, 0.5) })
-      }, KICKS[18])
-      tl.add(() => finishRef.current(false), T.lastKick + 0.45)
-    } else {
-      /* 4 — the title and tagline hold a full bar, then lift; three HEAD folders arrive together, centre first */
-      const n = lib.fan.length
-      const mid = (n - 1) / 2
-      const fw = Math.min(230, Math.max(vw < 768 ? 96 : 160, vw * 0.15))
-      rootRef.current?.style.setProperty('--fw', `${fw}px`)
-      const folderAt = (i: number) => ({ x: (i - mid) * fw * 1.45, y: vh * 0.14 })
-      const lift = KICKS[5] - 0.08
-      tl.to(tag!, { opacity: 0, duration: 0.2, ease: 'power1.in', overwrite: 'auto' }, lift - 0.16)
-      tl.to(brand!, { y: -vh * 0.395, scale: 230 / (lineW * fitLine), ...spring(1, 0.62) }, lift)
-      tl.to(light!, { opacity: 0.22, y: vh * 0.14, duration: 1.0, ease: 'power2.inOut' }, lift)
-      for (let i = 0; i < n; i++) {
-        const p = folderAt(i), at = lift + 0.06 + Math.abs(i - mid) * 0.06
-        tl.fromTo([backs[i], fronts[i]], { opacity: 0, x: p.x * 0.55, y: p.y + vh * 0.1, scale: 0.5 },
-          { opacity: 1, x: p.x, y: p.y, scale: 1, ...spring(0.8, 0.5) }, at)
-      }
-
-      /* the camera pushes into the centre folder while the flaps open */
-      const c0 = folderAt(Math.round(mid))
-      gsap.set(rig!, { transformOrigin: `${vw / 2 + c0.x}px ${vh / 2 + c0.y - fw * 0.2}px` })
-      const PUSH = 1.9
-      tl.to(fronts, { rotationX: -36, transformPerspective: 700, transformOrigin: '50% 100%', ...spring(0.8, 0.42), stagger: 0.035 }, KICKS[7] - 0.04)
-      tl.to(rig!, { scale: PUSH, duration: T.bar3 - KICKS[7] + 0.03, ease: 'power2.in' }, KICKS[7])
-      const caps = q('[data-fcap]')
-      tl.to(caps, { opacity: 0, duration: 0.2, ease: 'power1.in' }, KICKS[7]) // never under the skip pill during the push
-      tl.to(caps, { opacity: 1, duration: 0.3, ease: 'power1.out' }, KICKS[10] + 0.3)
-
-      /* 5 — bar 3, the hero shot: on the downbeat the cards burst out of that folder at ~2× and fill the frame; on the next
-            kick the camera pulls back and they settle into a fan above the folders */
-      const mouth = { x: c0.x, y: c0.y - fw * 0.2 - fw * 0.36 * PUSH }
-      const fanStep = CW + 44
-      lib.fan.forEach((_, j) => {
-        const card = cards[j], c = j - mid
-        if (!card) return
-        const side = Math.abs(c) > 0
-        // hero sizes, capped: the centre card <= 70 % of the width, the side cards wholly inside the frame (24 px margin)
-        const sC = Math.min(2.2, (vw * 0.7) / CW), sS = Math.min(1.5, sC * 0.72), rot = 8 * Math.sign(c)
-        const hS = faceH[j] ?? CH, rad = (Math.abs(rot) * Math.PI) / 180
-        const halfW = (sS * (CW * Math.cos(rad) + hS * Math.sin(rad))) / 2
-        const b = side
-          ? { x: Math.sign(c) * (vw / 2 - 24 - halfW) * Math.min(1, Math.abs(c)), y: -vh * 0.07, r: rot, s: sS, z: -180 }
-          : { x: 0, y: -vh * 0.02, r: 0, s: sC, z: 0 }
-        const at = T.bar3 - 0.03 + Math.abs(c) * 0.05
-        tl.set(card, { x: mouth.x, y: mouth.y, z: 0, scale: R(0.45), rotation: 0, opacity: 1 }, at - 0.02)
-        tl.to(card, { x: b.x, scale: R(b.s), z: b.z, ...spring(0.92, 0.4) }, at)
-        tl.to(card, { y: b.y, ...spring(0.66, 0.4) }, at)
-        tl.to(card, { rotation: b.r, ...spring(0.7, 0.42) }, at)
-        // pull back into the fan
-        const f = { x: c * fanStep, y: -vh * 0.13 + Math.abs(c) * 14, r: c * 3 }
-        // the hero holds a full kick, then the camera pulls back and the cards settle into a fan
-        const back = KICKS[10] + Math.abs(c) * 0.03
-        tl.to(card, { x: f.x, scale: R(1), z: 0, ...spring(1, 0.5) }, back)
-        tl.to(card, { y: f.y, ...spring(0.8, 0.46) }, back)
-        tl.to(card, { rotation: f.r, ...spring(0.85, 0.46) }, back)
-      })
-      tl.to(rig!, { scale: 1, ...spring(1, 0.6) }, KICKS[10])
-      // everything clears before the caption: the cards go back into depth, the folders sink
-      tl.to(cards, { z: -1400, opacity: 0, duration: 0.42, ease: 'power2.in' }, KICKS[11] - 0.06)
-      tl.to(fronts, { rotationX: 0, duration: 0.24, ease: 'power2.in' }, KICKS[11] - 0.1)
-      tl.to([...backs, ...fronts], { opacity: 0, y: `+=${vh * 0.2}`, scale: 0.86, duration: 0.42, ease: 'power2.in', stagger: 0.03 }, KICKS[11])
-
-      /* 6 — bar 4: the caption, then the command laid out whole and centred, revealed left→right within two beats; the
-            return hit on the kick turns it into the result, and the next kick pulses it */
-      tl.to(brand!, { opacity: 0.5, duration: 0.4 }, T.bar4)
-      tl.fromTo(cmdCap!, { opacity: 0, y: 14 }, { opacity: 1, y: 0, ...spring(1, 0.5) }, T.bar4 + 0.02)
-      tl.set(cmdStage!, { opacity: 1 }, T.bar4)
-      const hit = KICKS[14], typeD = hit - 0.1 - (T.bar4 + 0.08)
-      tl.fromTo(cmdClip!, { x: -cmdW }, { x: 0, duration: typeD, ease: 'power1.inOut' }, T.bar4 + 0.08)
-      tl.fromTo(cmdIn!, { x: cmdW }, { x: 0, duration: typeD, ease: 'power1.inOut' }, T.bar4 + 0.08)
-      tl.fromTo(caret!, { x: 0, opacity: 1 }, { x: cmdW, duration: typeD, ease: 'power1.inOut' }, T.bar4 + 0.08)
-      tl.to([cmdClip, caret], { y: -cmdFs * 0.45, opacity: 0, duration: 0.2, ease: 'power2.in' }, hit - 0.08)
-      tl.fromTo(done!, { opacity: 0, y: cmdFs * 0.45, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, ...spring(0.72, 0.4) }, hit)
-      tl.set(light!, { opacity: 0.55 }, hit)
-      tl.to(light!, { opacity: 0.18, duration: 0.9, ease: 'expo.out' }, hit + 0.02)
-      tl.fromTo(done!, { scale: 1.035 }, { scale: 1, immediateRender: false, ...spring(0.55, 0.34) }, KICKS[15])
-
-      /* 7 — bar 5, finale: a deep HEAD-blue iris opens, the camera pushes in, the three cards come forward out of depth,
-            large, a band of light crosses them; then only the real cards fly to their live seats and hand over */
-      tl.to([cmdStage, cmdCap, brand], { opacity: 0, y: '-=16', duration: 0.34, ease: 'power2.in' }, T.bar5 - 0.1)
-      tl.fromTo(blue!, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.36, ease: 'power2.out' }, T.bar5 - 0.06)
-      tl.to(light!, { opacity: 0, duration: 0.3 }, T.bar5)
-      tl.fromTo(wall!, { scale: 0.9 }, { scale: 1, immediateRender: false, ...spring(1, 0.6) }, T.bar5)
-      const bigStep = CW * 1.3 + 44
-      // immediateRender: false: a fromTo would otherwise park the cards in depth from the start
+      // 1 - the morph (transform/opacity only): the card shrinks toward a square while two rounder plates take over
       cards.forEach((card, j) => {
-        const at = T.bar5 + Math.abs(j - mid) * 0.05
-        tl.fromTo(card, { x: (j - mid) * bigStep, y: 0, z: -1400, scale: R(1.3), rotation: 0 }, { z: 0, immediateRender: false, ...spring(0.86, 0.5) }, at)
-        tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: 'power1.out', immediateRender: false }, at) // solid early, not a ghost
+        const c = cardAt(j), h = faceH[j] ?? CH, cw = CW * 1.3, ch = h * 1.3
+        const m = spring(1, 0.34)
+        tl.to(card, { scaleX: R(S0 / CW), scaleY: R(S0 / h), ...m }, M0)
+        tl.to(card, { opacity: 0, duration: 0.2, ease: 'power1.in' }, M0 + 0.06)
+        tl.set([plates2[j], plates3[j]], { x: c.x, y: c.y }, M0 - 0.01)
+        tl.fromTo(plates2[j], { scaleX: cw / P2W, scaleY: ch / P2H }, { scaleX: S0 / P2W, scaleY: S0 / P2H, immediateRender: false, ...m }, M0)
+        tl.to(plates2[j], { opacity: 1, duration: 0.08 }, M0 + 0.04)
+        tl.to(plates2[j], { opacity: 0, duration: 0.12 }, M0 + 0.18)
+        tl.fromTo(plates3[j], { scaleX: cw / P3, scaleY: ch / P3 }, { scaleX: S0 / P3, scaleY: S0 / P3, immediateRender: false, ...m }, M0)
+        tl.to(plates3[j], { opacity: 1, duration: 0.1 }, M0 + 0.14)
+        tl.to(plates3[j], { opacity: 0, duration: 0.08 }, SPLIT + 0.02)
+        // the paper lights up from this card outward
+        tl.fromTo(dawns[j], { x: c.x, y: c.y, scale: 0.02, opacity: 1 }, { scale: 1, duration: 0.8, ease: 'power2.inOut', immediateRender: false }, M0 + Math.abs(j - mid) * 0.05)
       })
-      tl.fromTo(sheen!, { xPercent: -120, opacity: 1 }, { xPercent: 120, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, T.bar5 + 0.12)
+      // the icons appear in the squircle as its glyphs cross in
+      HERO_TILES.forEach((t, i) => {
+        const c = cardAt(t.card)
+        tl.set(tiles[i], { x: c.x, y: c.y, scale: S0 / P3, rotation: 0, opacity: 0 }, M0)
+        tl.to(tiles[i], { opacity: 1, duration: 0.1, ease: 'power1.out' }, M0 + 0.22)
+      })
+      tl.set([ground, blue, light], { opacity: 0 }, M0 + 0.8)
+      tl.to(dawns, { opacity: 0, duration: 0.25, ease: 'power1.inOut' }, M0 + 0.8) // the page underneath is the same paper
+      tl.to(controls!, { opacity: 0, duration: 0.3 }, M0 + 0.3)
+
+      // 2 - split + flight, driven by the closed-form springs (a pure function of timeline time: seekable, audio-clocked)
+      let paths: { x: (t: number) => number; y: (t: number) => number; r: (t: number) => number; s: (t: number) => number; seat: { x: number; y: number; rot: number; scale: number } }[] | null = null
+      const flyAt = (i: number) => FLY + i * STAGGER
+      tl.add(() => {
+        paths = HERO_TILES.map((t, i) => {
+          const c = cardAt(t.card), real = heroTile(t.id), r = real?.getBoundingClientRect()
+          const seat = real && r && r.width > 0
+            ? { x: r.left + r.width / 2 - vw / 2, y: r.top + r.height / 2 - vh / 2, rot: parseFloat(getComputedStyle(real).getPropertyValue('--r')) || 0, scale: real.offsetHeight / P3 }
+            : { x: c.x, y: c.y, rot: 0, scale: 0 }
+          // split: shoot out toward the seat (the path points at the destination from the first frame) + a little apart
+          const dx = seat.x - c.x, dy = seat.y - c.y, len = Math.hypot(dx, dy) || 1, sib = HERO_TILES.filter((u) => u.card === t.card).indexOf(t) ? 1 : -1
+          const sep = Math.min(96, vw * 0.066)
+          const ax = c.x + (dx / len) * sep - (dy / len) * sib * 18, ay = c.y + (dy / len) * sep + (dx / len) * sib * 18
+          const t1 = SPLIT, t2 = flyAt(i)
+          return {
+            seat,
+            x: twoStage(c.x, ax, seat.x, t1, t2, [0.72, 0.3], [0.8, 0.46]),
+            y: twoStage(c.y, ay, seat.y, t1, t2, [0.72, 0.3], [0.8, 0.38]), // a different Y response curves the path
+            r: twoStage(0, Math.sign(dx) * 12, seat.rot, t1, t2, [0.7, 0.3], [0.8, 0.4]),
+            s: twoStage(S0 / P3, (S0 / P3) * 0.92, seat.scale, t1, t2, [1, 0.3], [1, 0.4]),
+          }
+        })
+      }, M0 - 0.05)
+      const setters = tiles.map((el) => ({ x: gsap.quickSetter(el, 'x', 'px'), y: gsap.quickSetter(el, 'y', 'px'), r: gsap.quickSetter(el, 'rotation', 'deg'), sx: gsap.quickSetter(el, 'scaleX'), sy: gsap.quickSetter(el, 'scaleY') })) // ('scale' is not a quickSetter channel)
+      const DRIVE_END = flyAt(HERO_TILES.length - 1) + 0.9
+      const drive = { t: 0 }
+      tl.to(drive, {
+        t: DRIVE_END - SPLIT, duration: DRIVE_END - SPLIT, ease: 'none',
+        onUpdate: () => { if (!paths) return; const now = SPLIT + drive.t; paths.forEach((p, i) => { const q = setters[i]; if (!q) return; q.x(p.x(now)); q.y(p.y(now)); q.r(p.r(now)); const k = p.s(now); q.sx(k); q.sy(k) }) },
+      }, SPLIT)
+      bSkip.current = () => paths // for Skip/Esc mid-flight: settle from the live values
+      // hand over, icon by icon, once each has settled on its seat (an underdamped spring is within 0.5 px by then)
+      HERO_TILES.forEach((t, i) => {
+        tl.add(() => { const real = heroTile(t.id); if (real) { real.style.transition = 'opacity .15s ease-out'; real.style.opacity = '1' } }, flyAt(i) + 0.64)
+        tl.to(tiles[i], { opacity: 0, duration: 0.12, ease: 'power1.in' }, flyAt(i) + 0.66)
+      })
+
+      // 3 - the hero builds around the icons: the headline rises on the last kick, the subtitle follows, the search opens
+      tl.add(() => {
+        const [title, subtitle, search] = heroText()
+        if (title) gsap.fromTo(title, { opacity: 0, y: 30 }, { opacity: 1, y: 0, clearProps: 'transform', ...spring(0.82, 0.5) })
+        if (subtitle) gsap.fromTo(subtitle, { opacity: 0, y: 18 }, { opacity: 1, y: 0, delay: 0.1, clearProps: 'transform', ...spring(1, 0.45) })
+        const field = search?.querySelector('input')?.getBoundingClientRect()
+        if (search && field && fieldPlate) {
+          // the search opens from its centre: a matching field plate springs from a sliver to full width (its border
+          // draws out), then the real search - icon and placeholder, never stretched - takes over
+          Object.assign(fieldPlate.style, { left: `${field.left}px`, top: `${field.top}px`, width: `${field.width}px`, height: `${field.height}px` })
+          gsap.set(fieldPlate, { opacity: 0, scaleX: 0.04 })
+          gsap.to(fieldPlate, { opacity: 1, duration: 0.06, delay: 0.22 }) // visible only as it starts to open
+          gsap.to(fieldPlate, { scaleX: 1, delay: 0.22, ...spring(0.85, 0.45) })
+          gsap.to(search, { opacity: 1, duration: 0.2, delay: 0.62, ease: 'power1.out' })
+          gsap.to(fieldPlate, { opacity: 0, duration: 0.15, delay: 0.8 })
+        } else if (search) gsap.to(search, { opacity: 1, duration: 0.3, delay: 0.3 })
+      }, KICKS[19])
+      tl.add(() => finishRef.current(false), KICKS[19] + 1.0)
+    } else {
       tl.to([ground, blue], { opacity: 0, duration: 0.42, ease: 'power1.inOut' }, KICKS[17] - 0.02)
       tl.to(controls!, { opacity: 0, duration: 0.3 }, KICKS[17])
       tl.add(() => {
@@ -553,7 +598,7 @@ function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenA
     <div ref={rootRef} className={clsx(s.root, isRu && s.ru)} role="dialog" aria-modal="true" aria-label={copy.dialog}>
       <div className={s.ground} data-ground />
       <div className={s.blue} data-blue />
-      <div className={s.dawn} data-dawn />
+      {variant === 'b' && [0, 1, 2].map((k) => <div key={k} className={s.dawn} data-dawn />)}
       <div className={s.light} data-light />
 
       <div className={s.stage} aria-hidden={phase === 'picker'}>
@@ -567,7 +612,7 @@ function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenA
           </div>
         </div>
 
-        {variant === 'a' && <div className={s.rig} data-rig aria-hidden="true">
+        <div className={s.rig} data-rig aria-hidden="true">
           {lib.fan.map((it) => (
             <div key={it.id} className={s.fBack} data-fback>
               <span className={s.fShadow} />
@@ -581,15 +626,17 @@ function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenA
             </div>
           ))}
 
-        </div>}
+        </div>
 
         <div className={s.wall} data-wall aria-hidden="true">
+          {variant === 'b' && lib.fan.map((it) => <div key={`p2-${it.id}`} className={s.plate2} data-plate2 />)}
+          {variant === 'b' && lib.fan.map((it) => <div key={`p3-${it.id}`} className={s.plate3} data-plate3><span /></div>)}
           {variant === 'b' && HERO_TILES.map((t) => (
             <div key={t.id} className={s.tileShell} data-btile>
               <span className={s.tileFace}>{t.agent ? <AgentLogo agent={t.agent} /> : t.src ? <img src={t.src} alt="" /> : null}</span>
             </div>
           ))}
-          {variant === 'a' && lib.fan.map((it) => (
+          {lib.fan.map((it) => (
             <div key={it.id} className={s.wcard} data-wcard>
               <div className={s.face}>
                 <MemoryRouter><LocaleContext.Provider value={locale}><ExtensionCard item={it} /></LocaleContext.Provider></MemoryRouter>
@@ -598,11 +645,7 @@ function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenA
           ))}
         </div>
 
-        {variant === 'b' && (
-          <div className={s.capLayer} aria-hidden="true">
-            {HERO_TILES.map((t) => <span key={t.id} className={s.tcap} data-tcap>{t.name(locale)}</span>)}
-          </div>
-        )}
+        {variant === 'b' && <div className={s.fieldPlate} data-field-plate aria-hidden="true" />}
 
         <div className={s.sheen} data-sheen aria-hidden="true" />
 
