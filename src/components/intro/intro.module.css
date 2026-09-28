@@ -22,7 +22,6 @@
 .pickerInner { display: flex; flex-direction: column; align-items: center; gap: clamp(28px, 5vh, 56px); }
 .pickerMark { width: clamp(72px, 6.4vw, 96px); height: auto; color: var(--fg); }
 .slashBlue { color: var(--blue); }
-.hint { font-family: var(--font-mono); font-weight: 500; font-size: 14px; line-height: 1.4; letter-spacing: .01em; color: var(--fg-3); text-align: center; }
 .options { display: flex; flex-direction: column; align-items: center; gap: .08em; font-size: clamp(44px, 6.6vw, 108px); }
 .option {
   position: relative; display: inline-block; padding: .02em .16em .06em; border-radius: .18em;
