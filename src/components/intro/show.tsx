@@ -22,7 +22,6 @@ const COPY: Record<Locale, { hi: string; rest: string; tag: string; cmd: string;
   ru: { hi: 'Привет', rest: 'добро пожаловать в head.uz', tag: 'Скиллы для ваших AI‑агентов', cmd: 'Установка одной командой', done: 'установлены', skip: 'Пропустить', mute: 'Выключить звук', unmute: 'Включить звук', dialog: 'Выберите язык' },
   en: { hi: 'Hey', rest: 'welcome to head.uz', tag: 'Skills for your AI agents', cmd: 'Install with one command', done: 'installed', skip: 'Skip intro', mute: 'Mute', unmute: 'Unmute', dialog: 'Choose your language' },
 }
-const HINT = 'Tilni tanlang · Выберите язык · Choose your language'
 
 export interface MountOpts {
   mode: 'picker' | 'show'
@@ -158,7 +157,6 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     if (reduced) { gsap.fromTo(q('[data-picker] > *'), { opacity: 0 }, { opacity: 1, duration: 0.4, ease: 'none' }); return }
     gsap.fromTo(q('[data-pmark]'), { opacity: 0, y: -12 }, { opacity: 1, y: 0, ...spring(1, 0.6), delay: 0.1 })
     gsap.fromTo(q('[data-option]'), { opacity: 0, y: 36 }, { opacity: 1, y: 0, ...spring(1, 0.62), stagger: 0.07, delay: 0.18 })
-    gsap.fromTo(q('[data-hint]'), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power1.out', delay: 0.55 })
   }, { scope: rootRef })
 
   /* the show */
@@ -232,7 +230,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     /* 0 — the picker gives way */
     if (fromPicker.current && picker) {
       tl.to(otherBtns, { opacity: 0, y: 18, duration: 0.3, ease: 'power2.in', stagger: 0.03 }, O)
-      tl.to(q('[data-pmark], [data-hint]'), { opacity: 0, duration: 0.22, ease: 'power1.in' }, O)
+      tl.to(q('[data-pmark]'), { opacity: 0, duration: 0.22, ease: 'power1.in' }, O)
       tl.to(chosenBtn ?? [], { opacity: 0, scale: 0.9, duration: 0.3, ease: 'power2.in' }, O + 0.02)
       tl.set(picker, { autoAlpha: 0 }, O + 0.4)
     } else if (picker) {
@@ -511,7 +509,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
         <div className={s.picker} data-picker>
           <div className={s.pickerInner}>
             <div data-pmark><HeadMark className={s.pickerMark} slashClassName={s.slashBlue} title="HEAD" /></div>
-            <div className={s.options} role="group" aria-label={HINT} onKeyDown={onOptionsKey}>
+            <div className={s.options} role="group" aria-label="Tilni tanlang · Выберите язык · Choose your language" onKeyDown={onOptionsKey}>
               {LOCALES.map((l) => (
                 <button key={l} type="button" lang={l} data-option={l} className={clsx(s.option, l === 'ru' && s.optionRu)}
                   onClick={() => choose(l)} disabled={phase !== 'picker'}>
@@ -522,7 +520,6 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
                 </button>
               ))}
             </div>
-            <p className={s.hint} data-hint>{HINT}</p>
           </div>
         </div>
       ) : null}
