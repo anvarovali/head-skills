@@ -156,15 +156,21 @@ const cues = [
   { v: 'a', name: 'land-apple', clip: 'tap', at: 16.5, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.69 },
   { v: 'a', name: 'land-bundle', clip: 'tap', at: 16.65, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.69 },
   { v: 'a', name: 'land-gauntlet', clip: 'tap', at: 16.81, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.23 },
-  // version B: the cards dissolve into the six hero tiles (a zoom-airy dissolve), a soft tap as each tile lands on its seat
-  // (measured settle times, panned to the seat's x), and a gentle shimmer as the headline resolves on the last kick
-  { v: 'b', name: 'b-dissolve', clip: 'zoom', at: KICKS[17] - 0.12, align: 'peak', dur: 1.3, peak: -22, fi: 0.2, fo: 0.45 },
-  ...[['cursor', 16.535, -0.55], ['apple-design', 16.568, -0.44], ['claude', 16.618, -0.45], ['gauntlet-loop', 16.633, 0.55], ['gemini', 16.735, 0.45], ['copilot', 16.802, 0.44]].map(([id, t, x]) => (
-    { v: 'b', name: `b-tile-${id}`, clip: 'tap', at: t - 0.035, align: 'onset', dur: 0.1, peak: -26, fo: 0.06, pan: x })),
-  { v: 'b', name: 'b-headline', clip: 'shimmer', at: KICKS[19] + 0.01, align: 'onset', dur: 1.4, peak: -27, fi: 0.03, fo: 0.8 },
+  // version B = all of A up to the iris, then its own ending (times from show.tsx: morph on KICKS[17], split +0.3,
+  // flights from KICKS[18]-0.12 staggered 0.07; landing times and seat pans measured at 1440)
+  ...[-0.63, 0, 0.63].map((x, j) => ({ v: 'b', name: `b-morph-${j}`, clip: 'slide', at: KICKS[17] + 0.2 + Math.abs(j - 1) * 0.02, align: 'peak', dur: 0.7, peak: -26, fi: 0.08, fo: 0.25, pan: x })),
+  ...[['cursor', -0.68, 'pop1', 0], ['apple-design', -0.58, 'pop3', 1.5], ['claude', -0.1, 'pop5', 0], ['copilot', 0.1, 'pop1', -1.5], ['gemini', 0.58, 'pop3', 0], ['gauntlet-loop', 0.68, 'pop5', 1.5]].map(([id, x, clip, st], i) => (
+    { v: 'b', name: `b-split-${id}`, clip, at: KICKS[17] + 0.3 + (i % 2) * 0.012, align: 'onset', dur: 0.26, peak: -23, fo: 0.1, pan: x, semitones: st || undefined })),
+  ...[['cursor', -0.63, -0.53], ['apple-design', -0.63, -0.41], ['claude', 0, -0.42], ['copilot', 0, 0.41], ['gemini', 0.63, 0.42], ['gauntlet-loop', 0.63, 0.53]].map(([id, from, to], i) => (
+    { v: 'b', name: `b-trail-${id}`, clip: 'swoosh', at: KICKS[18] - 0.12 + i * 0.07 + 0.22, align: 'peak', dur: 0.8, peak: -31, fi: 0.1, fo: 0.3, pan: [from, to], panOver: 0.5 })),
+  ...[['cursor', 16.841, -0.53], ['apple-design', 16.923, -0.41], ['claude', 17.074, -0.42], ['copilot', 17.14, 0.41], ['gemini', 17.155, 0.42], ['gauntlet-loop', 17.207, 0.53]].map(([id, t, x]) => (
+    { v: 'b', name: `b-land-${id}`, clip: 'tap', at: t - 0.05, align: 'onset', dur: 0.1, peak: -26, fo: 0.06, pan: x })),
+  { v: 'b', name: 'b-headline', clip: 'shimmer', at: KICKS[19] + 0.01, align: 'onset', dur: 1.4, peak: -24, fi: 0.02, fo: 0.8 },
+  { v: 'b', name: 'b-search', clip: 'slide', at: KICKS[19] + 0.42, align: 'peak', dur: 0.8, peak: -25, fi: 0.08, fo: 0.3 },
+  { v: 'b', name: 'b-caret', clip: 'tap', at: KICKS[19] + 1.07, align: 'onset', dur: 0.08, peak: -32, fo: 0.05 },
 ]
 // the music ducks ~2.5 dB under the drop and ~2 dB under the burst, with smooth edges
-const DUCK = [[DROP - 0.03, 0.04, 9.0, 0.7, 0.25], [BAR3 - 0.05, 0.05, 12.2, 0.5, 0.2]] // [start, attack, end, release, depth]
+const DUCKS = { a: [[DROP - 0.03, 0.04, 9.0, 0.7, 0.25], [BAR3 - 0.05, 0.05, 12.2, 0.5, 0.2]], b: [[DROP - 0.03, 0.04, 9.0, 0.7, 0.25], [BAR3 - 0.05, 0.05, 12.2, 0.5, 0.2]] } // [start, attack, end, release, depth]
 
 const VARIANTS = [
   { v: 'a', out: path.join(ROOT, 'public/audio/intro.mp3'), cuesOut: CUES_OUT },
@@ -174,6 +180,7 @@ for (const { v, out: OUT_V, cuesOut: CUES_V } of VARIANTS) mixVariant(v, OUT_V, 
 
 function mixVariant(variant, OUT, CUES_OUT) {
 const cuesV = cues.filter((c) => !c.v || c.v === variant)
+const DUCK = DUCKS[variant]
 /* place a cue: the clip's alignment point lands on `at` (a clip that would start before the click is head-trimmed) */
 const FADE_MIN = 0.006
 // local checks: MIX_ONLY=name,name renders only those cues (with MIX_SFX_STEM, to measure a cue in isolation)
