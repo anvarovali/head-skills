@@ -414,19 +414,16 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     const a = audioRef.current
     const audioLive = () => !!a && !a.paused && !a.ended && a.currentTime > 0
     tl.play(audioLive() && !fromPicker.current ? a!.currentTime : O)
-    let aligned = false
+    // a soft phase lock: the picture eases onto the music's clock (timeScale 0.8-1.2) and the music is never seeked, so
+    // the click tap and every baked-in effect play whole; only a real stall (a background tab) jumps
     const onTick = () => {
-      if (!a || !audioLive() || doneRef.current) return
+      if (!a || !audioLive() || doneRef.current) { tl.timeScale(1); return }
       const drift = a.currentTime - tl.time()
-      if (!aligned) {
-        aligned = true
-        // first real audio frame: pull the audio to the picture (a ~100 ms seek in the quiet riser is inaudible)
-        if (Math.abs(drift) > 0.04 && tl.time() < 6.5) { a.currentTime = tl.time(); return }
-      }
-      if (Math.abs(drift) > 0.12 && a.currentTime < T.stop) tl.time(a.currentTime)
+      if (Math.abs(drift) > 0.25 && a.currentTime < T.stop) { tl.time(a.currentTime); tl.timeScale(1); return }
+      tl.timeScale(Math.abs(drift) < 0.008 ? 1 : gsap.utils.clamp(0.8, 1.2, 1 + drift * 2))
     }
     gsap.ticker.add(onTick)
-    if (import.meta.env.DEV) (window as unknown as { __hsIntro?: unknown }).__hsIntro = { time: () => tl.time() - O } // seconds since the click
+    if (import.meta.env.DEV) (window as unknown as { __hsIntro?: unknown }).__hsIntro = { time: () => tl.time() - O, drift: () => (a && !a.paused ? a.currentTime - tl.time() : null) } // seconds since the click
     return () => { gsap.ticker.remove(onTick); restoreCards() }
   }, { scope: rootRef, dependencies: [phase] })
 
