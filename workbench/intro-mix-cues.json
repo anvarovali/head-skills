@@ -1,0 +1,173 @@
+{
+ "offset": 3.8,
+ "music": "public/audio/intro-music.mp3",
+ "out": "public/audio/intro.mp3",
+ "lufsMix": -14,
+ "lufsMusic": -14,
+ "durMusic": 19.8,
+ "durOut": 19.8,
+ "cues": [
+  {
+   "name": "click",
+   "clip": "tap",
+   "at": 3.805,
+   "start": 3.8042,
+   "from": 0,
+   "dur": 0.16,
+   "gainDb": -14.6
+  },
+  {
+   "name": "salom",
+   "clip": "slide",
+   "at": 4.05,
+   "start": 3.8,
+   "from": 0.34,
+   "dur": 0.9,
+   "gainDb": -17.86
+  },
+  {
+   "name": "glyph0",
+   "clip": "tap",
+   "at": 5.355,
+   "start": 5.3546,
+   "from": 0,
+   "dur": 0.08,
+   "gainDb": -26.6
+  },
+  {
+   "name": "glyph1",
+   "clip": "tap",
+   "at": 5.385,
+   "start": 5.3846,
+   "from": 0,
+   "dur": 0.08,
+   "gainDb": -26.6
+  },
+  {
+   "name": "glyph2",
+   "clip": "tap",
+   "at": 5.415,
+   "start": 5.4146,
+   "from": 0,
+   "dur": 0.08,
+   "gainDb": -26.6
+  },
+  {
+   "name": "glyph3",
+   "clip": "tap",
+   "at": 5.445,
+   "start": 5.4446,
+   "from": 0,
+   "dur": 0.08,
+   "gainDb": -26.6
+  },
+  {
+   "name": "glyph4",
+   "clip": "tap",
+   "at": 5.475,
+   "start": 5.4746,
+   "from": 0,
+   "dur": 0.08,
+   "gainDb": -26.6
+  },
+  {
+   "name": "glyph.uz",
+   "clip": "tap",
+   "at": 5.495,
+   "start": 5.4946,
+   "from": 0,
+   "dur": 0.08,
+   "gainDb": -27.6
+  },
+  {
+   "name": "drop-hit",
+   "clip": "hit",
+   "at": 7.814,
+   "start": 7.81,
+   "from": 0.1212,
+   "dur": 2.5,
+   "gainDb": -7.2
+  },
+  {
+   "name": "drop-sub",
+   "clip": "sub",
+   "at": 7.814,
+   "start": 7.81,
+   "from": 0.014,
+   "dur": 2.5,
+   "gainDb": -8.16
+  },
+  {
+   "name": "push",
+   "clip": "whoosh",
+   "at": 11.46,
+   "start": 11.03,
+   "from": 0,
+   "dur": 1.2,
+   "gainDb": -20.5
+  },
+  {
+   "name": "burst",
+   "clip": "airy",
+   "at": 11.74,
+   "start": 11.53,
+   "from": 0,
+   "dur": 1.3,
+   "gainDb": -19.78
+  },
+  {
+   "name": "typing",
+   "clip": "keys",
+   "at": 13.71,
+   "start": 13.71,
+   "from": 2,
+   "dur": 0.78,
+   "gainDb": -15.69
+  },
+  {
+   "name": "chime",
+   "clip": "chime",
+   "at": 14.582,
+   "start": 14.578,
+   "from": 0.0038,
+   "dur": 0.2,
+   "gainDb": -14.81
+  },
+  {
+   "name": "flight",
+   "clip": "swoosh",
+   "at": 16.3,
+   "start": 15.47,
+   "from": 0,
+   "dur": 1.6,
+   "gainDb": -20.68
+  },
+  {
+   "name": "land0",
+   "clip": "tap",
+   "at": 16.5,
+   "start": 16.4992,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -23.6
+  },
+  {
+   "name": "land1",
+   "clip": "tap",
+   "at": 16.65,
+   "start": 16.6492,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -23.6
+  },
+  {
+   "name": "land2",
+   "clip": "tap",
+   "at": 16.81,
+   "start": 16.8092,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -23.6
+  }
+ ]
+}
