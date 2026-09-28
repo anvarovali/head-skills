@@ -1,0 +1,7 @@
+{
+ "measured": "2026-09-28, headless Chromium, at click+13.12..13.16 s (just before hand-over); dx,dy,dw in px (ours - live seat); rot = ours/seat in degrees",
+ "A_grid_1440x900": ["apple-design 0,0 w0 h0", "praktikum-starter 0,0 w0 h0", "gauntlet-loop 1,0 w0 h0"],
+ "B_hero_1440x900": ["cursor 0,0 w0 rot -9/-9", "claude 0,0 w0 rot 6/6", "apple-design 0,0 w0 rot -5/-5", "gemini 0,0 w0 rot 10/10", "gauntlet-loop 0,0 w0 rot 14/14", "copilot 0,0 w0 rot -8/-8"],
+ "B_hero_390x844": ["cursor 0,0 w0 rot -8/-8", "claude 0,0 w0 rot 6/6", "apple-design 0,0 w0 rot 8/8", "gemini 0,0 w0 rot 8/8", "gauntlet-loop 0,0 w0 rot 12/12", "copilot 1,0 w0 rot -9/-9"],
+ "B_tile_settle_file_time": {"cursor": 16.535, "apple-design": 16.568, "claude": 16.618, "gauntlet-loop": 16.618, "gemini": 16.735, "copilot": 16.802}
+}

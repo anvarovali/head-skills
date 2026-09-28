@@ -152,19 +152,33 @@ const cues = [
   { name: 'peak-sweep', clip: 'shimmer', at: BAR5 + 0.12, align: 'onset', dur: 1.2, peak: -26, fo: 0.6, pan: [-0.9, 0.9], panOver: 0.7 },
   // each card's flight to its seat, panned along its own path, then a tap as it lands (measured settle times)
   ...[['flight-bundle', 0, -0.69, 0], ['flight-apple', -0.63, -0.69, 1], ['flight-gauntlet', 0.63, -0.23, 2]].map(([name, from, to, k]) => (
-    { name, clip: 'swoosh', at: KICKS[17] - 0.04 + k * 0.08 + 0.35, align: 'peak', dur: 1.1, peak: -24, fi: 0.2, fo: 0.4, pan: [from, to], panOver: 0.9 })),
-  { name: 'land-apple', clip: 'tap', at: 16.5, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.69 },
-  { name: 'land-bundle', clip: 'tap', at: 16.65, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.69 },
-  { name: 'land-gauntlet', clip: 'tap', at: 16.81, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.23 },
+    { v: 'a', name, clip: 'swoosh', at: KICKS[17] - 0.04 + k * 0.08 + 0.35, align: 'peak', dur: 1.1, peak: -24, fi: 0.2, fo: 0.4, pan: [from, to], panOver: 0.9 })),
+  { v: 'a', name: 'land-apple', clip: 'tap', at: 16.5, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.69 },
+  { v: 'a', name: 'land-bundle', clip: 'tap', at: 16.65, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.69 },
+  { v: 'a', name: 'land-gauntlet', clip: 'tap', at: 16.81, align: 'onset', dur: 0.1, peak: -25, fo: 0.06, pan: -0.23 },
+  // version B: the cards dissolve into the six hero tiles (a zoom-airy dissolve), a soft tap as each tile lands on its seat
+  // (measured settle times, panned to the seat's x), and a gentle shimmer as the headline resolves on the last kick
+  { v: 'b', name: 'b-dissolve', clip: 'zoom', at: KICKS[17] - 0.12, align: 'peak', dur: 1.3, peak: -22, fi: 0.2, fo: 0.45 },
+  ...[['cursor', 16.535, -0.55], ['apple-design', 16.568, -0.44], ['claude', 16.618, -0.45], ['gauntlet-loop', 16.633, 0.55], ['gemini', 16.735, 0.45], ['copilot', 16.802, 0.44]].map(([id, t, x]) => (
+    { v: 'b', name: `b-tile-${id}`, clip: 'tap', at: t - 0.035, align: 'onset', dur: 0.1, peak: -26, fo: 0.06, pan: x })),
+  { v: 'b', name: 'b-headline', clip: 'shimmer', at: KICKS[19] + 0.01, align: 'onset', dur: 1.4, peak: -27, fi: 0.03, fo: 0.8 },
 ]
 // the music ducks ~2.5 dB under the drop and ~2 dB under the burst, with smooth edges
 const DUCK = [[DROP - 0.03, 0.04, 9.0, 0.7, 0.25], [BAR3 - 0.05, 0.05, 12.2, 0.5, 0.2]] // [start, attack, end, release, depth]
 
+const VARIANTS = [
+  { v: 'a', out: path.join(ROOT, 'public/audio/intro.mp3'), cuesOut: CUES_OUT },
+  { v: 'b', out: path.join(ROOT, 'public/audio/intro-b.mp3'), cuesOut: CUES_OUT.replace(/\.json$/, '-b.json') },
+]
+for (const { v, out: OUT_V, cuesOut: CUES_V } of VARIANTS) mixVariant(v, OUT_V, CUES_V)
+
+function mixVariant(variant, OUT, CUES_OUT) {
+const cuesV = cues.filter((c) => !c.v || c.v === variant)
 /* place a cue: the clip's alignment point lands on `at` (a clip that would start before the click is head-trimmed) */
 const FADE_MIN = 0.006
 // local checks: MIX_ONLY=name,name renders only those cues (with MIX_SFX_STEM, to measure a cue in isolation)
 const only = process.env.MIX_ONLY?.split(',').map((x) => x.trim())
-const placed = cues.filter((c) => !only || only.includes(c.name)).map((c) => {
+const placed = cuesV.filter((c) => !only || only.includes(c.name)).map((c) => {
   const a = A[c.clip]
   const ratio = c.semitones ? 2 ** (c.semitones / 12) : 1 // pitch shift speeds the clip up by `ratio`
   const rate = c.rate ?? 1
@@ -219,7 +233,7 @@ const pass1 = path.join(tmp, 'mix.wav')
 execFileSync(FFMPEG, ['-v', 'error', '-y', ...inputs, '-filter_complex', graph(true), '-map', '[x]', '-c:a', 'pcm_f32le', pass1])
 // local verification only: the SFX bus alone. It is derived from the licensed files: never inside the repo.
 if (process.env.MIX_SFX_STEM) {
-  const stem = path.resolve(process.env.MIX_SFX_STEM)
+  const stem = path.resolve(process.env.MIX_SFX_STEM).replace(/\.wav$/, variant === 'a' ? '.wav' : `-${variant}.wav`)
   if (stem.startsWith(ROOT + path.sep)) { console.error('mix-intro: MIX_SFX_STEM must be outside the repo'); process.exit(1) }
   execFileSync(FFMPEG, ['-v', 'error', '-y', ...inputs, '-filter_complex', graph(false), '-map', '[x]', '-c:a', 'pcm_f32le', stem])
 }
@@ -237,7 +251,7 @@ if (Math.abs(miss) > 0.2) { gain += miss; master(gain) }
 
 const dur = (f) => Number(execFileSync(FFPROBE, ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f]).toString())
 const report = {
-  offset: O, music: path.relative(ROOT, MUSIC), out: path.relative(ROOT, OUT), lufsMix: +lufs(OUT).toFixed(1), lufsMusic: +lufs(MUSIC).toFixed(1),
+  variant, offset: O, music: path.relative(ROOT, MUSIC), out: path.relative(ROOT, OUT), lufsMix: +lufs(OUT).toFixed(1), lufsMusic: +lufs(MUSIC).toFixed(1),
   durMusic: dur(MUSIC), durOut: dur(OUT), duck: DUCK.map(([s, , e, , d]) => ({ from: s, to: e, db: +(20 * Math.log10(1 - d)).toFixed(1) })),
   cues: placed.map((c) => ({ name: c.name, file: path.relative(RAW, c.file), time: +c.at.toFixed(3), start: c.start, from: c.from, dur: c.dur,
     gainDb: c.gain, peakDbfs: c.peak, pan: c.pan ?? 0, ...(c.semitones ? { semitones: c.semitones } : {}) })),
@@ -246,3 +260,4 @@ fs.mkdirSync(path.dirname(CUES_OUT), { recursive: true })
 fs.writeFileSync(CUES_OUT, JSON.stringify(report, null, 1) + '\n')
 fs.rmSync(tmp, { recursive: true, force: true })
 console.log(`mix-intro: ${report.out}  ${report.lufsMix} LUFS (music ${report.lufsMusic})  ${report.durOut.toFixed(3)} s (music ${report.durMusic.toFixed(3)} s)  ${placed.length} cues -> ${path.relative(ROOT, CUES_OUT)}`)
+}

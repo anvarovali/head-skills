@@ -2,7 +2,7 @@
 /* Film the intro: open /?intro=1, pick a language, grab a frame every ~0.5 s at 1440×900, write a labelled contact
    sheet PNG plus the Playwright webm.
    node scripts/intro-film.mjs [--url http://127.0.0.1:5180] [--lang en] [--out workbench/intro-film/r1]
-                               [--mockgrid] [--reduced] [--step 0.5] [--dur 19] [--w 1440 --h 900] */
+                               [--variant a|b] [--mockgrid] [--reduced] [--step 0.5] [--dur 19] [--w 1440 --h 900] */
 import { chromium } from '@playwright/test'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -15,6 +15,7 @@ const STEP = Number(arg('step', 0.5))
 const DUR = Number(arg('dur', 19))
 const W = Number(arg('w', 1440)), H = Number(arg('h', 900))
 const NAMES = { uz: 'O‘zbekcha', ru: 'Русский', en: 'English' }
+const VARIANT = arg('variant', '1') // a | b (default: the configured variant)
 
 fs.rmSync(OUT, { recursive: true, force: true })
 fs.mkdirSync(path.join(OUT, 'frames'), { recursive: true })
@@ -28,7 +29,7 @@ const ctx = await browser.newContext({
 const page = await ctx.newPage()
 page.on('pageerror', (e) => console.error('pageerror:', e.message))
 page.on('console', (m) => { if (m.type() === 'error') console.error('console:', m.text()) })
-await page.goto(`${BASE}/?intro=1`, { waitUntil: 'networkidle' })
+await page.goto(`${BASE}/?intro=${VARIANT}`, { waitUntil: 'networkidle' })
 const option = page.locator(`[data-option="${LANG}"]`)
 await option.waitFor()
 await page.waitForTimeout(1300)

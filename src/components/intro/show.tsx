@@ -9,8 +9,9 @@ import { LocaleContext, pick } from '@/i18n/useLocale'
 import { LOCALES, LOCALE_NAMES, switchLocale, type Locale } from '@/i18n/locales'
 import { HeadMark, Slash } from '@/components/ui/HeadMark'
 import { ExtensionCard } from '@/components/market/ExtensionCard'
+import { AgentLogo, type Agent } from '@/components/market/agentLogos'
 import { getItems } from '@/components/market/items'
-import { INTRO_AUDIO, INTRO_OFFSET, SEEN_KEY } from './replay'
+import { INTRO_OFFSET, SEEN_KEY, introAudio, type IntroVariant } from './replay'
 import { KICKS, T, spring, EIGHTH, BEAT } from './timing'
 import s from './intro.module.css'
 
@@ -26,6 +27,7 @@ const HINT = 'Tilni tanlang · Выберите язык · Choose your language
 
 export interface MountOpts {
   mode: 'picker' | 'show'
+  variant: IntroVariant
   locale: Locale
   navigate: (to: string) => void
   audio?: HTMLAudioElement
@@ -55,8 +57,22 @@ function library() {
     crisp at hero size (~2.2×) and at their seat (1.0). */
 const CARD_ZOOM = 2.5
 
+/** Version B: the six hero tiles, in src/components/market/Hero.tsx's order (their `data-hero-tile` ids), and the card
+    each is born from (left card -> left seats, centre -> the pair beside the words, right card -> right seats). */
+const skillIcons = catalog.skills.filter((k) => k.icon).map((k) => ({ id: k.id, src: k.icon! }))
+const HERO_TILES: { id: string; agent?: Agent; src?: string; card: number; side: -1 | 1 }[] = [
+  { id: 'cursor', agent: 'cursor', card: 0, side: -1 },
+  { id: 'claude', agent: 'claude', card: 1, side: -1 },
+  { id: skillIcons[0]?.id ?? 'skill-0', src: skillIcons[0]?.src, card: 0, side: 1 },
+  { id: 'gemini', agent: 'gemini', card: 1, side: 1 },
+  { id: skillIcons[1]?.id ?? 'skill-1', src: skillIcons[1]?.src, card: 2, side: -1 },
+  { id: 'copilot', agent: 'copilot', card: 2, side: 1 },
+]
+/** a flying tile is laid out TILE_ZOOM× a 52 px tile and only ever scaled down (crisp at its 1.8× birth and its seat) */
+const TILE_BASE = 52, TILE_ZOOM = 3
+
 /* ---------- the component ---------- */
-function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onReady, onClose }: MountOpts & { onClose: () => void }) {
+function IntroShow({ mode, variant, locale: startLocale, navigate, audio: givenAudio, onReady, onClose }: MountOpts & { onClose: () => void }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement | null>(givenAudio ?? null)
   const tlRef = useRef<gsap.core.Timeline | null>(null)
@@ -83,12 +99,15 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
   }, [onReady])
 
   useEffect(() => {
-    if (!audioRef.current) { const a = new Audio(INTRO_AUDIO); a.preload = 'auto'; audioRef.current = a }
+    if (!audioRef.current) { const a = new Audio(introAudio(variant)); a.preload = 'auto'; audioRef.current = a }
     if (reduced && audioRef.current) audioRef.current.muted = true
     return () => { const a = audioRef.current; if (a && !doneRef.current) a.pause() }
-  }, [reduced])
+  }, [reduced, variant])
 
-  const restoreCards = () => { for (const el of hiddenCards.current) { el.style.opacity = ''; el.style.transition = '' } hiddenCards.current = [] }
+  const restoreCards = () => {
+    for (const el of hiddenCards.current) { el.style.opacity = ''; el.style.transition = ''; el.style.animationPlayState = ''; el.style.transform = '' }
+    hiddenCards.current = []
+  }
 
   const finish = (fast: boolean) => {
     if (doneRef.current) return
@@ -179,7 +198,7 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
     const cmdCap = one('[data-cmd-cap]'), cmdStage = one('[data-cmd-stage]'), cmdClip = one('[data-cmd-clip]'), cmdIn = one('[data-cmd-in]')
     const caret = one('[data-caret]'), done = one('[data-done]')
     const backs = q('[data-fback]'), fronts = q('[data-ffront]'), wall = one('[data-wall]')
-    const cards = q('[data-wcard]') as HTMLElement[], uzChars = q('[data-base] [data-uzc]')
+    const cards = q('[data-wcard]') as HTMLElement[], uzChars = q('[data-base] [data-uzc]'), tiles = q('[data-btile]') as HTMLElement[]
     const chosenBtn = one(`[data-option="${locale}"]`)
     const otherBtns = q('[data-option]').filter((b) => b !== chosenBtn)
 
@@ -376,38 +395,90 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
       tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.22, ease: 'power1.out', immediateRender: false }, at) // solid early, not a ghost
     })
     tl.fromTo(sheen!, { xPercent: -120, opacity: 1 }, { xPercent: 120, duration: 0.7, ease: 'power2.inOut', immediateRender: false }, T.bar5 + 0.12)
-    tl.to([ground, blue], { opacity: 0, duration: 0.42, ease: 'power1.inOut' }, KICKS[17] - 0.02)
-    tl.to(controls!, { opacity: 0, duration: 0.3 }, KICKS[17])
-    tl.add(() => {
-      const sub = gsap.timeline()
-      const land = T.lastKick - (KICKS[17] - 0.04)
-      // targets first; the card travelling furthest down leaves first, so each clears the row before the next moves
-      const flights = lib.fan.map((it, j) => {
-        const real = document.querySelector<HTMLElement>(`[data-grid] [data-card-id="${CSS.escape(it.id)}"]`)
-        const r = real?.getBoundingClientRect()
-        const ok = !!real && !!r && r.width > 0 && r.bottom > 0 && r.top < vh
-        return { c: cards[j], h: faceH[j] ?? CH, real, r, ok, y: ok ? r!.top : -1 }
+    if (variant === 'b') {
+      /* B: the cards dissolve into the six hero tiles, which fly to their exact seats around the headline; the headline,
+         the subtitle and the search resolve on the last kick. Independent of which skills the catalog holds. */
+      const heroText = () => ([document.querySelector('[data-hero-title]'), document.querySelector('[data-hero-sub]'),
+        document.querySelector('[data-hero-search] > *')].filter(Boolean) as HTMLElement[])
+      const heroTile = (id: string) => document.querySelector<HTMLElement>(`[data-hero-tile="${CSS.escape(id)}"]`)
+      // while the ground still covers the page: hide the hero's text and tiles, and pause each tile's bob so its seat holds still
+      tl.add(() => {
+        // via GSAP (not inline by hand): the context's revert on unmount then returns the text to its own state
+        gsap.set(heroText(), { opacity: 0 })
+        for (const t of HERO_TILES) { const el = heroTile(t.id); if (el) { el.style.opacity = '0'; el.style.animationPlayState = 'paused'; hiddenCards.current.push(el) } }
+      }, T.bar5)
+      const TR = (rendered: number) => rendered / TILE_ZOOM // a rendered size (1 = a 52 px tile) -> the transform scale
+      const DISSOLVE = KICKS[17] - 0.3
+      tl.to(cards, { scale: R(1.05), opacity: 0, duration: 0.26, ease: 'power2.in' }, DISSOLVE)
+      tiles.forEach((tile, i) => {
+        const def = HERO_TILES[i]
+        const cx = (def.card - mid) * bigStep
+        tl.set(tile, { x: cx, y: 0, scale: TR(0.5), rotation: 0, opacity: 0 }, DISSOLVE - 0.02)
+        tl.to(tile, { opacity: 1, duration: 0.12, ease: 'power1.out' }, DISSOLVE)
+        tl.to(tile, { x: cx + def.side * 78, scale: TR(1.8), ...spring(0.85, 0.42) }, DISSOLVE)
+        tl.to(tile, { y: def.side * -30, ...spring(0.72, 0.42) }, DISSOLVE)
+        tl.to(tile, { rotation: def.side * 8, ...spring(0.75, 0.45) }, DISSOLVE)
       })
-      const order = flights.filter((f) => f.ok).sort((a, b) => b.y - a.y)
-      flights.forEach((f) => {
-        if (!f.ok || !f.real || !f.r) {
-          sub.to(f.c, { opacity: 0, scale: R(0.94), duration: 0.5, ease: 'power2.inOut' }, 0.05)
-          return
-        }
-        const { real, r } = f
-        real.style.opacity = '0'
-        hiddenCards.current.push(real)
-        const x = r.left + r.width / 2 - vw / 2, y = r.top + r.height / 2 - vh / 2
-        sub.set(f.c, { zIndex: 10 - order.indexOf(f) }, 0)
-        // independent X and Y springs: Y answers first, so a card drops out of the row before it slides across
-        const at = order.indexOf(f) * 0.08
-        sub.to(f.c, { y, scaleX: r.width / (CW * K), scaleY: r.height / (f.h * K), rotation: 0, ...spring(1, 0.36) }, at)
-        sub.to(f.c, { x, ...spring(1, 0.5) }, at + 0.08)
-        sub.add(() => { real.style.transition = 'opacity .2s ease-out'; real.style.opacity = '1' }, land - 0.12)
-        sub.to(f.c, { opacity: 0, duration: 0.16, ease: 'power1.in' }, land - 0.04)
-      })
-      tl.add(sub, KICKS[17] - 0.04)
-    }, KICKS[17] - 0.04)
+      tl.to([ground, blue], { opacity: 0, duration: 0.42, ease: 'power1.inOut' }, KICKS[17] - 0.02)
+      tl.to(controls!, { opacity: 0, duration: 0.3 }, KICKS[17])
+      tl.add(() => {
+        const sub = gsap.timeline()
+        const land = T.lastKick - (KICKS[17] - 0.04)
+        tiles.forEach((tile, i) => {
+          const real = heroTile(HERO_TILES[i].id)
+          const r = real?.getBoundingClientRect()
+          if (!real || !r || r.width === 0) { sub.to(tile, { opacity: 0, duration: 0.3 }, 0.05); return }
+          // the seat: its live centre (the bob is paused), its own size and its own rotation (the hero's --r)
+          const x = r.left + r.width / 2 - vw / 2, y = r.top + r.height / 2 - vh / 2
+          const rot = parseFloat(getComputedStyle(real).getPropertyValue('--r')) || 0
+          const scale = real.offsetHeight / (TILE_BASE * TILE_ZOOM)
+          const at = i * 0.05
+          sub.to(tile, { x, ...spring(1, 0.5) }, at)
+          sub.to(tile, { y, ...spring(0.92, 0.44) }, at)
+          sub.to(tile, { scale, rotation: rot, ...spring(1, 0.48) }, at)
+          sub.add(() => { real.style.transition = 'opacity .18s ease-out'; real.style.opacity = '1' }, land - 0.1)
+          sub.to(tile, { opacity: 0, duration: 0.14, ease: 'power1.in' }, land - 0.02)
+        })
+        tl.add(sub, KICKS[17] - 0.04)
+      }, KICKS[17] - 0.04)
+      // the headline, the subtitle and the search resolve on the last kick
+      tl.add(() => {
+        heroText().forEach((el, k) => gsap.fromTo(el, { opacity: 0, y: 8 }, { opacity: 1, y: 0, delay: k * 0.07, clearProps: 'transform', ...spring(1, 0.45) }))
+      }, T.lastKick)
+    } else {
+      tl.to([ground, blue], { opacity: 0, duration: 0.42, ease: 'power1.inOut' }, KICKS[17] - 0.02)
+      tl.to(controls!, { opacity: 0, duration: 0.3 }, KICKS[17])
+      tl.add(() => {
+        const sub = gsap.timeline()
+        const land = T.lastKick - (KICKS[17] - 0.04)
+        // targets first; the card travelling furthest down leaves first, so each clears the row before the next moves
+        const flights = lib.fan.map((it, j) => {
+          const real = document.querySelector<HTMLElement>(`[data-grid] [data-card-id="${CSS.escape(it.id)}"]`)
+          const r = real?.getBoundingClientRect()
+          const ok = !!real && !!r && r.width > 0 && r.bottom > 0 && r.top < vh
+          return { c: cards[j], h: faceH[j] ?? CH, real, r, ok, y: ok ? r!.top : -1 }
+        })
+        const order = flights.filter((f) => f.ok).sort((a, b) => b.y - a.y)
+        flights.forEach((f) => {
+          if (!f.ok || !f.real || !f.r) {
+            sub.to(f.c, { opacity: 0, scale: R(0.94), duration: 0.5, ease: 'power2.inOut' }, 0.05)
+            return
+          }
+          const { real, r } = f
+          real.style.opacity = '0'
+          hiddenCards.current.push(real)
+          const x = r.left + r.width / 2 - vw / 2, y = r.top + r.height / 2 - vh / 2
+          sub.set(f.c, { zIndex: 10 - order.indexOf(f) }, 0)
+          // independent X and Y springs: Y answers first, so a card drops out of the row before it slides across
+          const at = order.indexOf(f) * 0.08
+          sub.to(f.c, { y, scaleX: r.width / (CW * K), scaleY: r.height / (f.h * K), rotation: 0, ...spring(1, 0.36) }, at)
+          sub.to(f.c, { x, ...spring(1, 0.5) }, at + 0.08)
+          sub.add(() => { real.style.transition = 'opacity .2s ease-out'; real.style.opacity = '1' }, land - 0.12)
+          sub.to(f.c, { opacity: 0, duration: 0.16, ease: 'power1.in' }, land - 0.04)
+        })
+        tl.add(sub, KICKS[17] - 0.04)
+      }, KICKS[17] - 0.04)
+    }
     tl.add(() => finishRef.current(false), T.stop + 0.1)
 
     /* clock: the music is the master. Start with the audio; correct drift if the tab stalls. */
@@ -476,6 +547,16 @@ function IntroShow({ mode, locale: startLocale, navigate, audio: givenAudio, onR
             </div>
           ))}
         </div>
+
+        {variant === 'b' && (
+          <div className={s.tileLayer} aria-hidden="true">
+            {HERO_TILES.map((t) => (
+              <div key={t.id} className={s.tileShell} data-btile>
+                <span className={s.tileFace}>{t.agent ? <AgentLogo agent={t.agent} /> : t.src ? <img src={t.src} alt="" /> : null}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className={s.sheen} data-sheen aria-hidden="true" />
 

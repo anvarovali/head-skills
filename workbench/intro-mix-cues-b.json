@@ -1,8 +1,8 @@
 {
- "variant": "a",
+ "variant": "b",
  "offset": 3.8,
  "music": "public/audio/intro-music.mp3",
- "out": "public/audio/intro.mp3",
+ "out": "public/audio/intro-b.mp3",
  "lufsMix": -14.1,
  "lufsMusic": -14,
  "durMusic": 19.8,
@@ -527,79 +527,92 @@
    ]
   },
   {
-   "name": "flight-bundle",
-   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
-   "time": 16.343,
-   "start": 15.513,
+   "name": "b-dissolve",
+   "file": "zoom-airy-swoosh/Zoom Airy Swoosh.wav",
+   "time": 15.913,
+   "start": 14.843,
    "from": 0,
-   "dur": 1.1,
-   "gainDb": -25.68,
-   "peakDbfs": -24,
-   "pan": [
-    0,
-    -0.69
-   ]
+   "dur": 1.3,
+   "gainDb": -18.35,
+   "peakDbfs": -22,
+   "pan": 0
   },
   {
-   "name": "flight-apple",
-   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
-   "time": 16.423,
-   "start": 15.593,
-   "from": 0,
-   "dur": 1.1,
-   "gainDb": -25.68,
-   "peakDbfs": -24,
-   "pan": [
-    -0.63,
-    -0.69
-   ]
-  },
-  {
-   "name": "flight-gauntlet",
-   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
-   "time": 16.503,
-   "start": 15.673,
-   "from": 0,
-   "dur": 1.1,
-   "gainDb": -25.68,
-   "peakDbfs": -24,
-   "pan": [
-    0.63,
-    -0.23
-   ]
-  },
-  {
-   "name": "land-apple",
+   "name": "b-tile-cursor",
    "file": "click-tap-soft/Click Tap Soft.wav",
    "time": 16.5,
    "start": 16.4992,
    "from": 0,
    "dur": 0.1,
-   "gainDb": -23.6,
-   "peakDbfs": -25,
-   "pan": -0.69
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": -0.55
   },
   {
-   "name": "land-bundle",
+   "name": "b-tile-apple-design",
    "file": "click-tap-soft/Click Tap Soft.wav",
-   "time": 16.65,
-   "start": 16.6492,
+   "time": 16.533,
+   "start": 16.5322,
    "from": 0,
    "dur": 0.1,
-   "gainDb": -23.6,
-   "peakDbfs": -25,
-   "pan": -0.69
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": -0.44
   },
   {
-   "name": "land-gauntlet",
+   "name": "b-tile-claude",
    "file": "click-tap-soft/Click Tap Soft.wav",
-   "time": 16.81,
-   "start": 16.8092,
+   "time": 16.583,
+   "start": 16.5822,
    "from": 0,
    "dur": 0.1,
-   "gainDb": -23.6,
-   "peakDbfs": -25,
-   "pan": -0.23
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": -0.45
+  },
+  {
+   "name": "b-tile-gauntlet-loop",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 16.598,
+   "start": 16.5972,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": 0.55
+  },
+  {
+   "name": "b-tile-gemini",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 16.7,
+   "start": 16.6992,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": 0.45
+  },
+  {
+   "name": "b-tile-copilot",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 16.767,
+   "start": 16.7662,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": 0.44
+  },
+  {
+   "name": "b-headline",
+   "file": "short-magic-shimmer/Short Magic Shimmer/Short Magic Shimmer.wav",
+   "time": 17.019,
+   "start": 17.015,
+   "from": 0.0328,
+   "dur": 1.4,
+   "gainDb": -23.05,
+   "peakDbfs": -27,
+   "pan": 0
   }
  ]
 }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useLocale } from '@/i18n/useLocale'
 import type { Locale } from '@/i18n/locales'
-import { INTRO_AUDIO, INTRO_EVENT, INTRO_OFFSET, SEEN_KEY } from './replay'
+import { INTRO_EVENT, INTRO_OFFSET, SEEN_KEY, introAudio, introVariant, type IntroVariant } from './replay'
 
 /* First-visit intro. This file is the light half: it decides whether to play, covers the page for the few ms the
    show chunk takes to arrive, and listens for replays. The show itself (GSAP, the stage) is a lazy chunk that mounts
@@ -10,7 +10,7 @@ import { INTRO_AUDIO, INTRO_EVENT, INTRO_OFFSET, SEEN_KEY } from './replay'
 
 let open = false
 
-type Launch = { mode: 'picker' | 'show'; locale: Locale; navigate: (to: string) => void; audio?: HTMLAudioElement; onReady?: () => void }
+type Launch = { mode: 'picker' | 'show'; variant: IntroVariant; locale: Locale; navigate: (to: string) => void; audio?: HTMLAudioElement; onReady?: () => void }
 
 function launch(opts: Launch) {
   if (open) return
@@ -24,7 +24,7 @@ function wantsIntro(): boolean {
   if (typeof window === 'undefined') return false
   const q = new URLSearchParams(window.location.search).get('intro')
   if (q === '0') return false
-  if (q === '1') return true
+  if (q === '1' || q === 'a' || q === 'b') return true
   try { return window.localStorage.getItem(SEEN_KEY) !== '1' } catch { return false }
 }
 
@@ -37,16 +37,16 @@ export function Intro() {
   useEffect(() => { live.current = { locale, navigate } }, [locale, navigate])
 
   useEffect(() => {
-    if (cover) launch({ mode: 'picker', locale, navigate: (to) => live.current.navigate(to), onReady: () => setCover(false) })
+    if (cover) launch({ mode: 'picker', variant: introVariant(), locale, navigate: (to) => live.current.navigate(to), onReady: () => setCover(false) })
     const onReplay = () => {
       // still inside the footer's click: start the music now, while the gesture counts; the show syncs to it
       let audio: HTMLAudioElement | undefined
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        audio = new Audio(INTRO_AUDIO)
+        audio = new Audio(introAudio(introVariant()))
         audio.currentTime = INTRO_OFFSET // before metadata this sets the default start position
         audio.play().catch(() => {})
       }
-      launch({ mode: 'show', locale: live.current.locale, navigate: (to) => live.current.navigate(to), audio })
+      launch({ mode: 'show', variant: introVariant(), locale: live.current.locale, navigate: (to) => live.current.navigate(to), audio })
     }
     window.addEventListener(INTRO_EVENT, onReplay)
     return () => window.removeEventListener(INTRO_EVENT, onReplay)
