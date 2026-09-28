@@ -1,28 +1,32 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router'
 import clsx from 'clsx'
-import { useHref } from '@/i18n/useLocale'
+import { useHref, useT } from '@/i18n/useLocale'
 import { useCopy } from './useCopy'
-import { useDT, type DetailKey } from './strings'
+import type { ChromeKey } from '@/content/chrome'
 import { CheckIcon, CopyIcon, DownloadIcon, LinkIcon, PlayIcon, ShareIcon } from './icons'
+import { NotFoundView } from '@/routes/NotFound'
+import { CategoryGlyph } from '@/components/market/icons'
 import s from './Detail.module.css'
 
-/** Square icon: the skill's own image when it has one, else its initials on ink (bundles on blue). */
-export function Glyph({ title, icon, bundle, className }: { title: string; icon?: string; bundle?: boolean; className?: string }) {
-  if (icon) return <span className={clsx(s.glyph, s.glyphImg, className)}><img src={icon} alt="" /></span>
-  const words = title.replace(/[^\p{L}\p{N}\s-]/gu, '').split(/[\s-]+/).filter(Boolean)
-  const initials = (words.length > 1 ? words[0][0] + words[1][0] : (words[0] ?? '?').slice(0, 2)).toUpperCase()
-  return <span className={clsx(s.glyph, bundle && s.glyphBundle, className)} aria-hidden>{initials}</span>
+/** Square icon, the same mark the marketplace card shows: the skill's own image, else its category glyph
+    (a bundle gets the bundle glyph). Decorative: the title sits right next to it. */
+export function Glyph({ icon, category, bundle, className }: { icon?: string; category?: string; bundle?: boolean; className?: string }) {
+  return (
+    <span className={clsx(s.glyph, className)} aria-hidden>
+      {icon ? <img src={icon} alt="" /> : <CategoryGlyph id={bundle ? 'bundle' : category ?? ''} size={30} />}
+    </span>
+  )
 }
 
 export function Badges({ ids, extra }: { ids: string[]; extra?: ReactNode }) {
-  const t = useDT()
+  const t = useT()
   if (!ids.length && !extra) return null
   return (
     <span className={s.badges}>
       {extra}
       {ids.map((b) => {
-        const key = `badge.${b}` as DetailKey
+        const key = `badge.${b}` as ChromeKey
         const label = (t(key) as string | undefined) ?? b
         return <span key={b} className={s.badge}>{label}</span>
       })}
@@ -31,7 +35,7 @@ export function Badges({ ids, extra }: { ids: string[]; extra?: ReactNode }) {
 }
 
 export function Crumbs({ current, actions }: { current: string; actions?: ReactNode }) {
-  const t = useDT()
+  const t = useT()
   const href = useHref()
   return (
     <div className={s.crumbBar}>
@@ -47,7 +51,7 @@ export function Crumbs({ current, actions }: { current: string; actions?: ReactN
 
 /** Icon-only copy button with a blue "copied" state; the label is announced, the state is announced politely. */
 export function CopyIconButton({ text, label }: { text: string; label: string }) {
-  const t = useDT()
+  const t = useT()
   const { copied, copy } = useCopy()
   return (
     <button type="button" className={s.iconBtn} data-done={copied || undefined} onClick={() => copy(text)}
@@ -59,7 +63,7 @@ export function CopyIconButton({ text, label }: { text: string; label: string })
 }
 
 export function Command({ text, label }: { text: string; label?: string }) {
-  const t = useDT()
+  const t = useT()
   return (
     <div className={s.cmd}>
       <code>{text}</code>
@@ -70,7 +74,7 @@ export function Command({ text, label }: { text: string; label?: string }) {
 
 /** Share (native sheet where available, else copies) + Copy link, as quiet icon buttons with tooltips. */
 export function ShareActions({ title }: { title: string }) {
-  const t = useDT()
+  const t = useT()
   const link = useCopy()
   const share = useCopy()
   const url = () => window.location.href.replace(/#.*$/, '').replace(/[?&](intro|yt)=[^&]*/g, '').replace(/\?$/, '')
@@ -96,13 +100,13 @@ export function ShareActions({ title }: { title: string }) {
 }
 
 export function DownloadAction({ href }: { href: string }) {
-  const t = useDT()
+  const t = useT()
   return <a className={s.action} href={href} download aria-label={t('dl.zip')} data-tip={t('dl.zip')}><DownloadIcon /></a>
 }
 
 /** Lite YouTube: a poster and a play button; the (nocookie) iframe only loads on click. */
 export function YouTubeLite({ id, title }: { id: string; title: string }) {
-  const t = useDT()
+  const t = useT()
   const [on, setOn] = useState(false)
   const safe = id.replace(/[^\w-]/g, '')
   if (!safe) return null
@@ -130,16 +134,8 @@ export function youtubeId(rec: Partial<Record<string, string>> | undefined, loca
   return rec?.[locale] || undefined
 }
 
+/** An unknown skill/bundle id: the site's one 404 look, with the detail wording. */
 export function NotFoundBlock({ title }: { title: string }) {
-  const t = useDT()
-  const href = useHref()
-  return (
-    <div className={s.page}>
-      <div className={s.empty}>
-        <h1>{title}</h1>
-        <p>{t('nf.sub')}</p>
-        <Link to={href('')} className={s.action}>{t('nf.back')}</Link>
-      </div>
-    </div>
-  )
+  const t = useT()
+  return <NotFoundView title={title} sub={t('nf.sub')} />
 }

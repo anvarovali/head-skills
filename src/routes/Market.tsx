@@ -5,6 +5,7 @@ import { pick, useLocale, useT } from '@/i18n/useLocale'
 import { Hero } from '@/components/market/Hero'
 import { getItems, matches, sortItems, sourceOf, SOURCES, type Item, type Sort } from '@/components/market/items'
 import { Check, CtaBand, Empty, Facet, Grid, Pager, Pills, SectionHead, Segmented, SideCta } from '@/components/market/parts'
+import { useDocumentMeta } from '@/i18n/useDocumentMeta'
 import s from '@/components/market/Market.module.css'
 
 type Tab = 'all' | 'skills' | 'bundles'
@@ -23,6 +24,7 @@ export function Market() {
   const cats = (params.get('cat') ?? '').split(',').filter(Boolean)
   const srcs = (params.get('src') ?? '').split(',').filter(Boolean)
   const page = Math.max(1, Number(params.get('page')) || 1)
+  useDocumentMeta(tab === 'skills' ? t('tab.skills') : tab === 'bundles' ? t('tab.bundles') : undefined)
 
   const set = (patch: Record<string, string | null>) => {
     const next = new URLSearchParams(params)

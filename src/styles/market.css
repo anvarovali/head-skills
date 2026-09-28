@@ -12,8 +12,8 @@
   --m-bg-hover: #f1f4ff;                 /* card hover: a faint blue, blue hovers only */
   --m-text: var(--ink);                  /* #101113 (qoder #141414) */
   --m-text-2: #5f636b;
-  --m-text-3: #7f838b;
-  --m-text-4: #8e9199;
+  --m-text-3: #686c74;                   /* was #7f838b (3.5:1 on paper); now 4.8:1 for body-size grey */
+  --m-text-4: #6c7078;                   /* was #8e9199 (2.9:1); now 4.55:1 on paper, 4.8:1 on the card ground */
   --m-border: #e4e6ea;                   /* qoder border-tertiary #e6e6e6 */
   --m-border-strong: #d4d7dc;
   --m-fill-2: #e6e8ec;                   /* active pill / tab fill */
@@ -39,6 +39,6 @@ code, pre, kbd { font-family: var(--m-font-code); }
   --m-shadow-tile: 0 2px 6px rgba(16, 17, 19, .06), 0 8px 20px rgba(16, 17, 19, .06);
   --m-header-x: 36px;
   --m-tag-bg: #eff2ff;                   /* pale tag, as qoder's Recommend: a tint, not a fill */
-  --m-tag-text: #4a67ff;
+  --m-tag-text: #3a58f5;                 /* was #4a67ff (4.0:1 on the tag tint); now 4.8:1 */
 }
 @media (max-width: 767px) { :root { --m-header-x: var(--m-page-x); } }

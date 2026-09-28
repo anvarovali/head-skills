@@ -3,11 +3,11 @@
 .md { color: #2b2e33; font-size: 15px; line-height: 1.65; font-weight: 400; overflow-wrap: break-word; }
 .md > :first-child { margin-top: 0; }
 .md :where(h1, h2, h3, h4, h5, h6) { color: var(--m-text); font-weight: 600; letter-spacing: -.01em; scroll-margin-top: 88px; text-wrap: balance; }
-.md h1 { font-size: 26px; line-height: 1.3; margin: 44px 0 14px; letter-spacing: -.02em; }
-.md h2 { font-size: 21px; line-height: 1.4; margin: 40px 0 12px; letter-spacing: -.015em; }
-.md h3 { font-size: 17px; line-height: 1.5; margin: 28px 0 8px; }
-.md h4 { font-size: 15px; line-height: 1.5; margin: 22px 0 6px; }
-.md h5, .md h6 { font-size: 14px; margin: 20px 0 6px; }
+.md [data-h="1"] { font-size: 26px; line-height: 1.3; margin: 44px 0 14px; letter-spacing: -.02em; }
+.md [data-h="2"] { font-size: 21px; line-height: 1.4; margin: 40px 0 12px; letter-spacing: -.015em; }
+.md [data-h="3"] { font-size: 17px; line-height: 1.5; margin: 28px 0 8px; }
+.md [data-h="4"] { font-size: 15px; line-height: 1.5; margin: 22px 0 6px; }
+.md [data-h="5"], .md [data-h="6"] { font-size: 14px; margin: 20px 0 6px; }
 .md p { margin: 0 0 14px; }
 .md strong { color: var(--m-text); font-weight: 600; }
 .md a { color: var(--m-text); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--m-text) 30%, transparent); text-decoration-thickness: 1px; text-underline-offset: 3px; transition: color var(--m-t), text-decoration-color var(--m-t); }
@@ -36,8 +36,8 @@
 .md tbody tr:nth-child(even) td { background: var(--m-bg-elevated); }
 
 @media (max-width: 767px) {
-  .md h1 { font-size: 23px; margin-top: 36px; }
-  .md h2 { font-size: 20px; margin-top: 34px; }
-  .md h3 { font-size: 17px; }
+  .md [data-h="1"] { font-size: 23px; margin-top: 36px; }
+  .md [data-h="2"] { font-size: 20px; margin-top: 34px; }
+  .md [data-h="3"] { font-size: 17px; }
   .md pre { padding: 14px 16px; }
 }
