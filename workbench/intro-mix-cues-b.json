@@ -527,81 +527,256 @@
    ]
   },
   {
-   "name": "b-dissolve",
-   "file": "zoom-airy-swoosh/Zoom Airy Swoosh.wav",
-   "time": 15.913,
-   "start": 14.843,
+   "name": "b-morph-0",
+   "file": "soft-sliding-transition-whoosh/Soft Sliding Transition Whoosh.wav",
+   "time": 16.253,
+   "start": 15.663,
    "from": 0,
-   "dur": 1.3,
-   "gainDb": -18.35,
-   "peakDbfs": -22,
+   "dur": 0.7,
+   "gainDb": -24.86,
+   "peakDbfs": -26,
+   "pan": -0.63
+  },
+  {
+   "name": "b-morph-1",
+   "file": "soft-sliding-transition-whoosh/Soft Sliding Transition Whoosh.wav",
+   "time": 16.233,
+   "start": 15.643,
+   "from": 0,
+   "dur": 0.7,
+   "gainDb": -24.86,
+   "peakDbfs": -26,
    "pan": 0
   },
   {
-   "name": "b-tile-cursor",
-   "file": "click-tap-soft/Click Tap Soft.wav",
-   "time": 16.5,
-   "start": 16.4992,
+   "name": "b-morph-2",
+   "file": "soft-sliding-transition-whoosh/Soft Sliding Transition Whoosh.wav",
+   "time": 16.253,
+   "start": 15.663,
    "from": 0,
-   "dur": 0.1,
-   "gainDb": -24.6,
+   "dur": 0.7,
+   "gainDb": -24.86,
    "peakDbfs": -26,
-   "pan": -0.55
+   "pan": 0.63
   },
   {
-   "name": "b-tile-apple-design",
-   "file": "click-tap-soft/Click Tap Soft.wav",
-   "time": 16.533,
-   "start": 16.5322,
-   "from": 0,
-   "dur": 0.1,
-   "gainDb": -24.6,
-   "peakDbfs": -26,
-   "pan": -0.44
+   "name": "b-split-cursor",
+   "file": "bubble-pop/Bubble Pop 01 Appear.wav",
+   "time": 16.333,
+   "start": 16.329,
+   "from": 0.0452,
+   "dur": 0.26,
+   "gainDb": -23.92,
+   "peakDbfs": -23,
+   "pan": -0.68
   },
   {
-   "name": "b-tile-claude",
-   "file": "click-tap-soft/Click Tap Soft.wav",
-   "time": 16.583,
-   "start": 16.5822,
-   "from": 0,
-   "dur": 0.1,
-   "gainDb": -24.6,
-   "peakDbfs": -26,
-   "pan": -0.45
+   "name": "b-split-apple-design",
+   "file": "bubble-pop/Bubble Pop 03 Appear.wav",
+   "time": 16.345,
+   "start": 16.341,
+   "from": 0.0282,
+   "dur": 0.26,
+   "gainDb": -16.48,
+   "peakDbfs": -23,
+   "pan": -0.58,
+   "semitones": 1.5
   },
   {
-   "name": "b-tile-gauntlet-loop",
-   "file": "click-tap-soft/Click Tap Soft.wav",
-   "time": 16.598,
-   "start": 16.5972,
-   "from": 0,
-   "dur": 0.1,
-   "gainDb": -24.6,
-   "peakDbfs": -26,
-   "pan": 0.55
+   "name": "b-split-claude",
+   "file": "bubble-pop/Bubble Pop 05 Appear.wav",
+   "time": 16.333,
+   "start": 16.329,
+   "from": 0.0466,
+   "dur": 0.26,
+   "gainDb": -22.04,
+   "peakDbfs": -23,
+   "pan": -0.1
   },
   {
-   "name": "b-tile-gemini",
-   "file": "click-tap-soft/Click Tap Soft.wav",
-   "time": 16.7,
-   "start": 16.6992,
-   "from": 0,
-   "dur": 0.1,
-   "gainDb": -24.6,
-   "peakDbfs": -26,
-   "pan": 0.45
+   "name": "b-split-copilot",
+   "file": "bubble-pop/Bubble Pop 01 Appear.wav",
+   "time": 16.345,
+   "start": 16.341,
+   "from": 0.0496,
+   "dur": 0.26,
+   "gainDb": -23.92,
+   "peakDbfs": -23,
+   "pan": 0.1,
+   "semitones": -1.5
   },
   {
-   "name": "b-tile-copilot",
+   "name": "b-split-gemini",
+   "file": "bubble-pop/Bubble Pop 03 Appear.wav",
+   "time": 16.333,
+   "start": 16.329,
+   "from": 0.0311,
+   "dur": 0.26,
+   "gainDb": -16.48,
+   "peakDbfs": -23,
+   "pan": 0.58
+  },
+  {
+   "name": "b-split-gauntlet-loop",
+   "file": "bubble-pop/Bubble Pop 05 Appear.wav",
+   "time": 16.345,
+   "start": 16.341,
+   "from": 0.0424,
+   "dur": 0.26,
+   "gainDb": -22.04,
+   "peakDbfs": -23,
+   "pan": 0.68,
+   "semitones": 1.5
+  },
+  {
+   "name": "b-trail-cursor",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.609,
+   "start": 15.779,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -32.68,
+   "peakDbfs": -31,
+   "pan": [
+    -0.63,
+    -0.53
+   ]
+  },
+  {
+   "name": "b-trail-apple-design",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.679,
+   "start": 15.849,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -32.68,
+   "peakDbfs": -31,
+   "pan": [
+    -0.63,
+    -0.41
+   ]
+  },
+  {
+   "name": "b-trail-claude",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.749,
+   "start": 15.919,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -32.68,
+   "peakDbfs": -31,
+   "pan": [
+    0,
+    -0.42
+   ]
+  },
+  {
+   "name": "b-trail-copilot",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.819,
+   "start": 15.989,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -32.68,
+   "peakDbfs": -31,
+   "pan": [
+    0,
+    0.41
+   ]
+  },
+  {
+   "name": "b-trail-gemini",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.889,
+   "start": 16.059,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -32.68,
+   "peakDbfs": -31,
+   "pan": [
+    0.63,
+    0.42
+   ]
+  },
+  {
+   "name": "b-trail-gauntlet-loop",
+   "file": "slide-across-swoosh/Slide Across Swoosh.wav",
+   "time": 16.959,
+   "start": 16.129,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -32.68,
+   "peakDbfs": -31,
+   "pan": [
+    0.63,
+    0.53
+   ]
+  },
+  {
+   "name": "b-land-cursor",
    "file": "click-tap-soft/Click Tap Soft.wav",
-   "time": 16.767,
-   "start": 16.7662,
+   "time": 16.791,
+   "start": 16.7902,
    "from": 0,
    "dur": 0.1,
    "gainDb": -24.6,
    "peakDbfs": -26,
-   "pan": 0.44
+   "pan": -0.53
+  },
+  {
+   "name": "b-land-apple-design",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 16.873,
+   "start": 16.8722,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": -0.41
+  },
+  {
+   "name": "b-land-claude",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 17.024,
+   "start": 17.0232,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": -0.42
+  },
+  {
+   "name": "b-land-copilot",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 17.09,
+   "start": 17.0892,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": 0.41
+  },
+  {
+   "name": "b-land-gemini",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 17.105,
+   "start": 17.1042,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": 0.42
+  },
+  {
+   "name": "b-land-gauntlet-loop",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 17.157,
+   "start": 17.1562,
+   "from": 0,
+   "dur": 0.1,
+   "gainDb": -24.6,
+   "peakDbfs": -26,
+   "pan": 0.53
   },
   {
    "name": "b-headline",
@@ -610,8 +785,30 @@
    "start": 17.015,
    "from": 0.0328,
    "dur": 1.4,
-   "gainDb": -23.05,
-   "peakDbfs": -27,
+   "gainDb": -20.05,
+   "peakDbfs": -24,
+   "pan": 0
+  },
+  {
+   "name": "b-search",
+   "file": "soft-sliding-transition-whoosh/Soft Sliding Transition Whoosh.wav",
+   "time": 17.429,
+   "start": 16.839,
+   "from": 0,
+   "dur": 0.8,
+   "gainDb": -23.86,
+   "peakDbfs": -25,
+   "pan": 0
+  },
+  {
+   "name": "b-caret",
+   "file": "click-tap-soft/Click Tap Soft.wav",
+   "time": 18.079,
+   "start": 18.0782,
+   "from": 0,
+   "dur": 0.08,
+   "gainDb": -30.6,
+   "peakDbfs": -32,
    "pan": 0
   }
  ]
