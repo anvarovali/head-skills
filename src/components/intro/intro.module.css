@@ -115,12 +115,17 @@
 .face { position: absolute; left: 0; top: 0; width: 313px; margin: -76px 0 0 -156.5px; zoom: 2.5; border-radius: var(--m-r-xl);
   font-family: var(--m-font); text-align: left; box-shadow: 0 30px 60px -14px rgba(0, 0, 0, .6); }
 /* version B: the hero tiles, a copy of the hero's tile face laid out 3x (zoom) and only ever scaled down */
-.tileLayer { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 3; }
 .tileShell { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; }
 .tileFace { position: absolute; left: 0; top: 0; width: 52px; height: 52px; margin: -26px 0 0 -26px; zoom: 3; display: grid; place-items: center;
   border-radius: 13.52px; background: #fff; box-shadow: 0 1px 2px rgba(16, 17, 19, .05), 0 6px 14px -4px rgba(16, 17, 19, .10); }
 .tileFace img { width: 64%; height: 64%; }
 .tileFace svg { width: 55%; height: 55%; }
+.capLayer { position: absolute; left: 50%; top: 50%; width: 0; height: 0; z-index: 3; }
+.tcap { position: absolute; left: 0; top: 0; white-space: nowrap; font-family: var(--font-mono); font-weight: 500;
+  font-size: 16px; letter-spacing: .005em; color: rgba(245, 245, 247, .8); opacity: 0; }
+/* version B's light change: a paper dawn blooms from the centre (the page underneath is the same paper) */
+.dawn { position: absolute; left: 50%; top: 50%; width: 260vmax; height: 260vmax; margin: -130vmax 0 0 -130vmax; border-radius: 50%;
+  background: radial-gradient(closest-side, #f4f5f7 0%, #f4f5f7 38%, rgba(244, 245, 247, .55) 66%, rgba(244, 245, 247, 0) 100%); opacity: 0; will-change: transform, opacity; }
 /* the finale's light: a soft diagonal band crossing the blue and the cards on the downbeat */
 .sheen { position: absolute; inset: -10% -30%; z-index: 4; pointer-events: none; opacity: 0;
   background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, .06) 44%, rgba(255, 255, 255, .26) 50%, rgba(255, 255, 255, .06) 56%, transparent 62%); }
